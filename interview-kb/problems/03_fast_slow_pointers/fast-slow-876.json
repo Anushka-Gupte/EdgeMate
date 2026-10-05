@@ -1,0 +1,206 @@
+{
+ "id": "fast-slow-876",
+ "leetcode": 876,
+ "title": "Middle of the Linked List",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "easy",
+ "function": "middleNode",
+ "signature": "middleNode(head: ListNode) -> ListNode",
+ "adapter": "list_to_list",
+ "statement": "Return the middle node of a singly linked list (the values from that node to the end are compared). If there are two middle nodes, return the second one.",
+ "reference_solution": "def middleNode(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n",
+ "brute_force_solution": "def middleNode(head):\n    n, cur = 0, head\n    while cur:\n        n += 1\n        cur = cur.next\n    cur = head\n    for _ in range(n // 2):\n        cur = cur.next\n    return cur\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   ],
+   "expected": [
+    3,
+    4,
+    5
+   ],
+   "tag": "odd_length"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   ],
+   "expected": [
+    4,
+    5,
+    6
+   ],
+   "tag": "even_length"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "even_length"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     8,
+     8,
+     4,
+     6
+    ]
+   ],
+   "expected": [
+    4,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     7
+    ]
+   ],
+   "expected": [
+    7
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     4,
+     6,
+     5,
+     5,
+     1,
+     3
+    ]
+   ],
+   "expected": [
+    5,
+    5,
+    1,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     0,
+     8,
+     0,
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     8,
+     9,
+     1,
+     5,
+     2,
+     9
+    ]
+   ],
+   "expected": [
+    1,
+    5,
+    2,
+    9
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "If one person walks twice as fast as another, where is the slow one when the fast one finishes?",
+  "2_nudge": "Use two pointers starting at head. Move slow by 1 and fast by 2 each round.",
+  "3_big_hint": "Loop while fast and fast.next: slow = slow.next; fast = fast.next.next. Return slow."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the first middle for even lengths",
+   "code": "def middleNode(head):\n    slow = fast = head\n    while fast and fast.next and fast.next.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n",
+   "fails_on": "even_length",
+   "followup": "For a list of 4 nodes, which of the two middle nodes does your code return? Which does the problem want?"
+  },
+  {
+   "name": "crashes when fast runs off the end",
+   "code": "def middleNode(head):\n    slow = fast = head\n    while fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n",
+   "fails_on": "even_length",
+   "followup": "When the list has an even length, what is `fast` after its last jump, and what happens when you read fast.next?"
+  },
+  {
+   "name": "returns the node after the middle",
+   "code": "def middleNode(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow.next if slow else None\n",
+   "fails_on": "single",
+   "followup": "Trace a one-node list. What does your function return?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is this one pass instead of two (count, then walk)? Is it actually faster?",
+   "How would you return the first middle instead, and which loop condition changes?"
+  ]
+ }
+}

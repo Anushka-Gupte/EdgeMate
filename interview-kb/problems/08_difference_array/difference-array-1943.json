@@ -1,0 +1,349 @@
+{
+ "id": "difference-array-1943",
+ "leetcode": 1943,
+ "title": "Describe the Painting",
+ "pattern": "difference_array",
+ "difficulty": "hard",
+ "function": "describePainting",
+ "signature": "describePainting(segments: List[List[int]]) -> List[List[int]]",
+ "adapter": null,
+ "statement": "Each segment [start, end, color] paints the half-open interval [start, end) with a distinct color number. Overlapping paint mixes by adding colors. Return the painting as non-overlapping pieces [start, end, mixedSum], ordered left to right, omitting unpainted parts. A new piece begins wherever the set of colors changes (so two neighbouring pieces may have equal sums).",
+ "reference_solution": "def describePainting(segments):\n    diff = {}\n    for s, e, c in segments:\n        diff[s] = diff.get(s, 0) + c\n        diff[e] = diff.get(e, 0) - c\n    out = []\n    cur = 0\n    prev = None\n    for x in sorted(diff):\n        if prev is not None and cur > 0:\n            out.append([prev, x, cur])\n        cur += diff[x]\n        prev = x\n    return out\n",
+ "brute_force_solution": "def describePainting(segments):\n    if not segments:\n        return []\n    lo = min(s for s, e, c in segments)\n    hi = max(e for s, e, c in segments)\n    out = []\n    cur_set = None\n    start = None\n    for x in range(lo, hi):\n        ids = frozenset(i for i, (s, e, c) in enumerate(segments) if s <= x < e)\n        if ids != cur_set:\n            if cur_set:\n                out.append([start, x, sum(segments[i][2] for i in cur_set)])\n            cur_set = ids\n            start = x\n    if cur_set:\n        out.append([start, hi, sum(segments[i][2] for i in cur_set)])\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      4,
+      5
+     ],
+     [
+      4,
+      7,
+      7
+     ],
+     [
+      1,
+      7,
+      9
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     4,
+     14
+    ],
+    [
+     4,
+     7,
+     16
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      7,
+      9
+     ],
+     [
+      6,
+      8,
+      15
+     ],
+     [
+      8,
+      10,
+      7
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     6,
+     9
+    ],
+    [
+     6,
+     7,
+     24
+    ],
+    [
+     7,
+     8,
+     15
+    ],
+    [
+     8,
+     10,
+     7
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      4,
+      5
+     ],
+     [
+      1,
+      4,
+      7
+     ],
+     [
+      4,
+      7,
+      1
+     ],
+     [
+      4,
+      7,
+      11
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     4,
+     12
+    ],
+    [
+     4,
+     7,
+     12
+    ]
+   ],
+   "tag": "same_sum_must_split"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      5,
+      2
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     5,
+     2
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      5,
+      8,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     3,
+     4
+    ],
+    [
+     5,
+     8,
+     6
+    ]
+   ],
+   "tag": "gap_between_segments"
+  },
+  {
+   "args": [
+    [
+     [
+      8,
+      10,
+      3
+     ],
+     [
+      4,
+      6,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     4,
+     6,
+     6
+    ],
+    [
+     8,
+     10,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      10,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     6,
+     10,
+     5
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      4,
+      7
+     ],
+     [
+      7,
+      10,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     4,
+     7
+    ],
+    [
+     7,
+     10,
+     6
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      4,
+      10
+     ],
+     [
+      5,
+      10,
+      9
+     ],
+     [
+      6,
+      10,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     4,
+     10
+    ],
+    [
+     5,
+     6,
+     9
+    ],
+    [
+     6,
+     10,
+     10
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(30)\n    segs = []\n    for i in range(20000):\n        a = r.randint(0, 99000)\n        segs.append([a, a + r.randint(1, 1000), 2 * i + 1])\n    return [segs]"
+  }
+ ],
+ "hints": {
+  "1_question": "Between any two consecutive 'interesting' coordinates (where some segment starts or ends) the mixed color does not change. What are the interesting coordinates?",
+  "2_nudge": "Record +color at each start and -color at each end in a dictionary. Walk the coordinates in sorted order keeping a running sum.",
+  "3_big_hint": "For consecutive sorted coordinates prev, x: if the running sum before x is > 0, emit [prev, x, sum]. Then add diff[x] to the sum. Do not merge neighbours; colors differ even if sums match."
+ },
+ "known_bugs": [
+  {
+   "name": "merges neighbouring pieces with equal sums",
+   "code": "def describePainting(segments):\n    diff = {}\n    for s, e, c in segments:\n        diff[s] = diff.get(s, 0) + c\n        diff[e] = diff.get(e, 0) - c\n    out = []\n    cur = 0\n    prev = None\n    for x in sorted(diff):\n        if prev is not None and cur > 0:\n            if out and out[-1][1] == prev and out[-1][2] == cur:\n                out[-1][1] = x\n            else:\n                out.append([prev, x, cur])\n        cur += diff[x]\n        prev = x\n    return out\n",
+   "fails_on": "same_sum_must_split",
+   "followup": "Two neighbouring pieces have the same total. Are they made of the same set of colors? What does the problem say about when a new piece starts?"
+  },
+  {
+   "name": "includes unpainted gaps as pieces with sum 0",
+   "code": "def describePainting(segments):\n    diff = {}\n    for s, e, c in segments:\n        diff[s] = diff.get(s, 0) + c\n        diff[e] = diff.get(e, 0) - c\n    out = []\n    cur = 0\n    prev = None\n    for x in sorted(diff):\n        if prev is not None:\n            out.append([prev, x, cur])\n        cur += diff[x]\n        prev = x\n    return out\n",
+   "fails_on": "gap_between_segments",
+   "followup": "Should a stretch with no paint appear in the output?"
+  },
+  {
+   "name": "sweeps every integer coordinate (O(range * segments))",
+   "code": "def describePainting(segments):\n    if not segments:\n        return []\n    lo = min(s for s, e, c in segments)\n    hi = max(e for s, e, c in segments)\n    out = []\n    cur_set = None\n    start = None\n    for x in range(lo, hi):\n        ids = frozenset(i for i, (s, e, c) in enumerate(segments) if s <= x < e)\n        if ids != cur_set:\n            if cur_set:\n                out.append([start, x, sum(segments[i][2] for i in cur_set)])\n            cur_set = ids\n            start = x\n    if cur_set:\n        out.append([start, hi, sum(segments[i][2] for i in cur_set)])\n    return out\n",
+   "fails_on": "large",
+   "followup": "If coordinates go up to 100000 and there are 20000 segments, how much work is it to test every segment at every coordinate? Which coordinates actually matter?"
+  }
+ ],
+ "complexity": {
+  "time": "O(m log m)",
+  "space": "O(m)",
+  "followups": [
+   "Why is a dictionary + sorted keys better than an array when coordinates are huge?",
+   "Why is it important that all colors are distinct?"
+  ]
+ }
+}

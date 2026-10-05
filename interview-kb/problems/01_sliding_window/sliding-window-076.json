@@ -1,0 +1,158 @@
+{
+ "id": "sliding-window-076",
+ "leetcode": 76,
+ "title": "Minimum Window Substring",
+ "pattern": "sliding_window",
+ "difficulty": "hard",
+ "function": "minWindow",
+ "signature": "minWindow(s: str, t: str) -> str",
+ "adapter": null,
+ "statement": "Return the shortest substring of s that contains every character of t, counting repeats (if t has two 'a's the window needs two 'a's). If no such window exists return an empty string. If several windows tie for shortest, return the leftmost.",
+ "reference_solution": "from collections import Counter\ndef minWindow(s, t):\n    if not t or len(t) > len(s):\n        return \"\"\n    need = Counter(t)\n    missing = len(t)\n    best = (0, float('inf'))\n    left = 0\n    for right, ch in enumerate(s):\n        if need[ch] > 0:\n            missing -= 1\n        need[ch] -= 1\n        if missing == 0:\n            while need[s[left]] < 0:\n                need[s[left]] += 1\n                left += 1\n            if right - left < best[1] - best[0]:\n                best = (left, right)\n            need[s[left]] += 1\n            missing += 1\n            left += 1\n    return \"\" if best[1] == float('inf') else s[best[0]:best[1] + 1]\n",
+ "brute_force_solution": "from collections import Counter\ndef minWindow(s, t):\n    need = Counter(t)\n    for L in range(len(t), len(s) + 1):\n        for i in range(len(s) - L + 1):\n            w = Counter(s[i:i + L])\n            if all(w[c] >= n for c, n in need.items()):\n                return s[i:i + L]\n    return \"\"\n",
+ "tests": [
+  {
+   "args": [
+    "ADOBECODEBANC",
+    "ABC"
+   ],
+   "expected": "BANC",
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "a",
+    "a"
+   ],
+   "expected": "a",
+   "tag": "single"
+  },
+  {
+   "args": [
+    "a",
+    "aa"
+   ],
+   "expected": "",
+   "tag": "t_longer_than_s"
+  },
+  {
+   "args": [
+    "aa",
+    "aa"
+   ],
+   "expected": "aa",
+   "tag": "duplicates_needed"
+  },
+  {
+   "args": [
+    "ab",
+    "b"
+   ],
+   "expected": "b",
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "",
+    "a"
+   ],
+   "expected": "",
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "abc",
+    ""
+   ],
+   "expected": "",
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "bba",
+    "ab"
+   ],
+   "expected": "ba",
+   "tag": "shrink_left"
+  },
+  {
+   "args": [
+    "bcacbcc",
+    "aacc"
+   ],
+   "expected": "",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "bbc",
+    "acca"
+   ],
+   "expected": "",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "caabcc",
+    "b"
+   ],
+   "expected": "b",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "",
+    "b"
+   ],
+   "expected": "",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "aabcc",
+    "cacb"
+   ],
+   "expected": "abcc",
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(12)\n    return [''.join(r.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(100000)), 'abcde']"
+  }
+ ],
+ "hints": {
+  "1_question": "What does 'the window contains all of t' mean in terms of character counts? How can you track that cheaply as the window changes?",
+  "2_nudge": "Expand the right edge until the window is valid, then shrink the left edge as far as you can while staying valid. Keep a count of how many required characters are still missing.",
+  "3_big_hint": "need = Counter(t); missing = len(t). On each right char: if need[ch] > 0, missing -= 1; need[ch] -= 1. When missing == 0, advance left while need[s[left]] < 0, record the window, then drop s[left] and continue."
+ },
+ "known_bugs": [
+  {
+   "name": "treats t as a set (ignores repeated characters)",
+   "code": "def minWindow(s, t):\n    need = set(t)\n    if not need:\n        return \"\"\n    have = {}\n    best = \"\"\n    left = 0\n    for right, ch in enumerate(s):\n        if ch in need:\n            have[ch] = have.get(ch, 0) + 1\n        while len(have) == len(need):\n            if best == \"\" or right - left + 1 < len(best):\n                best = s[left:right + 1]\n            c = s[left]\n            if c in have:\n                have[c] -= 1\n                if have[c] == 0:\n                    del have[c]\n            left += 1\n    return best\n",
+   "fails_on": "duplicates_needed",
+   "followup": "If t is 'aa', is the window 'a' enough? What does your code track about how many of each character are needed?"
+  },
+  {
+   "name": "returns the first valid window without shrinking",
+   "code": "from collections import Counter\ndef minWindow(s, t):\n    need = Counter(t)\n    missing = len(t)\n    for right, ch in enumerate(s):\n        if need[ch] > 0:\n            missing -= 1\n        need[ch] -= 1\n        if missing == 0:\n            return s[:right + 1]\n    return \"\"\n",
+   "fails_on": "shrink_left",
+   "followup": "Once the window is valid, is it also the shortest? What could you drop from its left side?"
+  },
+  {
+   "name": "returns None when no window exists",
+   "code": "from collections import Counter\ndef minWindow(s, t):\n    if not t:\n        return \"\"\n    need = Counter(t)\n    missing = len(t)\n    best = (0, float('inf'))\n    left = 0\n    for right, ch in enumerate(s):\n        if need[ch] > 0:\n            missing -= 1\n        need[ch] -= 1\n        if missing == 0:\n            while need[s[left]] < 0:\n                need[s[left]] += 1\n                left += 1\n            if right - left < best[1] - best[0]:\n                best = (left, right)\n            need[s[left]] += 1\n            missing += 1\n            left += 1\n    return None if best[1] == float('inf') else s[best[0]:best[1] + 1]\n",
+   "fails_on": "t_longer_than_s",
+   "followup": "What should you return when no window can contain all of t?"
+  }
+ ],
+ "complexity": {
+  "time": "O(|s| + |t|)",
+  "space": "O(alphabet)",
+  "followups": [
+   "Why does the left pointer only ever move forward, giving O(n) total?",
+   "How would you return all minimum windows instead of one?"
+  ]
+ }
+}

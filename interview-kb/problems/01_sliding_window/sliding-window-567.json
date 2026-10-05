@@ -1,0 +1,158 @@
+{
+ "id": "sliding-window-567",
+ "leetcode": 567,
+ "title": "Permutation in String",
+ "pattern": "sliding_window",
+ "difficulty": "medium",
+ "function": "checkInclusion",
+ "signature": "checkInclusion(s1: str, s2: str) -> bool",
+ "adapter": null,
+ "statement": "Return True if some contiguous substring of s2 is a rearrangement of s1 (same letters with the same counts). s1 has at least one character; both strings are lowercase.",
+ "reference_solution": "def checkInclusion(s1, s2):\n    n, m = len(s1), len(s2)\n    if n > m:\n        return False\n    need = [0] * 26\n    win = [0] * 26\n    for ch in s1:\n        need[ord(ch) - 97] += 1\n    for i in range(m):\n        win[ord(s2[i]) - 97] += 1\n        if i >= n:\n            win[ord(s2[i - n]) - 97] -= 1\n        if win == need:\n            return True\n    return False\n",
+ "brute_force_solution": "def checkInclusion(s1, s2):\n    n = len(s1)\n    return any(sorted(s2[i:i + n]) == sorted(s1) for i in range(len(s2) - n + 1))\n",
+ "tests": [
+  {
+   "args": [
+    "ab",
+    "eidbaooo"
+   ],
+   "expected": true,
+   "tag": "not_at_start"
+  },
+  {
+   "args": [
+    "ab",
+    "eidboaoo"
+   ],
+   "expected": false,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "a",
+    "a"
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    "ab",
+    "a"
+   ],
+   "expected": false,
+   "tag": "s1_longer"
+  },
+  {
+   "args": [
+    "abc",
+    "cba"
+   ],
+   "expected": true,
+   "tag": "whole_string"
+  },
+  {
+   "args": [
+    "aab",
+    "abbb"
+   ],
+   "expected": false,
+   "tag": "counts_matter"
+  },
+  {
+   "args": [
+    "a",
+    ""
+   ],
+   "expected": false,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "ab",
+    "ba"
+   ],
+   "expected": true,
+   "tag": "at_start"
+  },
+  {
+   "args": [
+    "bcb",
+    "bbaac"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "caa",
+    "b"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "bbc",
+    "ccccaaa"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "acc",
+    "baaccaab"
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "caa",
+    "abcaa"
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(14)\n    return [''.join(r.choice('abc') for _ in range(20000)), ''.join(r.choice('abc') for _ in range(40000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "Two strings are rearrangements of each other exactly when their letter counts match. What window size do you need to examine in s2?",
+  "2_nudge": "Slide a window of length len(s1) across s2, updating letter counts as one letter enters and one leaves.",
+  "3_big_hint": "Count s1 into need[26]. For each i in s2: add s2[i]; if i >= n remove s2[i-n]; if the window counts equal need, return True."
+ },
+ "known_bugs": [
+  {
+   "name": "compares sets of letters instead of counts",
+   "code": "def checkInclusion(s1, s2):\n    n = len(s1)\n    target = set(s1)\n    return any(set(s2[i:i + n]) == target for i in range(len(s2) - n + 1))\n",
+   "fails_on": "counts_matter",
+   "followup": "If s1 is 'aab', does 'abb' have the same letters with the same counts?"
+  },
+  {
+   "name": "window never shrinks (nothing leaves)",
+   "code": "def checkInclusion(s1, s2):\n    n, m = len(s1), len(s2)\n    if n > m:\n        return False\n    need = [0] * 26\n    win = [0] * 26\n    for ch in s1:\n        need[ord(ch) - 97] += 1\n    for i in range(m):\n        win[ord(s2[i]) - 97] += 1\n        if win == need:\n            return True\n    return False\n",
+   "fails_on": "not_at_start",
+   "followup": "When the window slides one step right, what happens to the letter that falls off the left edge?"
+  },
+  {
+   "name": "sorts every window (O(m * n log n))",
+   "code": "def checkInclusion(s1, s2):\n    n = len(s1)\n    target = sorted(s1)\n    return any(sorted(s2[i:i + n]) == target for i in range(len(s2) - n + 1))\n",
+   "fails_on": "large",
+   "followup": "How much work does sorting each window do when s1 is 20000 characters long? Can you update counts incrementally?"
+  }
+ ],
+ "complexity": {
+  "time": "O(|s2|) (alphabet fixed)",
+  "space": "O(1)",
+  "followups": [
+   "How would you also return the starting index of every permutation (problem 438)?",
+   "Why is comparing two 26-element arrays acceptable inside the loop?"
+  ]
+ }
+}

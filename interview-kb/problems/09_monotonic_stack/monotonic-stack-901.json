@@ -1,0 +1,235 @@
+{
+ "id": "monotonic-stack-901",
+ "leetcode": 901,
+ "title": "Online Stock Span",
+ "pattern": "monotonic_stack",
+ "difficulty": "medium",
+ "function": "stockSpans",
+ "signature": "stockSpans(prices: List[int]) -> List[int]",
+ "adapter": null,
+ "statement": "Process daily prices in order. The span of a day is the number of consecutive days ending that day (including it) on which the price was less than or equal to that day's price. Return the span of every day.",
+ "reference_solution": "def stockSpans(prices):\n    st = []\n    out = []\n    for p in prices:\n        span = 1\n        while st and st[-1][0] <= p:\n            span += st.pop()[1]\n        st.append((p, span))\n        out.append(span)\n    return out\n",
+ "brute_force_solution": "def stockSpans(prices):\n    out = []\n    for i, p in enumerate(prices):\n        span = 1\n        j = i - 1\n        while j >= 0 and prices[j] <= p:\n            span += 1\n            j -= 1\n        out.append(span)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     100,
+     80,
+     60,
+     70,
+     60,
+     75,
+     85
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    1,
+    2,
+    1,
+    4,
+    6
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     10,
+     10,
+     10
+    ]
+   ],
+   "expected": [
+    1,
+    2,
+    3
+   ],
+   "tag": "equal_prices"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "tag": "increasing"
+  },
+  {
+   "args": [
+    [
+     4,
+     3,
+     2,
+     1
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "tag": "decreasing"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     8,
+     4,
+     3,
+     7,
+     2,
+     8
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    3,
+    1,
+    1,
+    3,
+    1,
+    8
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     5,
+     3,
+     8,
+     4,
+     1
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    1,
+    4,
+    1,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     3
+    ]
+   ],
+   "expected": [
+    1,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     5,
+     4,
+     5,
+     8
+    ]
+   ],
+   "expected": [
+    1,
+    2,
+    3,
+    1,
+    5,
+    6
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(60000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "A day's span covers every earlier day up to the previous strictly higher price. If you already know spans for earlier days, can you jump over them?",
+  "2_nudge": "Keep a stack of (price, span). When a new price arrives, pop everything with price <= it and add their spans to the new span.",
+  "3_big_hint": "span = 1; while stack and stack[-1].price <= p: span += stack.pop().span; push (p, span)."
+ },
+ "known_bugs": [
+  {
+   "name": "strict < so equal prices end the span",
+   "code": "def stockSpans(prices):\n    st = []\n    out = []\n    for p in prices:\n        span = 1\n        while st and st[-1][0] < p:\n            span += st.pop()[1]\n        st.append((p, span))\n        out.append(span)\n    return out\n",
+   "fails_on": "equal_prices",
+   "followup": "The span counts days with price less than OR EQUAL to today's. Does your comparison include equal?"
+  },
+  {
+   "name": "adds 1 per popped entry instead of its span",
+   "code": "def stockSpans(prices):\n    st = []\n    out = []\n    for p in prices:\n        span = 1\n        while st and st[-1][0] <= p:\n            st.pop()\n            span += 1\n        st.append((p, span))\n        out.append(span)\n    return out\n",
+   "fails_on": "increasing",
+   "followup": "A popped entry stands for several days. How many days should you add for it?"
+  },
+  {
+   "name": "walks backwards day by day (O(n^2))",
+   "code": "def stockSpans(prices):\n    out = []\n    for i, p in enumerate(prices):\n        span = 1\n        j = i - 1\n        while j >= 0 and prices[j] <= p:\n            span += 1\n            j -= 1\n        out.append(span)\n    return out\n",
+   "fails_on": "large",
+   "followup": "On steadily rising prices, how far back do you walk each day? Could earlier results let you skip ahead?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why is the amortised cost O(1) per day even though the while loop exists?",
+   "How would you serve this as an online API (one price at a time)?"
+  ]
+ }
+}

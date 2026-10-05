@@ -1,0 +1,260 @@
+{
+ "id": "linked-list-021",
+ "leetcode": 21,
+ "title": "Merge Two Sorted Lists",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "easy",
+ "function": "mergeTwoLists",
+ "signature": "mergeTwoLists(list1: ListNode, list2: ListNode) -> ListNode",
+ "adapter": "two_lists",
+ "statement": "Merge two sorted singly linked lists into one sorted list by splicing their nodes together, and return its head.",
+ "reference_solution": "def mergeTwoLists(l1, l2):\n    dummy = cur = ListNode(0)\n    while l1 and l2:\n        if l1.val <= l2.val:\n            cur.next = l1\n            l1 = l1.next\n        else:\n            cur.next = l2\n            l2 = l2.next\n        cur = cur.next\n    cur.next = l1 or l2\n    return dummy.next\n",
+ "brute_force_solution": "def mergeTwoLists(l1, l2):\n    vals = []\n    for l in (l1, l2):\n        while l:\n            vals.append(l.val)\n            l = l.next\n    vals.sort()\n    out = None\n    for v in reversed(vals):\n        out = ListNode(v, out)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     4
+    ],
+    [
+     1,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    2,
+    3,
+    4,
+    4
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [],
+    []
+   ],
+   "expected": [],
+   "tag": "both_empty"
+  },
+  {
+   "args": [
+    [],
+    [
+     0
+    ]
+   ],
+   "expected": [
+    0
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    []
+   ],
+   "expected": [
+    5
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "tag": "one_after_other"
+  },
+  {
+   "args": [
+    [
+     2,
+     2
+    ],
+    [
+     2
+    ]
+   ],
+   "expected": [
+    2,
+    2,
+    2
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     4,
+     4,
+     6,
+     6
+    ],
+    [
+     1,
+     6
+    ]
+   ],
+   "expected": [
+    1,
+    4,
+    4,
+    6,
+    6,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     6,
+     6
+    ],
+    [
+     0,
+     1,
+     5,
+     5,
+     6
+    ]
+   ],
+   "expected": [
+    0,
+    1,
+    5,
+    5,
+    5,
+    5,
+    6,
+    6,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     5,
+     5
+    ],
+    [
+     0,
+     0,
+     0,
+     3
+    ]
+   ],
+   "expected": [
+    0,
+    0,
+    0,
+    2,
+    3,
+    5,
+    5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     4,
+     5,
+     6
+    ],
+    []
+   ],
+   "expected": [
+    1,
+    2,
+    4,
+    5,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     3,
+     5,
+     6
+    ],
+    []
+   ],
+   "expected": [
+    0,
+    3,
+    5,
+    6
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(0, 100000, 2)), list(range(1, 100000, 2))]"
+  }
+ ],
+ "hints": {
+  "1_question": "Look at the heads of both lists. Which one belongs next in the merged list?",
+  "2_nudge": "Use a dummy head and a tail pointer. Repeatedly attach the smaller head to the tail. When one list runs out, attach the other whole.",
+  "3_big_hint": "while l1 and l2: attach the smaller, advance it and the tail. Finally cur.next = l1 or l2. Return dummy.next."
+ },
+ "known_bugs": [
+  {
+   "name": "drops the leftover nodes of the longer list",
+   "code": "def mergeTwoLists(l1, l2):\n    dummy = cur = ListNode(0)\n    while l1 and l2:\n        if l1.val <= l2.val:\n            cur.next = l1\n            l1 = l1.next\n        else:\n            cur.next = l2\n            l2 = l2.next\n        cur = cur.next\n    return dummy.next\n",
+   "fails_on": "one_after_other",
+   "followup": "When one list runs out, what happens to the remaining nodes of the other?"
+  },
+  {
+   "name": "crashes when a list is empty",
+   "code": "def mergeTwoLists(l1, l2):\n    dummy = cur = ListNode(0)\n    if l1.val <= l2.val:\n        cur.next = l1\n        l1 = l1.next\n    else:\n        cur.next = l2\n        l2 = l2.next\n    cur = cur.next\n    while l1 and l2:\n        if l1.val <= l2.val:\n            cur.next = l1\n            l1 = l1.next\n        else:\n            cur.next = l2\n            l2 = l2.next\n        cur = cur.next\n    cur.next = l1 or l2\n    return dummy.next\n",
+   "fails_on": "empty",
+   "followup": "What is `l1.val` when l1 is None?"
+  },
+  {
+   "name": "recursive merge (hits Python's recursion limit)",
+   "code": "def mergeTwoLists(l1, l2):\n    if not l1:\n        return l2\n    if not l2:\n        return l1\n    if l1.val <= l2.val:\n        l1.next = mergeTwoLists(l1.next, l2)\n        return l1\n    l2.next = mergeTwoLists(l1, l2.next)\n    return l2\n",
+   "fails_on": "large",
+   "followup": "How deep does the recursion go for two lists of 50000 nodes, and what limit does Python have?"
+  }
+ ],
+ "complexity": {
+  "time": "O(m + n)",
+  "space": "O(1)",
+  "followups": [
+   "Why does a dummy node simplify the code?",
+   "How would the recursive version trade clarity for stack space?"
+  ]
+ }
+}

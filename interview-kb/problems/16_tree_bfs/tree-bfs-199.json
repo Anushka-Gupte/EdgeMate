@@ -1,0 +1,224 @@
+{
+ "id": "tree-bfs-199",
+ "leetcode": 199,
+ "title": "Binary Tree Right Side View",
+ "pattern": "tree_bfs",
+ "difficulty": "medium",
+ "function": "rightSideView",
+ "signature": "rightSideView(root: TreeNode) -> List[int]",
+ "adapter": "tree_value",
+ "statement": "Imagine standing on the right side of the tree. Return the values of the nodes you can see, from top to bottom.",
+ "reference_solution": "def rightSideView(root):\n    out = []\n    level = [root] if root else []\n    while level:\n        out.append(level[-1].val)\n        level = [c for n in level for c in (n.left, n.right) if c]\n    return out\n",
+ "brute_force_solution": "def rightSideView(root):\n    out = []\n    def dfs(n, d):\n        if not n:\n            return\n        if d == len(out):\n            out.append(n.val)\n        dfs(n.right, d + 1)\n        dfs(n.left, d + 1)\n    dfs(root, 0)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     null,
+     5,
+     null,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    3,
+    4
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     null,
+     3
+    ]
+   ],
+   "expected": [
+    1,
+    3
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "left_only_visible"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    3,
+    4
+   ],
+   "tag": "left_deeper"
+  },
+  {
+   "args": [
+    [
+     5,
+     -4,
+     7,
+     -4,
+     1,
+     null,
+     0
+    ]
+   ],
+   "expected": [
+    5,
+    7,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     5,
+     null,
+     null,
+     2
+    ]
+   ],
+   "expected": [
+    0,
+    5,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     2,
+     7,
+     null,
+     -3,
+     null,
+     null,
+     -5
+    ]
+   ],
+   "expected": [
+    -2,
+    7,
+    -3,
+    -5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     null,
+     7,
+     null,
+     8
+    ]
+   ],
+   "expected": [
+    -5,
+    7,
+    8
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     -3,
+     null,
+     9
+    ]
+   ],
+   "expected": [
+    3,
+    -3,
+    9
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(8)\n    return [rand_tree(r, 60000)]"
+  }
+ ],
+ "hints": {
+  "1_question": "Which node of each level is visible from the right?",
+  "2_nudge": "Do a level-order traversal and keep the last node of every level.",
+  "3_big_hint": "level = [root]; while level: out.append(level[-1].val); level = all children of the level."
+ },
+ "known_bugs": [
+  {
+   "name": "only follows right children",
+   "code": "def rightSideView(root):\n    out = []\n    while root:\n        out.append(root.val)\n        root = root.right\n    return out\n",
+   "fails_on": "left_deeper",
+   "followup": "If the right side runs out but the left side is deeper, are those left nodes visible?"
+  },
+  {
+   "name": "returns the left side view",
+   "code": "def rightSideView(root):\n    out = []\n    level = [root] if root else []\n    while level:\n        out.append(level[0].val)\n        level = [c for n in level for c in (n.left, n.right) if c]\n    return out\n",
+   "fails_on": "normal",
+   "followup": "Which end of the level list is the rightmost node?"
+  },
+  {
+   "name": "crashes on an empty tree",
+   "code": "def rightSideView(root):\n    out = [root.val]\n    level = [root]\n    while level:\n        level = [c for n in level for c in (n.left, n.right) if c]\n        if level:\n            out.append(level[-1].val)\n    return out\n",
+   "fails_on": "empty",
+   "followup": "What is root.val when root is None?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(w)",
+  "followups": [
+   "How would DFS (right child first) do it?",
+   "How would you get the left view too?"
+  ]
+ }
+}

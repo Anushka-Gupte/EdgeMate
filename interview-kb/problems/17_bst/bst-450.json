@@ -1,0 +1,283 @@
+{
+ "id": "bst-450",
+ "leetcode": 450,
+ "title": "Delete Node in a BST",
+ "pattern": "bst",
+ "difficulty": "medium",
+ "function": "deleteNode",
+ "signature": "deleteNode(root: TreeNode, key: int) -> TreeNode",
+ "adapter": "bst_delete",
+ "statement": "Delete the node with the given key from the BST (if present) and return the new root. The result must still be a valid BST. (The checker accepts any valid result and compares in-order values.)",
+ "reference_solution": "def deleteNode(root, key):\n    if not root:\n        return None\n    if key < root.val:\n        root.left = deleteNode(root.left, key)\n    elif key > root.val:\n        root.right = deleteNode(root.right, key)\n    else:\n        if not root.left:\n            return root.right\n        if not root.right:\n            return root.left\n        s = root.right\n        while s.left:\n            s = s.left\n        root.val = s.val\n        root.right = deleteNode(root.right, s.val)\n    return root\n",
+ "brute_force_solution": "def deleteNode(root, key):\n    vals, st, cur = [], [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        vals.append(cur.val)\n        cur = cur.right\n    vals = [v for v in vals if v != key]\n    def build(lo, hi):\n        if lo > hi:\n            return None\n        mid = (lo + hi) // 2\n        n = TreeNode(vals[mid])\n        n.left = build(lo, mid - 1)\n        n.right = build(mid + 1, hi)\n        return n\n    return build(0, len(vals) - 1)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     5,
+     3,
+     6,
+     2,
+     4,
+     null,
+     7
+    ],
+    3
+   ],
+   "expected": [
+    2,
+    4,
+    5,
+    6,
+    7
+   ],
+   "tag": "two_children"
+  },
+  {
+   "args": [
+    [
+     5,
+     3,
+     6,
+     2,
+     4,
+     null,
+     7
+    ],
+    0
+   ],
+   "expected": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "tag": "key_absent"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    5
+   ],
+   "expected": [],
+   "tag": "delete_only_node"
+  },
+  {
+   "args": [
+    [
+     5,
+     3,
+     6,
+     2,
+     4,
+     null,
+     7
+    ],
+    2
+   ],
+   "expected": [
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "tag": "leaf"
+  },
+  {
+   "args": [
+    [
+     5,
+     3,
+     6,
+     2,
+     4,
+     null,
+     7
+    ],
+    6
+   ],
+   "expected": [
+    2,
+    3,
+    4,
+    5,
+    7
+   ],
+   "tag": "one_child"
+  },
+  {
+   "args": [
+    [
+     5,
+     3,
+     6,
+     2,
+     4,
+     null,
+     7
+    ],
+    5
+   ],
+   "expected": [
+    2,
+    3,
+    4,
+    6,
+    7
+   ],
+   "tag": "delete_root"
+  },
+  {
+   "args": [
+    [
+     10,
+     5,
+     19,
+     null,
+     7,
+     null,
+     null,
+     null,
+     9,
+     8
+    ],
+    1
+   ],
+   "expected": [
+    5,
+    7,
+    8,
+    9,
+    10,
+    19
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    5
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     15,
+     11,
+     null,
+     2,
+     12
+    ],
+    4
+   ],
+   "expected": [
+    2,
+    11,
+    12,
+    15
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     null,
+     11,
+     5,
+     15,
+     null,
+     null,
+     13,
+     19
+    ],
+    12
+   ],
+   "expected": [
+    0,
+    5,
+    11,
+    13,
+    15,
+    19
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     4,
+     14,
+     null,
+     6,
+     null,
+     17
+    ],
+    8
+   ],
+   "expected": [
+    4,
+    6,
+    9,
+    14,
+    17
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(14)\n    return [rand_bst(r, 60000, 0, 10**6), 500000]"
+  }
+ ],
+ "hints": {
+  "1_question": "There are three cases for the node to delete: no children, one child, two children. Which one is the tricky case?",
+  "2_nudge": "With two children, replace the node's value with its in-order successor (smallest value in the right subtree), then delete that successor from the right subtree.",
+  "3_big_hint": "Recurse by comparing key to root.val. When found: no left -> return right; no right -> return left; else copy successor value and delete it from root.right."
+ },
+ "known_bugs": [
+  {
+   "name": "with two children, just keeps the left subtree",
+   "code": "def deleteNode(root, key):\n    if not root:\n        return None\n    if key < root.val:\n        root.left = deleteNode(root.left, key)\n    elif key > root.val:\n        root.right = deleteNode(root.right, key)\n    else:\n        if not root.left:\n            return root.right\n        return root.left\n    return root\n",
+   "fails_on": "two_children",
+   "followup": "When the deleted node has two children, what happens to its right subtree in your code?"
+  },
+  {
+   "name": "copies the successor but never removes it",
+   "code": "def deleteNode(root, key):\n    if not root:\n        return None\n    if key < root.val:\n        root.left = deleteNode(root.left, key)\n    elif key > root.val:\n        root.right = deleteNode(root.right, key)\n    else:\n        if not root.left:\n            return root.right\n        if not root.right:\n            return root.left\n        s = root.right\n        while s.left:\n            s = s.left\n        root.val = s.val\n    return root\n",
+   "fails_on": "two_children",
+   "followup": "After copying the successor's value up, how many nodes now hold that value?"
+  },
+  {
+   "name": "assumes the key exists (no None check)",
+   "code": "def deleteNode(root, key):\n    if key < root.val:\n        root.left = deleteNode(root.left, key)\n    elif key > root.val:\n        root.right = deleteNode(root.right, key)\n    else:\n        if not root.left:\n            return root.right\n        if not root.right:\n            return root.left\n        s = root.right\n        while s.left:\n            s = s.left\n        root.val = s.val\n        root.right = deleteNode(root.right, s.val)\n    return root\n",
+   "fails_on": "key_absent",
+   "followup": "What happens when the search runs off the bottom of the tree because the key isn't there?"
+  }
+ ],
+ "complexity": {
+  "time": "O(h)",
+  "space": "O(h)",
+  "followups": [
+   "Could you use the in-order predecessor instead? Does it change correctness?",
+   "How does deletion differ in a self-balancing tree?"
+  ]
+ }
+}

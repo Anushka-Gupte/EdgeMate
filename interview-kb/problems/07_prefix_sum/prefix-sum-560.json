@@ -1,0 +1,189 @@
+{
+ "id": "prefix-sum-560",
+ "leetcode": 560,
+ "title": "Subarray Sum Equals K",
+ "pattern": "prefix_sum",
+ "difficulty": "medium",
+ "function": "subarraySum",
+ "signature": "subarraySum(nums: List[int], k: int) -> int",
+ "adapter": null,
+ "statement": "Return how many contiguous, non-empty subarrays of the list add up exactly to k. Values may be negative or zero.",
+ "reference_solution": "def subarraySum(nums, k):\n    seen = {0: 1}\n    total = count = 0\n    for x in nums:\n        total += x\n        count += seen.get(total - k, 0)\n        seen[total] = seen.get(total, 0) + 1\n    return count\n",
+ "brute_force_solution": "def subarraySum(nums, k):\n    count = 0\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s == k:\n                count += 1\n    return count\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     1,
+     1
+    ],
+    2
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    3
+   ],
+   "expected": 2,
+   "tag": "from_start"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "from_start"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     -1,
+     0
+    ],
+    0
+   ],
+   "expected": 3,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0
+    ],
+    0
+   ],
+   "expected": 6,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     -1,
+     1,
+     1,
+     1,
+     -3,
+     0,
+     0
+    ],
+    -1
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -1,
+     1,
+     3,
+     2,
+     2,
+     0
+    ],
+    2
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    -1
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     -3,
+     3,
+     -3,
+     -2,
+     3,
+     -1
+    ],
+    1
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2
+    ],
+    -1
+   ],
+   "expected": 1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(7)\n    return [[r.randint(-5, 5) for _ in range(100000)], 0]"
+  }
+ ],
+ "hints": {
+  "1_question": "A subarray sum is a difference of two prefix sums. If prefix[j] - prefix[i] == k, what must prefix[i] be?",
+  "2_nudge": "As you scan, keep a map of how many times each prefix sum has occurred. How many earlier prefixes equal (current - k)?",
+  "3_big_hint": "seen = {0: 1} (empty prefix). For each x: total += x; count += seen.get(total - k, 0); seen[total] += 1."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets the empty prefix (seen starts empty)",
+   "code": "def subarraySum(nums, k):\n    seen = {}\n    total = count = 0\n    for x in nums:\n        total += x\n        count += seen.get(total - k, 0)\n        seen[total] = seen.get(total, 0) + 1\n    return count\n",
+   "fails_on": "from_start",
+   "followup": "How does your code count a subarray that starts at index 0? What prefix sum corresponds to 'before the first element'?"
+  },
+  {
+   "name": "sliding window (breaks with negatives)",
+   "code": "def subarraySum(nums, k):\n    left = total = count = 0\n    for right, x in enumerate(nums):\n        total += x\n        while total > k and left <= right:\n            total -= nums[left]\n            left += 1\n        if total == k:\n            count += 1\n    return count\n",
+   "fails_on": "negative",
+   "followup": "Sliding windows rely on the sum only growing when you extend. Is that true if the array can contain negatives or zeros?"
+  },
+  {
+   "name": "set instead of counts (undercounts repeated prefixes)",
+   "code": "def subarraySum(nums, k):\n    seen = {0}\n    total = count = 0\n    for x in nums:\n        total += x\n        if total - k in seen:\n            count += 1\n        seen.add(total)\n    return count\n",
+   "fails_on": "duplicates",
+   "followup": "If the same prefix sum appears three times, how many subarrays can end here? Does a set remember that?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why can't a sliding window solve this when negatives are allowed?",
+   "How would you return the subarrays themselves instead of the count?"
+  ]
+ }
+}

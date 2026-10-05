@@ -1,0 +1,227 @@
+{
+ "id": "monotonic-stack-503",
+ "leetcode": 503,
+ "title": "Next Greater Element II",
+ "pattern": "monotonic_stack",
+ "difficulty": "medium",
+ "function": "nextGreaterElements",
+ "signature": "nextGreaterElements(nums: List[int]) -> List[int]",
+ "adapter": null,
+ "statement": "The list is circular: after the last element comes the first again. For each element return the next strictly greater value found while moving forward (wrapping around at most once), or -1 if none exists.",
+ "reference_solution": "def nextGreaterElements(nums):\n    n = len(nums)\n    res = [-1] * n\n    st = []\n    for i in range(2 * n):\n        x = nums[i % n]\n        while st and nums[st[-1]] < x:\n            res[st.pop()] = x\n        if i < n:\n            st.append(i)\n    return res\n",
+ "brute_force_solution": "def nextGreaterElements(nums):\n    n = len(nums)\n    res = []\n    for i in range(n):\n        ans = -1\n        for j in range(1, n):\n            if nums[(i + j) % n] > nums[i]:\n                ans = nums[(i + j) % n]\n                break\n        res.append(ans)\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     1
+    ]
+   ],
+   "expected": [
+    2,
+    -1,
+    2
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     3
+    ]
+   ],
+   "expected": [
+    2,
+    3,
+    4,
+    -1,
+    4
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": [
+    -1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     5
+    ]
+   ],
+   "expected": [
+    -1,
+    -1,
+    -1
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     1
+    ]
+   ],
+   "expected": [
+    -1,
+    3,
+    3
+   ],
+   "tag": "circular_wrap"
+  },
+  {
+   "args": [
+    [
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    3,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     4,
+     3,
+     5,
+     3,
+     4,
+     2,
+     0
+    ]
+   ],
+   "expected": [
+    5,
+    5,
+    5,
+    -1,
+    4,
+    5,
+    4,
+    4
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     5,
+     4,
+     3,
+     0,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    5,
+    -1,
+    5,
+    4,
+    3,
+    4,
+    5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     5
+    ]
+   ],
+   "expected": [
+    5,
+    -1,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4
+    ]
+   ],
+   "expected": [
+    -1
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(32)\n    return [[r.randint(0, 10**6) for _ in range(100000)]]"
+  },
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000, 0, -1))]"
+  }
+ ],
+ "hints": {
+  "1_question": "A circular array can be thought of as the array written twice. How could you reuse the usual next-greater stack idea?",
+  "2_nudge": "Loop i from 0 to 2n-1 using nums[i % n]. Only push indices during the first pass.",
+  "3_big_hint": "For i in range(2n): x = nums[i % n]; while stack and nums[stack[-1]] < x: res[pop] = x; if i < n: push i."
+ },
+ "known_bugs": [
+  {
+   "name": "single pass (ignores the wrap-around)",
+   "code": "def nextGreaterElements(nums):\n    n = len(nums)\n    res = [-1] * n\n    st = []\n    for i in range(n):\n        while st and nums[st[-1]] < nums[i]:\n            res[st.pop()] = nums[i]\n        st.append(i)\n    return res\n",
+   "fails_on": "circular_wrap",
+   "followup": "For [3, 2, 1], what is the next greater element of 2 if you may wrap around to the start?"
+  },
+  {
+   "name": "pops on equal values (<=)",
+   "code": "def nextGreaterElements(nums):\n    n = len(nums)\n    res = [-1] * n\n    st = []\n    for i in range(2 * n):\n        x = nums[i % n]\n        while st and nums[st[-1]] <= x:\n            res[st.pop()] = x\n        if i < n:\n            st.append(i)\n    return res\n",
+   "fails_on": "duplicates",
+   "followup": "The next greater element must be strictly greater. Is an equal value greater?"
+  },
+  {
+   "name": "scans forward from every index (O(n^2))",
+   "code": "def nextGreaterElements(nums):\n    n = len(nums)\n    res = []\n    for i in range(n):\n        ans = -1\n        for j in range(1, n):\n            if nums[(i + j) % n] > nums[i]:\n                ans = nums[(i + j) % n]\n                break\n        res.append(ans)\n    return res\n",
+   "fails_on": "large",
+   "followup": "For a value that is the maximum, how many elements does your scan look at? Can a stack share that work between indices?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why do you push indices only in the first pass?",
+   "What would change if you needed the next smaller element instead?"
+  ]
+ }
+}

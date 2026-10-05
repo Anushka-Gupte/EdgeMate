@@ -1,0 +1,249 @@
+{
+ "id": "intervals-252",
+ "leetcode": 252,
+ "title": "Meeting Rooms",
+ "pattern": "intervals",
+ "difficulty": "easy",
+ "function": "canAttendMeetings",
+ "signature": "canAttendMeetings(intervals: List[List[int]]) -> bool",
+ "adapter": null,
+ "statement": "Each meeting is [start, end) (the end time is free for another meeting to start). Return True if one person can attend all meetings, i.e. no two overlap.",
+ "reference_solution": "def canAttendMeetings(intervals):\n    iv = sorted(intervals)\n    for i in range(1, len(iv)):\n        if iv[i][0] < iv[i - 1][1]:\n            return False\n    return True\n",
+ "brute_force_solution": "def canAttendMeetings(intervals):\n    for i in range(len(intervals)):\n        for j in range(i + 1, len(intervals)):\n            if intervals[i][0] < intervals[j][1] and intervals[j][0] < intervals[i][1]:\n                return False\n    return True\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      0,
+      30
+     ],
+     [
+      5,
+      10
+     ],
+     [
+      15,
+      20
+     ]
+    ]
+   ],
+   "expected": false,
+   "tag": "overlap"
+  },
+  {
+   "args": [
+    [
+     [
+      7,
+      10
+     ],
+     [
+      2,
+      4
+     ]
+    ]
+   ],
+   "expected": true,
+   "tag": "unsorted"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": true,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": true,
+   "tag": "touching"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      5
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": false,
+   "tag": "contained"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      3
+     ],
+     [
+      12,
+      12
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      4,
+      8
+     ]
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      7
+     ],
+     [
+      2,
+      2
+     ]
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      4,
+      8
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      3,
+      4
+     ]
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      9,
+      12
+     ]
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0
+     ],
+     [
+      11,
+      15
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      2,
+      5
+     ]
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[[2 * i, 2 * i + 1] for i in range(50000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Two meetings conflict only if one starts before the other ends. Which pairs do you really need to compare?",
+  "2_nudge": "Sort by start time. After sorting, only neighbouring meetings can conflict first.",
+  "3_big_hint": "Sort; for i >= 1: if start[i] < end[i-1] return False. Return True."
+ },
+ "known_bugs": [
+  {
+   "name": "does not sort",
+   "code": "def canAttendMeetings(intervals):\n    for i in range(1, len(intervals)):\n        if intervals[i][0] < intervals[i - 1][1]:\n            return False\n    return True\n",
+   "fails_on": "unsorted",
+   "followup": "Are the meetings given in time order? What do you compare for [7,10] followed by [2,4]?"
+  },
+  {
+   "name": "treats back-to-back meetings as a clash (<=)",
+   "code": "def canAttendMeetings(intervals):\n    iv = sorted(intervals)\n    for i in range(1, len(iv)):\n        if iv[i][0] <= iv[i - 1][1]:\n            return False\n    return True\n",
+   "fails_on": "touching",
+   "followup": "A meeting ends at 2 and the next starts at 2. Can one person attend both?"
+  },
+  {
+   "name": "compares every pair (O(n^2))",
+   "code": "def canAttendMeetings(intervals):\n    for i in range(len(intervals)):\n        for j in range(i + 1, len(intervals)):\n            if intervals[i][0] < intervals[j][1] and intervals[j][0] < intervals[i][1]:\n                return False\n    return True\n",
+   "fails_on": "large",
+   "followup": "How many pairs is that for 50000 meetings? What does sorting let you skip?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(1) extra",
+  "followups": [
+   "What is the minimum number of rooms needed (problem 253)?",
+   "Why is checking neighbours after sorting enough?"
+  ]
+ }
+}

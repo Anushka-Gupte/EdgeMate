@@ -1,0 +1,189 @@
+{
+ "id": "binary-search-answer-1283",
+ "leetcode": 1283,
+ "title": "Find the Smallest Divisor Given a Threshold",
+ "pattern": "binary_search_on_answer",
+ "difficulty": "medium",
+ "function": "smallestDivisor",
+ "signature": "smallestDivisor(nums: List[int], threshold: int) -> int",
+ "adapter": null,
+ "statement": "Pick a positive integer divisor, divide every number by it rounding up, and add the results. Return the smallest divisor for which that sum is at most the threshold. (threshold >= len(nums).)",
+ "reference_solution": "def smallestDivisor(nums, threshold):\n    lo, hi = 1, max(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if sum((x + mid - 1) // mid for x in nums) <= threshold:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+ "brute_force_solution": "def smallestDivisor(nums, threshold):\n    d = 1\n    while sum((x + d - 1) // d for x in nums) > threshold:\n        d += 1\n    return d\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     5,
+     9
+    ],
+    6
+   ],
+   "expected": 5,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     44,
+     22,
+     33,
+     11,
+     1
+    ],
+    5
+   ],
+   "expected": 44,
+   "tag": "threshold_equals_len"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     5,
+     7,
+     11
+    ],
+    11
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     19
+    ],
+    5
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1
+    ],
+    3
+   ],
+   "expected": 1,
+   "tag": "divisor_one"
+  },
+  {
+   "args": [
+    [
+     30,
+     6,
+     25
+    ],
+    8
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    4
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     16,
+     9,
+     17
+    ],
+    6
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     22,
+     1,
+     1,
+     1,
+     1
+    ],
+    12
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     11,
+     24,
+     30
+    ],
+    9
+   ],
+   "expected": 8,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(21)\n    return [[r.randint(1, 10**6) for _ in range(50000)], 100000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Is the 'sum of rounded-up quotients' bigger or smaller as the divisor grows? What does that let you do?",
+  "2_nudge": "The sum only decreases as the divisor increases, so binary search the divisor between 1 and max(nums).",
+  "3_big_hint": "lo = 1, hi = max(nums). total = sum(ceil(x / mid)). If total <= threshold: hi = mid else lo = mid + 1."
+ },
+ "known_bugs": [
+  {
+   "name": "floor division instead of rounding up",
+   "code": "def smallestDivisor(nums, threshold):\n    lo, hi = 1, max(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if sum(x // mid for x in nums) <= threshold:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "normal",
+   "followup": "The problem rounds each quotient up. What does 7 // 3 give versus ceil(7 / 3)?"
+  },
+  {
+   "name": "lower bound of 0 divides by zero",
+   "code": "def smallestDivisor(nums, threshold):\n    lo, hi = 0, max(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if sum((x + mid - 1) // mid for x in nums) <= threshold:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "divisor_one",
+   "followup": "Can a divisor be zero? What is the smallest value your search can try?"
+  },
+  {
+   "name": "upper bound excludes the largest number",
+   "code": "def smallestDivisor(nums, threshold):\n    lo, hi = 1, max(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if sum((x + mid - 1) // mid for x in nums) <= threshold:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "threshold_equals_len",
+   "followup": "If the threshold equals the number of elements, each term must be 1. Which divisor does that need, and is it in range?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log M)",
+  "space": "O(1)",
+  "followups": [
+   "Why is max(nums) always a valid upper bound?",
+   "How does this compare with Koko Eating Bananas (875)?"
+  ]
+ }
+}

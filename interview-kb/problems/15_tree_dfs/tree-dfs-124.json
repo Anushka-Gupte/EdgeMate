@@ -1,0 +1,214 @@
+{
+ "id": "tree-dfs-124",
+ "leetcode": 124,
+ "title": "Binary Tree Maximum Path Sum",
+ "pattern": "tree_dfs",
+ "difficulty": "hard",
+ "function": "maxPathSum",
+ "signature": "maxPathSum(root: TreeNode) -> int",
+ "adapter": "tree_value",
+ "statement": "A path is any connected sequence of nodes moving along parent-child links (no node twice); it need not pass through the root or end at a leaf. Return the maximum sum of node values over all non-empty paths. The tree has at least one node.",
+ "reference_solution": "def maxPathSum(root):\n    best = float('-inf')\n    def g(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = max(0, g(n.left))\n        r = max(0, g(n.right))\n        best = max(best, n.val + l + r)\n        return n.val + max(l, r)\n    g(root)\n    return best\n",
+ "brute_force_solution": "def maxPathSum(root):\n    nodes = []\n    q = [root]\n    for n in q:\n        nodes.append(n)\n        for c in (n.left, n.right):\n            if c:\n                q.append(c)\n    idx = {id(n): i for i, n in enumerate(nodes)}\n    adj = [[] for _ in nodes]\n    for n in nodes:\n        for c in (n.left, n.right):\n            if c:\n                adj[idx[id(n)]].append(idx[id(c)])\n                adj[idx[id(c)]].append(idx[id(n)])\n    best = float('-inf')\n    def dfs(u, seen, s):\n        nonlocal best\n        best = max(best, s)\n        for v in adj[u]:\n            if v not in seen:\n                dfs(v, seen | {v}, s + nodes[v].val)\n    for i in range(len(nodes)):\n        dfs(i, {i}, nodes[i].val)\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -10,
+     9,
+     20,
+     null,
+     null,
+     15,
+     7
+    ]
+   ],
+   "expected": 42,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -3
+    ]
+   ],
+   "expected": -3,
+   "tag": "all_negative"
+  },
+  {
+   "args": [
+    [
+     2,
+     -1
+    ]
+   ],
+   "expected": 2,
+   "tag": "negative_child_dropped"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -1
+    ]
+   ],
+   "expected": -1,
+   "tag": "all_negative"
+  },
+  {
+   "args": [
+    [
+     5,
+     4,
+     8,
+     11,
+     null,
+     13,
+     4,
+     7,
+     2,
+     null,
+     null,
+     null,
+     1
+    ]
+   ],
+   "expected": 48,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     -2,
+     3
+    ]
+   ],
+   "expected": 4,
+   "tag": "skip_negative_middle"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     -2,
+     null,
+     -2,
+     6,
+     null,
+     null,
+     null,
+     -2
+    ]
+   ],
+   "expected": 10,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     4,
+     1,
+     null,
+     3,
+     null,
+     4
+    ]
+   ],
+   "expected": 18,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     -6,
+     6,
+     -5,
+     2,
+     null,
+     null,
+     null,
+     null,
+     -5,
+     0,
+     null,
+     null,
+     null,
+     1
+    ]
+   ],
+   "expected": 8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(4)\n    return [rand_tree(r, 60000, -50, 50)]"
+  }
+ ],
+ "hints": {
+  "1_question": "At each node, a best path 'turns' there: it goes down into at most one child on each side. What should you do with a child whose best downward path is negative?",
+  "2_nudge": "Compute, bottom-up, the best downward gain from each node. A path through a node = node + max(0, left gain) + max(0, right gain). Track the global best, but return only one side upward.",
+  "3_big_hint": "g(n) = n.val + max(0, g(left), g(right)) for the upward return; best = max(best, n.val + max(0, g(left)) + max(0, g(right)))."
+ },
+ "known_bugs": [
+  {
+   "name": "does not drop negative child gains",
+   "code": "def maxPathSum(root):\n    best = float('-inf')\n    def g(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = g(n.left)\n        r = g(n.right)\n        best = max(best, n.val + l + r)\n        return n.val + max(l, r)\n    g(root)\n    return best\n",
+   "fails_on": "negative_child_dropped",
+   "followup": "If a subtree's best downward path sums to a negative number, is it worth including?"
+  },
+  {
+   "name": "best starts at 0 (never reports a negative answer)",
+   "code": "def maxPathSum(root):\n    best = 0\n    def g(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = max(0, g(n.left))\n        r = max(0, g(n.right))\n        best = max(best, n.val + l + r)\n        return n.val + max(l, r)\n    g(root)\n    return best\n",
+   "fails_on": "all_negative",
+   "followup": "The path must contain at least one node. What is the answer for a tree whose every value is negative?"
+  },
+  {
+   "name": "only considers the path through the root",
+   "code": "def maxPathSum(root):\n    def g(n):\n        if not n:\n            return 0\n        return n.val + max(0, g(n.left), g(n.right))\n    return root.val + max(0, g(root.left)) + max(0, g(root.right))\n",
+   "fails_on": "normal",
+   "followup": "Could the best path live entirely inside one subtree and avoid the root?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "Why do you return only one child's gain to the parent?",
+   "How is this related to the tree diameter?"
+  ]
+ }
+}

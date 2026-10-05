@@ -1,0 +1,222 @@
+{
+ "id": "bst-098",
+ "leetcode": 98,
+ "title": "Validate Binary Search Tree",
+ "pattern": "bst",
+ "difficulty": "medium",
+ "function": "isValidBST",
+ "signature": "isValidBST(root: TreeNode) -> bool",
+ "adapter": "tree_value",
+ "statement": "Return True if the tree is a valid binary search tree: for every node, all values in its left subtree are strictly smaller and all values in its right subtree are strictly larger.",
+ "reference_solution": "def isValidBST(root):\n    def ok(n, lo, hi):\n        if not n:\n            return True\n        if lo is not None and n.val <= lo:\n            return False\n        if hi is not None and n.val >= hi:\n            return False\n        return ok(n.left, lo, n.val) and ok(n.right, n.val, hi)\n    return ok(root, None, None)\n",
+ "brute_force_solution": "def isValidBST(root):\n    vals, st, cur = [], [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        vals.append(cur.val)\n        cur = cur.right\n    return all(vals[i] < vals[i + 1] for i in range(len(vals) - 1))\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     1,
+     3
+    ]
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5,
+     1,
+     4,
+     null,
+     null,
+     3,
+     6
+    ]
+   ],
+   "expected": false,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": true,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2
+    ]
+   ],
+   "expected": false,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     1,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     5,
+     4,
+     6,
+     null,
+     null,
+     3,
+     7
+    ]
+   ],
+   "expected": false,
+   "tag": "deep_violation"
+  },
+  {
+   "args": [
+    [
+     2147483647
+    ]
+   ],
+   "expected": true,
+   "tag": "extreme_values"
+  },
+  {
+   "args": [
+    [
+     -2147483648
+    ]
+   ],
+   "expected": true,
+   "tag": "extreme_values"
+  },
+  {
+   "args": [
+    [
+     12,
+     4,
+     18,
+     3,
+     null,
+     13,
+     19
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     0,
+     15,
+     null,
+     null,
+     6,
+     18,
+     null,
+     null,
+     16
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     5,
+     1,
+     6,
+     null,
+     2,
+     null,
+     null,
+     2,
+     null,
+     null,
+     6
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     15,
+     5
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(11)\n    return [rand_bst(r, 60000, 0, 10**6)]"
+  }
+ ],
+ "hints": {
+  "1_question": "Checking each node against only its parent isn't enough. What range of values is a node allowed to have?",
+  "2_nudge": "Pass down a lower and upper bound. Going left tightens the upper bound to the parent's value; going right tightens the lower bound.",
+  "3_big_hint": "ok(n, lo, hi): if lo is not None and n.val <= lo: False; if hi is not None and n.val >= hi: False; return ok(left, lo, n.val) and ok(right, n.val, hi)."
+ },
+ "known_bugs": [
+  {
+   "name": "only compares each node with its direct children",
+   "code": "def isValidBST(root):\n    if not root:\n        return True\n    if root.left and root.left.val >= root.val:\n        return False\n    if root.right and root.right.val <= root.val:\n        return False\n    return isValidBST(root.left) and isValidBST(root.right)\n",
+   "fails_on": "deep_violation",
+   "followup": "In [5, 4, 6, None, None, 3, 7] the 3 is smaller than its parent 6, but it sits in the right subtree of 5. Do you catch that?"
+  },
+  {
+   "name": "allows equal values",
+   "code": "def isValidBST(root):\n    def ok(n, lo, hi):\n        if not n:\n            return True\n        if lo is not None and n.val < lo:\n            return False\n        if hi is not None and n.val > hi:\n            return False\n        return ok(n.left, lo, n.val) and ok(n.right, n.val, hi)\n    return ok(root, None, None)\n",
+   "fails_on": "duplicates",
+   "followup": "Are two equal values allowed in a valid BST according to the statement?"
+  },
+  {
+   "name": "uses fixed 32-bit bounds with strict checks",
+   "code": "def isValidBST(root):\n    def ok(n, lo, hi):\n        if not n:\n            return True\n        if n.val <= lo or n.val >= hi:\n            return False\n        return ok(n.left, lo, n.val) and ok(n.right, n.val, hi)\n    return ok(root, -2 ** 31, 2 ** 31 - 1)\n",
+   "fails_on": "extreme_values",
+   "followup": "What if a node's value equals one of your starting bounds? Why use None instead of a number?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "How does an in-order traversal give an alternative solution?",
+   "Why is a plain parent-child comparison insufficient?"
+  ]
+ }
+}

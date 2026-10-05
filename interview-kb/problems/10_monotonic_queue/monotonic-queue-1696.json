@@ -1,0 +1,229 @@
+{
+ "id": "monotonic-queue-1696",
+ "leetcode": 1696,
+ "title": "Jump Game VI",
+ "pattern": "monotonic_queue",
+ "difficulty": "medium",
+ "function": "maxResult",
+ "signature": "maxResult(nums: List[int], k: int) -> int",
+ "adapter": null,
+ "statement": "Start at index 0 and reach the last index. From index i you may jump to any index from i+1 to i+k. Your score is the sum of nums at every index you stand on (including the first and last). Return the maximum score.",
+ "reference_solution": "from collections import deque\ndef maxResult(nums, k):\n    n = len(nums)\n    dp = [0] * n\n    dp[0] = nums[0]\n    dq = deque([0])\n    for i in range(1, n):\n        while dq[0] < i - k:\n            dq.popleft()\n        dp[i] = nums[i] + dp[dq[0]]\n        while dq and dp[dq[-1]] <= dp[i]:\n            dq.pop()\n        dq.append(i)\n    return dp[-1]\n",
+ "brute_force_solution": "def maxResult(nums, k):\n    n = len(nums)\n    dp = [0] * n\n    dp[0] = nums[0]\n    for i in range(1, n):\n        dp[i] = nums[i] + max(dp[j] for j in range(max(0, i - k), i))\n    return dp[-1]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     -1,
+     -2,
+     4,
+     -7,
+     3
+    ],
+    2
+   ],
+   "expected": 7,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     10,
+     -5,
+     -2,
+     4,
+     0,
+     3
+    ],
+    3
+   ],
+   "expected": 17,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     -5,
+     -20,
+     4,
+     -1,
+     3,
+     -6,
+     -3
+    ],
+    2
+   ],
+   "expected": 0,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    1
+   ],
+   "expected": 5,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     -3
+    ],
+    1
+   ],
+   "expected": -3,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    1
+   ],
+   "expected": 6,
+   "tag": "k_is_one"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2,
+     -3
+    ],
+    5
+   ],
+   "expected": -4,
+   "tag": "k_exceeds_n"
+  },
+  {
+   "args": [
+    [
+     -3,
+     4,
+     -9,
+     7,
+     -2,
+     5
+    ],
+    3
+   ],
+   "expected": 13,
+   "tag": "greedy_fails"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2
+    ],
+    2
+   ],
+   "expected": -3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     3
+    ],
+    2
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     5,
+     -2,
+     1,
+     1,
+     -1
+    ],
+    4
+   ],
+   "expected": 15,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     -2,
+     4,
+     0,
+     0
+    ],
+    4
+   ],
+   "expected": 13,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     1,
+     -1,
+     -4,
+     0,
+     3,
+     -2
+    ],
+    3
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(37)\n    return [[r.randint(-1000, 1000) for _ in range(100000)], 1000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Let dp[i] be the best score to arrive at i. Which earlier positions can reach i, and which of them is best?",
+  "2_nudge": "dp[i] = nums[i] + max(dp[j]) for j in [i-k, i-1]. That is a sliding window maximum over dp.",
+  "3_big_hint": "Use a deque of indices with decreasing dp. Pop expired indices from the front (index < i - k), compute dp[i] from the front, then pop smaller dp values from the back and push i."
+ },
+ "known_bugs": [
+  {
+   "name": "window boundary off by one (drops index i - k)",
+   "code": "from collections import deque\ndef maxResult(nums, k):\n    n = len(nums)\n    dp = [0] * n\n    dp[0] = nums[0]\n    dq = deque([0])\n    for i in range(1, n):\n        while dq and dq[0] < i - k + 1:\n            dq.popleft()\n        if not dq:\n            return None\n        dp[i] = nums[i] + dp[dq[0]]\n        while dq and dp[dq[-1]] <= dp[i]:\n            dq.pop()\n        dq.append(i)\n    return dp[-1]\n",
+   "fails_on": "k_is_one",
+   "followup": "From index i you can jump back up to k positions. For k = 1, which previous index is allowed, and does your window keep it?"
+  },
+  {
+   "name": "greedy: always jump to the biggest value in reach",
+   "code": "def maxResult(nums, k):\n    n = len(nums)\n    i = 0\n    total = nums[0]\n    while i < n - 1:\n        if i + k >= n - 1:\n            total += nums[-1]\n            break\n        j = max(range(i + 1, i + k + 1), key=lambda t: nums[t])\n        total += nums[j]\n        i = j\n    return total\n",
+   "fails_on": "greedy_fails",
+   "followup": "Could taking a big value now lead you to a spot with poor options later? Does your code consider future positions?"
+  },
+  {
+   "name": "scans the last k dp values every step (O(n * k))",
+   "code": "def maxResult(nums, k):\n    n = len(nums)\n    dp = [0] * n\n    dp[0] = nums[0]\n    for i in range(1, n):\n        dp[i] = nums[i] + max(dp[j] for j in range(max(0, i - k), i))\n    return dp[-1]\n",
+   "fails_on": "large",
+   "followup": "With k = 1000 and n = 100000, how many dp values are examined? Which structure maintains the window maximum cheaply?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "How does this relate to Sliding Window Maximum (239)?",
+   "Why is a greedy choice incorrect here?"
+  ]
+ }
+}

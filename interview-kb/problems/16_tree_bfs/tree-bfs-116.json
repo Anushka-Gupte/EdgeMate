@@ -1,0 +1,228 @@
+{
+ "id": "tree-bfs-116",
+ "leetcode": 116,
+ "title": "Populating Next Right Pointers in Each Node",
+ "pattern": "tree_bfs",
+ "difficulty": "medium",
+ "function": "connect",
+ "signature": "connect(root: TreeNode) -> TreeNode",
+ "adapter": "tree_next",
+ "statement": "The tree is a perfect binary tree (every internal node has two children and all leaves are on the same level). Each node has a `next` pointer, initially None. Set every node's next to the node immediately to its right on the same level (None for the rightmost). Return the root. (The checker reads each level by following next pointers.)",
+ "reference_solution": "def connect(root):\n    left = root\n    while left and left.left:\n        cur = left\n        while cur:\n            cur.left.next = cur.right\n            if cur.next:\n                cur.right.next = cur.next.left\n            cur = cur.next\n        left = left.left\n    return root\n",
+ "brute_force_solution": "def connect(root):\n    level = [root] if root else []\n    while level:\n        for i in range(len(level) - 1):\n            level[i].next = level[i + 1]\n        level = [c for n in level for c in (n.left, n.right) if c]\n    return root\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ],
+    [
+     2,
+     3
+    ]
+   ],
+   "tag": "two_levels"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     5,
+     6,
+     7
+    ],
+    [
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ]
+   ],
+   "tag": "four_levels"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4
+    ]
+   ],
+   "expected": [
+    [
+     4
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     0,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     6
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ]
+   ],
+   "expected": [
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(1, 2 ** 16))]"
+  }
+ ],
+ "hints": {
+  "1_question": "A node's next is either its sibling (same parent) or the first child of its parent's next neighbour. Which of these links is easy to make, and which needs information from one level up?",
+  "2_nudge": "Process level by level using the next pointers you already built on the level above - you do not need a queue.",
+  "3_big_hint": "For each node cur on a level: cur.left.next = cur.right; if cur.next: cur.right.next = cur.next.left. Then move to the next level via left = left.left."
+ },
+ "known_bugs": [
+  {
+   "name": "links siblings but not across different parents",
+   "code": "def connect(root):\n    if not root:\n        return root\n    stack = [root]\n    while stack:\n        n = stack.pop()\n        if n.left:\n            n.left.next = n.right\n            stack.append(n.left)\n            stack.append(n.right)\n    return root\n",
+   "fails_on": "normal",
+   "followup": "Node 5 and node 6 have different parents. Which pointer links 5 to 6?"
+  },
+  {
+   "name": "only links the first two levels",
+   "code": "def connect(root):\n    if root and root.left:\n        root.left.next = root.right\n    return root\n",
+   "fails_on": "four_levels",
+   "followup": "Does your code handle nodes deeper than the root's children?"
+  },
+  {
+   "name": "crashes on an empty tree",
+   "code": "def connect(root):\n    left = root\n    while left.left:\n        cur = left\n        while cur:\n            cur.left.next = cur.right\n            if cur.next:\n                cur.right.next = cur.next.left\n            cur = cur.next\n        left = left.left\n    return root\n",
+   "fails_on": "empty",
+   "followup": "What is root.left when root is None?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How would you adapt this for a tree that is not perfect (problem 117)?",
+   "Why does this use no extra queue?"
+  ]
+ }
+}

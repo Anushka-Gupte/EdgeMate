@@ -1,0 +1,329 @@
+{
+ "id": "backtracking-constraints-017",
+ "leetcode": 17,
+ "title": "Letter Combinations of a Phone Number",
+ "pattern": "backtracking_constraints",
+ "difficulty": "medium",
+ "function": "letterCombinations",
+ "signature": "letterCombinations(digits: str) -> List[str]",
+ "adapter": "sort_outer",
+ "statement": "Digits 2-9 map to letters as on a phone keypad (2:abc 3:def 4:ghi 5:jkl 6:mno 7:pqrs 8:tuv 9:wxyz). Return every string you could type with a digit string, in any order. An empty input gives an empty list.",
+ "reference_solution": "def letterCombinations(digits):\n    if not digits:\n        return []\n    M = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    res = []\n    def bt(i, cur):\n        if i == len(digits):\n            res.append(cur)\n            return\n        for c in M[digits[i]]:\n            bt(i + 1, cur + c)\n    bt(0, \"\")\n    return res\n",
+ "brute_force_solution": "import itertools\ndef letterCombinations(digits):\n    if not digits:\n        return []\n    M = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    return [\"\".join(p) for p in itertools.product(*[M[d] for d in digits])]\n",
+ "tests": [
+  {
+   "args": [
+    "23"
+   ],
+   "expected": [
+    "ad",
+    "ae",
+    "af",
+    "bd",
+    "be",
+    "bf",
+    "cd",
+    "ce",
+    "cf"
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    ""
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "2"
+   ],
+   "expected": [
+    "a",
+    "b",
+    "c"
+   ],
+   "tag": "single_digit"
+  },
+  {
+   "args": [
+    "7"
+   ],
+   "expected": [
+    "p",
+    "q",
+    "r",
+    "s"
+   ],
+   "tag": "four_letter_digit"
+  },
+  {
+   "args": [
+    "79"
+   ],
+   "expected": [
+    "pw",
+    "px",
+    "py",
+    "pz",
+    "qw",
+    "qx",
+    "qy",
+    "qz",
+    "rw",
+    "rx",
+    "ry",
+    "rz",
+    "sw",
+    "sx",
+    "sy",
+    "sz"
+   ],
+   "tag": "four_letter_digit"
+  },
+  {
+   "args": [
+    "234"
+   ],
+   "expected": [
+    "adg",
+    "adh",
+    "adi",
+    "aeg",
+    "aeh",
+    "aei",
+    "afg",
+    "afh",
+    "afi",
+    "bdg",
+    "bdh",
+    "bdi",
+    "beg",
+    "beh",
+    "bei",
+    "bfg",
+    "bfh",
+    "bfi",
+    "cdg",
+    "cdh",
+    "cdi",
+    "ceg",
+    "ceh",
+    "cei",
+    "cfg",
+    "cfh",
+    "cfi"
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "9"
+   ],
+   "expected": [
+    "w",
+    "x",
+    "y",
+    "z"
+   ],
+   "tag": "four_letter_digit"
+  },
+  {
+   "args": [
+    "8"
+   ],
+   "expected": [
+    "t",
+    "u",
+    "v"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "793"
+   ],
+   "expected": [
+    "pwd",
+    "pwe",
+    "pwf",
+    "pxd",
+    "pxe",
+    "pxf",
+    "pyd",
+    "pye",
+    "pyf",
+    "pzd",
+    "pze",
+    "pzf",
+    "qwd",
+    "qwe",
+    "qwf",
+    "qxd",
+    "qxe",
+    "qxf",
+    "qyd",
+    "qye",
+    "qyf",
+    "qzd",
+    "qze",
+    "qzf",
+    "rwd",
+    "rwe",
+    "rwf",
+    "rxd",
+    "rxe",
+    "rxf",
+    "ryd",
+    "rye",
+    "ryf",
+    "rzd",
+    "rze",
+    "rzf",
+    "swd",
+    "swe",
+    "swf",
+    "sxd",
+    "sxe",
+    "sxf",
+    "syd",
+    "sye",
+    "syf",
+    "szd",
+    "sze",
+    "szf"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "386"
+   ],
+   "expected": [
+    "dtm",
+    "dtn",
+    "dto",
+    "dum",
+    "dun",
+    "duo",
+    "dvm",
+    "dvn",
+    "dvo",
+    "etm",
+    "etn",
+    "eto",
+    "eum",
+    "eun",
+    "euo",
+    "evm",
+    "evn",
+    "evo",
+    "ftm",
+    "ftn",
+    "fto",
+    "fum",
+    "fun",
+    "fuo",
+    "fvm",
+    "fvn",
+    "fvo"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "393"
+   ],
+   "expected": [
+    "dwd",
+    "dwe",
+    "dwf",
+    "dxd",
+    "dxe",
+    "dxf",
+    "dyd",
+    "dye",
+    "dyf",
+    "dzd",
+    "dze",
+    "dzf",
+    "ewd",
+    "ewe",
+    "ewf",
+    "exd",
+    "exe",
+    "exf",
+    "eyd",
+    "eye",
+    "eyf",
+    "ezd",
+    "eze",
+    "ezf",
+    "fwd",
+    "fwe",
+    "fwf",
+    "fxd",
+    "fxe",
+    "fxf",
+    "fyd",
+    "fye",
+    "fyf",
+    "fzd",
+    "fze",
+    "fzf"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "5"
+   ],
+   "expected": [
+    "j",
+    "k",
+    "l"
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return ['23456789']"
+  }
+ ],
+ "hints": {
+  "1_question": "Each digit offers a few letters; a result picks one letter per digit. How do you enumerate every such choice?",
+  "2_nudge": "Recurse over the digit positions; at each position try each letter of that digit and move on to the next digit.",
+  "3_big_hint": "bt(i, cur): if i == len(digits): record cur; else for c in letters[digits[i]]: bt(i + 1, cur + c). Return [] for empty input."
+ },
+ "known_bugs": [
+  {
+   "name": "returns [''] for an empty input",
+   "code": "def letterCombinations(digits):\n    M = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    res = []\n    def bt(i, cur):\n        if i == len(digits):\n            res.append(cur)\n            return\n        for c in M[digits[i]]:\n            bt(i + 1, cur + c)\n    bt(0, \"\")\n    return res\n",
+   "fails_on": "empty",
+   "followup": "What should be returned when no digits are given?"
+  },
+  {
+   "name": "gives 7 and 9 only three letters",
+   "code": "def letterCombinations(digits):\n    if not digits:\n        return []\n    M = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqr', '8': 'tuv', '9': 'wxy'}\n    res = []\n    def bt(i, cur):\n        if i == len(digits):\n            res.append(cur)\n            return\n        for c in M[digits[i]]:\n            bt(i + 1, cur + c)\n    bt(0, \"\")\n    return res\n",
+   "fails_on": "four_letter_digit",
+   "followup": "How many letters do the keys 7 and 9 have?"
+  },
+  {
+   "name": "lists each digit's letters instead of combining them",
+   "code": "def letterCombinations(digits):\n    if not digits:\n        return []\n    M = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    return [c for d in digits for c in M[d]]\n",
+   "fails_on": "normal",
+   "followup": "For '23' you should produce strings of length 2 such as 'ad'. What lengths does your output have?"
+  }
+ ],
+ "complexity": {
+  "time": "O(4^n * n)",
+  "space": "O(n)",
+  "followups": [
+   "What is the output size for n digits in the worst case?",
+   "How would an iterative queue-based solution work?"
+  ]
+ }
+}

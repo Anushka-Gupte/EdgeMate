@@ -1,0 +1,237 @@
+{
+ "id": "fast-slow-019",
+ "leetcode": 19,
+ "title": "Remove Nth Node From End of List",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "medium",
+ "function": "removeNthFromEnd",
+ "signature": "removeNthFromEnd(head: ListNode, n: int) -> ListNode",
+ "adapter": "list_args_to_list",
+ "statement": "Remove the n-th node counted from the end of a singly linked list (n = 1 is the last node) and return the head of the resulting list. n is always valid.",
+ "reference_solution": "def removeNthFromEnd(head, n):\n    dummy = ListNode(0, head)\n    fast = slow = dummy\n    for _ in range(n):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next\n        slow = slow.next\n    slow.next = slow.next.next\n    return dummy.next\n",
+ "brute_force_solution": "def removeNthFromEnd(head, n):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    del vals[len(vals) - n]\n    out = None\n    for v in reversed(vals):\n        out = ListNode(v, out)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    2
+   ],
+   "expected": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "remove_only_node"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    1
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "remove_last"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    2
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "remove_head"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    3
+   ],
+   "expected": [
+    2,
+    3
+   ],
+   "tag": "remove_head"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    4
+   ],
+   "expected": [
+    2,
+    3,
+    4
+   ],
+   "tag": "remove_head"
+  },
+  {
+   "args": [
+    [
+     2,
+     4,
+     1,
+     2,
+     6,
+     9,
+     8,
+     8
+    ],
+    3
+   ],
+   "expected": [
+    2,
+    4,
+    1,
+    2,
+    6,
+    8,
+    8
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     8,
+     7,
+     2
+    ],
+    4
+   ],
+   "expected": [
+    8,
+    7,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     8,
+     3,
+     4,
+     6,
+     0
+    ],
+    3
+   ],
+   "expected": [
+    3,
+    8,
+    3,
+    6,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     6,
+     5,
+     4,
+     5,
+     7,
+     9
+    ],
+    7
+   ],
+   "expected": [
+    6,
+    5,
+    4,
+    5,
+    7,
+    9
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 50000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Counting from the end is hard in one pass. What if one pointer is already n steps ahead of another?",
+  "2_nudge": "Give a fast pointer a head start of n nodes, then move both until fast reaches the last node. The slow pointer is then just before the node to remove.",
+  "3_big_hint": "Use a dummy node before head so removing the head is not special. fast and slow start at dummy; advance fast n times; while fast.next: move both; slow.next = slow.next.next; return dummy.next."
+ },
+ "known_bugs": [
+  {
+   "name": "no dummy node (breaks when removing the first node)",
+   "code": "def removeNthFromEnd(head, n):\n    fast = slow = head\n    for _ in range(n):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next\n        slow = slow.next\n    slow.next = slow.next.next\n    return head\n",
+   "fails_on": "remove_only_node",
+   "followup": "What are `fast` and `fast.next` if n equals the length of the list?"
+  },
+  {
+   "name": "gap of n + 1 instead of n",
+   "code": "def removeNthFromEnd(head, n):\n    dummy = ListNode(0, head)\n    fast = slow = dummy\n    for _ in range(n + 1):\n        fast = fast.next\n    while fast and fast.next:\n        fast = fast.next\n        slow = slow.next\n    slow.next = slow.next.next\n    return dummy.next\n",
+   "fails_on": "normal",
+   "followup": "If fast leads by n+1 nodes and stops at the last node, which node is slow pointing at, and which node does slow.next skip?"
+  },
+  {
+   "name": "returns the original head even if it was removed",
+   "code": "def removeNthFromEnd(head, n):\n    dummy = ListNode(0, head)\n    fast = slow = dummy\n    for _ in range(n):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next\n        slow = slow.next\n    slow.next = slow.next.next\n    return head\n",
+   "fails_on": "remove_head",
+   "followup": "If the head itself was removed, is the old `head` variable still the head of the list?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why does a dummy node simplify the head case?",
+   "Can you do it with a single pass using only one pointer variable plus a counter? What changes?"
+  ]
+ }
+}

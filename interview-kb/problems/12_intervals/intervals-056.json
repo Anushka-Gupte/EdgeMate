@@ -1,0 +1,372 @@
+{
+ "id": "intervals-056",
+ "leetcode": 56,
+ "title": "Merge Intervals",
+ "pattern": "intervals",
+ "difficulty": "medium",
+ "function": "merge",
+ "signature": "merge(intervals: List[List[int]]) -> List[List[int]]",
+ "adapter": null,
+ "statement": "Merge all overlapping closed intervals (intervals that share at least one point, including a single touching endpoint, overlap) and return the merged intervals sorted by start.",
+ "reference_solution": "def merge(intervals):\n    out = []\n    for s, e in sorted(intervals):\n        if out and s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\n",
+ "brute_force_solution": "def merge(intervals):\n    res = [list(i) for i in intervals]\n    changed = True\n    while changed:\n        changed = False\n        for i in range(len(res)):\n            for j in range(i + 1, len(res)):\n                a, b = res[i], res[j]\n                if a[0] <= b[1] and b[0] <= a[1]:\n                    res[i] = [min(a[0], b[0]), max(a[1], b[1])]\n                    res.pop(j)\n                    changed = True\n                    break\n            if changed:\n                break\n    return sorted(res)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      15,
+      18
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     6
+    ],
+    [
+     8,
+     10
+    ],
+    [
+     15,
+     18
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      4
+     ],
+     [
+      4,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     5
+    ]
+   ],
+   "tag": "touching"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      4
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     4
+    ]
+   ],
+   "tag": "contained"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      4
+     ],
+     [
+      0,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     4
+    ]
+   ],
+   "tag": "unsorted"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      3
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      1,
+      10
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     10
+    ]
+   ],
+   "tag": "swallows_all"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      4
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      8,
+      8
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     7
+    ],
+    [
+     8,
+     8
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      7,
+      7
+     ],
+     [
+      4,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     4,
+     5
+    ],
+    [
+     7,
+     7
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      9
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      2,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     5
+    ],
+    [
+     6,
+     9
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      9,
+      13
+     ],
+     [
+      9,
+      11
+     ],
+     [
+      10,
+      11
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     2,
+     3
+    ],
+    [
+     9,
+     13
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      8,
+      12
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      6,
+      10
+     ],
+     [
+      9,
+      9
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     4,
+     12
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(45)\n    return [[[a, a + r.randint(0, 30)] for a in (r.randint(0, 10**6) for _ in range(100000))]]"
+  }
+ ],
+ "hints": {
+  "1_question": "If the intervals were sorted by start, how would you know whether the next one overlaps the current merged block?",
+  "2_nudge": "Sort by start. Keep the last merged interval; if the next start is <= its end, extend the end (using max); otherwise start a new block.",
+  "3_big_hint": "for s, e in sorted(intervals): if out and s <= out[-1][1]: out[-1][1] = max(out[-1][1], e) else out.append([s, e])."
+ },
+ "known_bugs": [
+  {
+   "name": "does not sort first",
+   "code": "def merge(intervals):\n    out = []\n    for s, e in intervals:\n        if out and s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\n",
+   "fails_on": "unsorted",
+   "followup": "Does your loop assume the intervals arrive ordered by start? What if they don't?"
+  },
+  {
+   "name": "touching intervals are not merged (< instead of <=)",
+   "code": "def merge(intervals):\n    out = []\n    for s, e in sorted(intervals):\n        if out and s < out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\n",
+   "fails_on": "touching",
+   "followup": "[1,4] and [4,5] share the point 4. Should they merge?"
+  },
+  {
+   "name": "takes the new end instead of the larger end",
+   "code": "def merge(intervals):\n    out = []\n    for s, e in sorted(intervals):\n        if out and s <= out[-1][1]:\n            out[-1][1] = e\n        else:\n            out.append([s, e])\n    return out\n",
+   "fails_on": "contained",
+   "followup": "If [2,3] sits inside [1,4], what should the merged end be?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(n)",
+  "followups": [
+   "Why does sorting by start make a single pass enough?",
+   "How would you merge intervals arriving online?"
+  ]
+ }
+}

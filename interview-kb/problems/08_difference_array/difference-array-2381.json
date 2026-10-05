@@ -1,0 +1,365 @@
+{
+ "id": "difference-array-2381",
+ "leetcode": 2381,
+ "title": "Shifting Letters II",
+ "pattern": "difference_array",
+ "difficulty": "medium",
+ "function": "shiftingLetters",
+ "signature": "shiftingLetters(s: str, shifts: List[List[int]]) -> str",
+ "adapter": null,
+ "statement": "Each shift [start, end, direction] moves every letter in s[start..end] one step forward in the alphabet (direction 1) or backward (direction 0), wrapping around z to a and a to z. Apply all shifts and return the final string.",
+ "reference_solution": "def shiftingLetters(s, shifts):\n    n = len(s)\n    diff = [0] * (n + 1)\n    for a, b, d in shifts:\n        v = 1 if d == 1 else -1\n        diff[a] += v\n        diff[b + 1] -= v\n    out, cur = [], 0\n    for i, ch in enumerate(s):\n        cur += diff[i]\n        out.append(chr((ord(ch) - 97 + cur) % 26 + 97))\n    return \"\".join(out)\n",
+ "brute_force_solution": "def shiftingLetters(s, shifts):\n    vals = [ord(c) - 97 for c in s]\n    for a, b, d in shifts:\n        for i in range(a, b + 1):\n            vals[i] = (vals[i] + (1 if d == 1 else -1)) % 26\n    return \"\".join(chr(v + 97) for v in vals)\n",
+ "tests": [
+  {
+   "args": [
+    "abc",
+    [
+     [
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ]
+    ]
+   ],
+   "expected": "ace",
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "dztz",
+    [
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": "catz",
+   "tag": "wraparound"
+  },
+  {
+   "args": [
+    "a",
+    [
+     [
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": "z",
+   "tag": "wrap_back"
+  },
+  {
+   "args": [
+    "z",
+    [
+     [
+      0,
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": "a",
+   "tag": "wrap_forward"
+  },
+  {
+   "args": [
+    "abc",
+    []
+   ],
+   "expected": "abc",
+   "tag": "empty_shifts"
+  },
+  {
+   "args": [
+    "abc",
+    [
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ],
+     [
+      0,
+      2,
+      1
+     ]
+    ]
+   ],
+   "expected": "abc",
+   "tag": "full_cycle"
+  },
+  {
+   "args": [
+    "acbbbx",
+    []
+   ],
+   "expected": "acbbbx",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "bxbxxzyc",
+    [
+     [
+      1,
+      6,
+      0
+     ],
+     [
+      4,
+      7,
+      0
+     ],
+     [
+      0,
+      3,
+      1
+     ],
+     [
+      4,
+      7,
+      1
+     ],
+     [
+      4,
+      4,
+      0
+     ]
+    ]
+   ],
+   "expected": "cxbxvyxc",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "acxyyxzy",
+    []
+   ],
+   "expected": "acxyyxzy",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "xxc",
+    [
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      2,
+      1
+     ],
+     [
+      2,
+      2,
+      0
+     ]
+    ]
+   ],
+   "expected": "xxc",
+   "tag": "random"
+  },
+  {
+   "args": [
+    "acbxz",
+    [
+     [
+      0,
+      3,
+      0
+     ],
+     [
+      4,
+      4,
+      1
+     ]
+    ]
+   ],
+   "expected": "zbawa",
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(31)\n    n = 100000\n    s = ''.join(r.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(n))\n    sh = []\n    for _ in range(100000):\n        a = r.randint(0, n - 1)\n        sh.append([a, r.randint(a, n - 1), r.randint(0, 1)])\n    return [s, sh]"
+  }
+ ],
+ "hints": {
+  "1_question": "Shifting a whole range one position at a time per shift is too slow. How can you record 'everything from a to b moves by +1/-1' with two markers?",
+  "2_nudge": "Build a difference array of net shifts, take a running sum to get each letter's total shift, then apply it modulo 26.",
+  "3_big_hint": "diff[a] += v; diff[b+1] -= v with v = +1 or -1. For each index, cur += diff[i]; new letter = (ord(ch) - 97 + cur) % 26. Python's % keeps it non-negative."
+ },
+ "known_bugs": [
+  {
+   "name": "only wraps forward (negative shifts not wrapped)",
+   "code": "def shiftingLetters(s, shifts):\n    n = len(s)\n    diff = [0] * (n + 1)\n    for a, b, d in shifts:\n        v = 1 if d == 1 else -1\n        diff[a] += v\n        diff[b + 1] -= v\n    out, cur = [], 0\n    for i, ch in enumerate(s):\n        cur += diff[i]\n        pos = ord(ch) - 97 + cur\n        if pos > 25:\n            pos -= 26\n        out.append(chr(pos + 97))\n    return \"\".join(out)\n",
+   "fails_on": "wrap_back",
+   "followup": "What letter should 'a' become after one backward shift, and what character does your arithmetic produce?"
+  },
+  {
+   "name": "directions swapped",
+   "code": "def shiftingLetters(s, shifts):\n    n = len(s)\n    diff = [0] * (n + 1)\n    for a, b, d in shifts:\n        v = -1 if d == 1 else 1\n        diff[a] += v\n        diff[b + 1] -= v\n    out, cur = [], 0\n    for i, ch in enumerate(s):\n        cur += diff[i]\n        out.append(chr((ord(ch) - 97 + cur) % 26 + 97))\n    return \"\".join(out)\n",
+   "fails_on": "normal",
+   "followup": "Which direction value means forward, and which sign are you applying for it?"
+  },
+  {
+   "name": "applies each shift letter by letter (O(n * m))",
+   "code": "def shiftingLetters(s, shifts):\n    vals = [ord(c) - 97 for c in s]\n    for a, b, d in shifts:\n        for i in range(a, b + 1):\n            vals[i] = (vals[i] + (1 if d == 1 else -1)) % 26\n    return \"\".join(chr(v + 97) for v in vals)\n",
+   "fails_on": "large",
+   "followup": "With 100000 shifts that each cover up to 100000 letters, how many letter updates is that?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + m)",
+  "space": "O(n)",
+  "followups": [
+   "Why can you reduce the net shift modulo 26 only at the end?",
+   "How would you handle shifts of larger magnitudes (like +5 or -100)?"
+  ]
+ }
+}

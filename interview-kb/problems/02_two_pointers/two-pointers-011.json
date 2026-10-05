@@ -1,0 +1,182 @@
+{
+ "id": "two-pointers-011",
+ "leetcode": 11,
+ "title": "Container With Most Water",
+ "pattern": "two_pointers",
+ "difficulty": "medium",
+ "function": "maxArea",
+ "signature": "maxArea(height: List[int]) -> int",
+ "adapter": null,
+ "statement": "Each number is the height of a vertical wall at consecutive positions. Choose two walls; the container's water is the distance between them times the shorter wall. Return the largest possible amount.",
+ "reference_solution": "def maxArea(height):\n    l, r = 0, len(height) - 1\n    best = 0\n    while l < r:\n        best = max(best, min(height[l], height[r]) * (r - l))\n        if height[l] < height[r]:\n            l += 1\n        else:\n            r -= 1\n    return best\n",
+ "brute_force_solution": "def maxArea(height):\n    best = 0\n    for i in range(len(height)):\n        for j in range(i + 1, len(height)):\n            best = max(best, min(height[i], height[j]) * (j - i))\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     8,
+     6,
+     2,
+     5,
+     4,
+     8,
+     3,
+     7
+    ]
+   ],
+   "expected": 49,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     4,
+     3,
+     2,
+     1,
+     4
+    ]
+   ],
+   "expected": 16,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "min_width"
+  },
+  {
+   "args": [
+    [
+     1,
+     100
+    ]
+   ],
+   "expected": 1,
+   "tag": "one_tall_wall"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     1,
+     9,
+     2,
+     9,
+     7,
+     4,
+     3
+    ]
+   ],
+   "expected": 30,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     2,
+     6,
+     5,
+     10,
+     4
+    ]
+   ],
+   "expected": 32,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     7,
+     7
+    ]
+   ],
+   "expected": 14,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     1,
+     7,
+     1,
+     10
+    ]
+   ],
+   "expected": 36,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(3)\n    return [[r.randint(0, 10000) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "What limits the water: the taller wall or the shorter one? What happens to the width as the two walls move closer?",
+  "2_nudge": "Start with the widest container (both ends). To possibly do better you must move one wall inward. Which one is worth moving?",
+  "3_big_hint": "Compute the area, then move the pointer at the shorter wall inward. Moving the taller one can never help because the shorter wall still caps the height and the width shrinks."
+ },
+ "known_bugs": [
+  {
+   "name": "moves the taller wall",
+   "code": "def maxArea(height):\n    l, r = 0, len(height) - 1\n    best = 0\n    while l < r:\n        best = max(best, min(height[l], height[r]) * (r - l))\n        if height[l] > height[r]:\n            l += 1\n        else:\n            r -= 1\n    return best\n",
+   "fails_on": "normal",
+   "followup": "When you move a pointer inward, the width always shrinks. Which move gives you any chance of a bigger area?"
+  },
+  {
+   "name": "uses the taller wall as the height",
+   "code": "def maxArea(height):\n    l, r = 0, len(height) - 1\n    best = 0\n    while l < r:\n        best = max(best, max(height[l], height[r]) * (r - l))\n        if height[l] < height[r]:\n            l += 1\n        else:\n            r -= 1\n    return best\n",
+   "fails_on": "one_tall_wall",
+   "followup": "If water is poured in, which wall does it spill over first, the taller or the shorter?"
+  },
+  {
+   "name": "width off by one",
+   "code": "def maxArea(height):\n    l, r = 0, len(height) - 1\n    best = 0\n    while l < r:\n        best = max(best, min(height[l], height[r]) * (r - l + 1))\n        if height[l] < height[r]:\n            l += 1\n        else:\n            r -= 1\n    return best\n",
+   "fails_on": "min_width",
+   "followup": "Two walls at positions 0 and 1: how far apart are they?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Can you prove that skipping the taller wall never loses the optimal answer?",
+   "What would change if walls had thickness?"
+  ]
+ }
+}

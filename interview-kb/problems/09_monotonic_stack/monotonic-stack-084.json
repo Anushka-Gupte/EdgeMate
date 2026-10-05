@@ -1,0 +1,177 @@
+{
+ "id": "monotonic-stack-084",
+ "leetcode": 84,
+ "title": "Largest Rectangle in Histogram",
+ "pattern": "monotonic_stack",
+ "difficulty": "hard",
+ "function": "largestRectangleArea",
+ "signature": "largestRectangleArea(heights: List[int]) -> int",
+ "adapter": null,
+ "statement": "Given the heights of adjacent bars (each of width 1) in a histogram, return the area of the largest rectangle that fits entirely inside the bars.",
+ "reference_solution": "def largestRectangleArea(heights):\n    stack = []\n    best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\n",
+ "brute_force_solution": "def largestRectangleArea(heights):\n    best = 0\n    for i in range(len(heights)):\n        m = heights[i]\n        for j in range(i, len(heights)):\n            m = min(m, heights[j])\n            best = max(best, m * (j - i + 1))\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     1,
+     5,
+     6,
+     2,
+     3
+    ]
+   ],
+   "expected": 10,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     5,
+     4,
+     5,
+     1,
+     6
+    ]
+   ],
+   "expected": 12,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     4
+    ]
+   ],
+   "expected": 4,
+   "tag": "flush_stack"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2
+    ]
+   ],
+   "expected": 6,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     0,
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "zeros"
+  },
+  {
+   "args": [
+    [
+     4,
+     6,
+     1,
+     1
+    ]
+   ],
+   "expected": 8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     0,
+     3,
+     2
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(1, 30001))]"
+  }
+ ],
+ "hints": {
+  "1_question": "For each bar, think about the widest rectangle in which that bar is the shortest one. What decides its left and right edges?",
+  "2_nudge": "A stack of increasing heights lets you find, for each bar, the first shorter bar on its left and on its right.",
+  "3_big_hint": "Scan with a sentinel 0 at the end. While the stack top is taller than h: pop it; width = i if stack is empty else i - stack[-1] - 1; area = height * width."
+ },
+ "known_bugs": [
+  {
+   "name": "never flushes the stack at the end (no sentinel)",
+   "code": "def largestRectangleArea(heights):\n    stack = []\n    best = 0\n    for i, h in enumerate(heights):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\n",
+   "fails_on": "flush_stack",
+   "followup": "For [2, 4] nothing is ever popped in your loop. Which bars are still on the stack when the scan ends, and who handles them?"
+  },
+  {
+   "name": "width off by one when the stack is non-empty",
+   "code": "def largestRectangleArea(heights):\n    stack = []\n    best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1]\n            best = max(best, height * width)\n        stack.append(i)\n    return best\n",
+   "fails_on": "normal",
+   "followup": "After popping a bar, the new stack top is the first shorter bar to the left. How many bars lie strictly between it and i?"
+  },
+  {
+   "name": "expands around every bar (O(n^2))",
+   "code": "def largestRectangleArea(heights):\n    n = len(heights)\n    best = 0\n    for i in range(n):\n        l = i\n        while l > 0 and heights[l - 1] >= heights[i]:\n            l -= 1\n        r = i\n        while r < n - 1 and heights[r + 1] >= heights[i]:\n            r += 1\n        best = max(best, heights[i] * (r - l + 1))\n    return best\n",
+   "fails_on": "large",
+   "followup": "For a steadily rising histogram, how far does each bar's right expansion walk? Can a stack remember that for you?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why does a trailing sentinel of 0 remove the need for a cleanup loop?",
+   "How does this help solve Maximal Rectangle (85)?"
+  ]
+ }
+}

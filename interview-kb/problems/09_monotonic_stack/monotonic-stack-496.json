@@ -1,0 +1,266 @@
+{
+ "id": "monotonic-stack-496",
+ "leetcode": 496,
+ "title": "Next Greater Element I",
+ "pattern": "monotonic_stack",
+ "difficulty": "easy",
+ "function": "nextGreaterElement",
+ "signature": "nextGreaterElement(nums1: List[int], nums2: List[int]) -> List[int]",
+ "adapter": null,
+ "statement": "nums1 is a subset of nums2 (all values distinct). For each x in nums1, find x's position in nums2 and return the first larger value to its right in nums2, or -1 if there is none.",
+ "reference_solution": "def nextGreaterElement(nums1, nums2):\n    nxt = {}\n    stack = []\n    for x in nums2:\n        while stack and stack[-1] < x:\n            nxt[stack.pop()] = x\n        stack.append(x)\n    return [nxt.get(x, -1) for x in nums1]\n",
+ "brute_force_solution": "def nextGreaterElement(nums1, nums2):\n    res = []\n    for x in nums1:\n        i = nums2.index(x)\n        ans = -1\n        for y in nums2[i + 1:]:\n            if y > x:\n                ans = y\n                break\n        res.append(ans)\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     4,
+     1,
+     2
+    ],
+    [
+     1,
+     3,
+     4,
+     2
+    ]
+   ],
+   "expected": [
+    -1,
+    3,
+    -1
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     4
+    ],
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    3,
+    -1
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [],
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    [
+     1
+    ]
+   ],
+   "expected": [
+    -1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    [
+     1,
+     0,
+     2
+    ]
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "not_adjacent"
+  },
+  {
+   "args": [
+    [
+     5,
+     3
+    ],
+    [
+     5,
+     4,
+     3,
+     2,
+     1
+    ]
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "decreasing"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    2,
+    3,
+    -1
+   ],
+   "tag": "increasing"
+  },
+  {
+   "args": [
+    [],
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     7,
+     5,
+     6,
+     2
+    ],
+    [
+     8,
+     1,
+     3,
+     5,
+     6,
+     7,
+     2
+    ]
+   ],
+   "expected": [
+    5,
+    -1,
+    6,
+    7,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     8,
+     1
+    ],
+    [
+     1,
+     5,
+     9,
+     8
+    ]
+   ],
+   "expected": [
+    -1,
+    -1,
+    5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     4,
+     1
+    ],
+    [
+     5,
+     6,
+     3,
+     7,
+     1,
+     8,
+     4
+    ]
+   ],
+   "expected": [
+    7,
+    -1,
+    8
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    [
+     8
+    ]
+   ],
+   "expected": [],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(0, 100000, 2)), list(range(100000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "For every value in nums2 you could find its next greater element once and remember it. What structure lets you do that in one pass?",
+  "2_nudge": "Scan nums2 with a stack of values still waiting for a bigger one. When a bigger value arrives, it is the answer for everything it pops.",
+  "3_big_hint": "For x in nums2: while stack and stack[-1] < x: nxt[stack.pop()] = x; push x. Answer = [nxt.get(v, -1) for v in nums1]."
+ },
+ "known_bugs": [
+  {
+   "name": "only looks at the immediate next element in nums2",
+   "code": "def nextGreaterElement(nums1, nums2):\n    pos = {v: i for i, v in enumerate(nums2)}\n    res = []\n    for x in nums1:\n        i = pos[x]\n        res.append(nums2[i + 1] if i + 1 < len(nums2) and nums2[i + 1] > x else -1)\n    return res\n",
+   "fails_on": "not_adjacent",
+   "followup": "What if the next greater value is not directly adjacent in nums2?"
+  },
+  {
+   "name": "returns 0 instead of -1 when nothing is greater",
+   "code": "def nextGreaterElement(nums1, nums2):\n    nxt = {}\n    stack = []\n    for x in nums2:\n        while stack and stack[-1] < x:\n            nxt[stack.pop()] = x\n        stack.append(x)\n    return [nxt.get(x, 0) for x in nums1]\n",
+   "fails_on": "decreasing",
+   "followup": "What does the problem say to return when there is no greater element?"
+  },
+  {
+   "name": "rescans nums2 from scratch for each query (O(n * m))",
+   "code": "def nextGreaterElement(nums1, nums2):\n    res = []\n    for x in nums1:\n        i = nums2.index(x)\n        ans = -1\n        for y in nums2[i + 1:]:\n            if y > x:\n                ans = y\n                break\n        res.append(ans)\n    return res\n",
+   "fails_on": "large",
+   "followup": "How long does nums2.index(x) plus the scan take per query? What could you precompute for every value at once?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + m)",
+  "space": "O(n)",
+  "followups": [
+   "Why does a value get popped at most once?",
+   "How would you adapt this for the circular version (503)?"
+  ]
+ }
+}

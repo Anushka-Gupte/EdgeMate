@@ -1,0 +1,138 @@
+{
+ "id": "sliding-window-003",
+ "leetcode": 3,
+ "title": "Longest Substring Without Repeating Characters",
+ "pattern": "sliding_window",
+ "difficulty": "medium",
+ "function": "lengthOfLongestSubstring",
+ "signature": "lengthOfLongestSubstring(s: str) -> int",
+ "adapter": null,
+ "statement": "Given a string, return the length of the longest run of consecutive characters in which no character appears more than once.",
+ "reference_solution": "def lengthOfLongestSubstring(s):\n    last = {}\n    left = best = 0\n    for right, ch in enumerate(s):\n        if ch in last and last[ch] >= left:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n",
+ "brute_force_solution": "def lengthOfLongestSubstring(s):\n    best = 0\n    for i in range(len(s)):\n        for j in range(i, len(s)):\n            sub = s[i:j + 1]\n            if len(set(sub)) == len(sub):\n                best = max(best, j - i + 1)\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    "abcabcbb"
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "pwwkew"
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    ""
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "a"
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    "bbbbb"
+   ],
+   "expected": 1,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    "abba"
+   ],
+   "expected": 2,
+   "tag": "left_never_moves_back"
+  },
+  {
+   "args": [
+    "dvdf"
+   ],
+   "expected": 3,
+   "tag": "dont_reset_window"
+  },
+  {
+   "args": [
+    "bbbabaa"
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "cabbaba"
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "aacbccabccaa"
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "a"
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "ccbbacba"
+   ],
+   "expected": 3,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(1)\n    return [''.join(r.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(30000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "What do you need to know about the current window to decide whether the next character is allowed in it?",
+  "2_nudge": "Keep a map from character to the last index you saw it. When you meet a repeat, the window's left edge may need to jump.",
+  "3_big_hint": "For each right index: if the character was last seen at or after `left`, set left = last_seen + 1. Update last_seen, then update the best length."
+ },
+ "known_bugs": [
+  {
+   "name": "returns 1 for empty string",
+   "code": "def lengthOfLongestSubstring(s):\n    last = {}\n    left = 0\n    best = 1\n    for right, ch in enumerate(s):\n        if ch in last and last[ch] >= left:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "empty",
+   "followup": "What should your function return if the string is empty?"
+  },
+  {
+   "name": "left pointer jumps backwards",
+   "code": "def lengthOfLongestSubstring(s):\n    last = {}\n    left = best = 0\n    for right, ch in enumerate(s):\n        if ch in last:\n            left = last[ch] + 1\n        last[ch] = right\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "left_never_moves_back",
+   "followup": "Walk through 'abba'. Where is `left` when you reach the final 'a', and is that still inside your window?"
+  },
+  {
+   "name": "throws away the whole window on a repeat",
+   "code": "def lengthOfLongestSubstring(s):\n    seen = set()\n    cur = best = 0\n    for ch in s:\n        if ch in seen:\n            seen = set()\n            cur = 0\n        seen.add(ch)\n        cur += 1\n        best = max(best, cur)\n    return best\n",
+   "fails_on": "dont_reset_window",
+   "followup": "After you see a repeat, do you really have to discard every character in the window, or only some of them?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(min(n, alphabet))",
+  "followups": [
+   "Why is this O(n) even though there is a window and a map?",
+   "How would the map change if the input could contain any Unicode character?"
+  ]
+ }
+}

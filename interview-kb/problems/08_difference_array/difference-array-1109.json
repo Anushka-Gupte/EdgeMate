@@ -1,0 +1,294 @@
+{
+ "id": "difference-array-1109",
+ "leetcode": 1109,
+ "title": "Corporate Flight Bookings",
+ "pattern": "difference_array",
+ "difficulty": "medium",
+ "function": "corpFlightBookings",
+ "signature": "corpFlightBookings(bookings: List[List[int]], n: int) -> List[int]",
+ "adapter": null,
+ "statement": "There are n flights numbered 1..n. Each booking [first, last, seats] reserves that many seats on every flight from first to last inclusive. Return a list where entry i is the total seats reserved on flight i+1.",
+ "reference_solution": "def corpFlightBookings(bookings, n):\n    diff = [0] * (n + 1)\n    for first, last, seats in bookings:\n        diff[first - 1] += seats\n        diff[last] -= seats\n    out, run = [], 0\n    for i in range(n):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+ "brute_force_solution": "def corpFlightBookings(bookings, n):\n    res = [0] * n\n    for first, last, seats in bookings:\n        for i in range(first - 1, last):\n            res[i] += seats\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      2,
+      10
+     ],
+     [
+      2,
+      3,
+      20
+     ],
+     [
+      2,
+      5,
+      25
+     ]
+    ],
+    5
+   ],
+   "expected": [
+    10,
+    55,
+    45,
+    25,
+    25
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2,
+      10
+     ],
+     [
+      2,
+      2,
+      15
+     ]
+    ],
+    2
+   ],
+   "expected": [
+    10,
+    25
+   ],
+   "tag": "short_booking"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      5
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    5
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": [
+    0,
+    0,
+    0
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      3,
+      7
+     ]
+    ],
+    3
+   ],
+   "expected": [
+    0,
+    7,
+    7
+   ],
+   "tag": "through_last_flight"
+  },
+  {
+   "args": [
+    [],
+    8
+   ],
+   "expected": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      7
+     ],
+     [
+      2,
+      2,
+      5
+     ],
+     [
+      1,
+      1,
+      5
+     ],
+     [
+      1,
+      1,
+      6
+     ]
+    ],
+    2
+   ],
+   "expected": [
+    18,
+    5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      4,
+      4
+     ],
+     [
+      3,
+      5,
+      5
+     ],
+     [
+      4,
+      6,
+      9
+     ]
+    ],
+    6
+   ],
+   "expected": [
+    0,
+    0,
+    9,
+    18,
+    14,
+    9
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      4,
+      6
+     ],
+     [
+      2,
+      5,
+      7
+     ]
+    ],
+    6
+   ],
+   "expected": [
+    0,
+    13,
+    13,
+    13,
+    7,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      9
+     ],
+     [
+      1,
+      1,
+      3
+     ],
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      1,
+      3
+     ],
+     [
+      1,
+      1,
+      4
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    20
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(9)\n    n = 100000\n    b = []\n    for _ in range(100000):\n        f = r.randint(1, n)\n        b.append([f, r.randint(f, n), r.randint(1, 100)])\n    return [b, n]"
+  }
+ ],
+ "hints": {
+  "1_question": "Adding seats to a whole range one flight at a time is slow. What if you only marked where the range starts and where it stops?",
+  "2_nudge": "Store changes instead of totals: +seats where the range begins, -seats just after it ends. Then a running sum rebuilds the totals.",
+  "3_big_hint": "diff size n+1. diff[first-1] += seats; diff[last] -= seats. Finally out[i] = out[i-1] + diff[i]."
+ },
+ "known_bugs": [
+  {
+   "name": "off by one: treats flights as 0-based",
+   "code": "def corpFlightBookings(bookings, n):\n    diff = [0] * (n + 2)\n    for first, last, seats in bookings:\n        diff[first] += seats\n        diff[last + 1] -= seats\n    out, run = [], 0\n    for i in range(n):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+   "fails_on": "normal",
+   "followup": "Flights are numbered from 1 but list positions from 0. Which list position should flight 1 map to?"
+  },
+  {
+   "name": "difference array too small (index error)",
+   "code": "def corpFlightBookings(bookings, n):\n    diff = [0] * n\n    for first, last, seats in bookings:\n        diff[first - 1] += seats\n        diff[last] -= seats\n    out, run = [], 0\n    for i in range(n):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+   "fails_on": "through_last_flight",
+   "followup": "What if a booking runs through the very last flight? Which index do you write the '-seats' marker at?"
+  },
+  {
+   "name": "cancels the booking one flight early",
+   "code": "def corpFlightBookings(bookings, n):\n    diff = [0] * (n + 1)\n    for first, last, seats in bookings:\n        diff[first - 1] += seats\n        diff[last - 1] -= seats\n    out, run = [], 0\n    for i in range(n):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+   "fails_on": "short_booking",
+   "followup": "A booking [1, 2, 10] should cover flights 1 and 2. At which list index must the -10 marker go so flight 2 is still included?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + m) for m bookings",
+  "space": "O(n)",
+  "followups": [
+   "Why is a difference array the 'inverse' of a prefix sum?",
+   "How would you handle many range updates interleaved with point queries?"
+  ]
+ }
+}

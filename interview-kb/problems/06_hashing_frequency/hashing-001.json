@@ -1,0 +1,208 @@
+{
+ "id": "hashing-001",
+ "leetcode": 1,
+ "title": "Two Sum",
+ "pattern": "hashing_frequency",
+ "difficulty": "easy",
+ "function": "twoSum",
+ "signature": "twoSum(nums: List[int], target: int) -> List[int]",
+ "adapter": "sort_flat",
+ "statement": "Return the indices of the two different elements that add up to the target. Exactly one such pair exists, and you may not use the same element twice. The order of the two indices does not matter.",
+ "reference_solution": "def twoSum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [seen[target - x], i]\n        seen[x] = i\n    return []\n",
+ "brute_force_solution": "def twoSum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     7,
+     11,
+     15
+    ],
+    9
+   ],
+   "expected": [
+    0,
+    1
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     4
+    ],
+    6
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "no_reuse_same_element"
+  },
+  {
+   "args": [
+    [
+     3,
+     3
+    ],
+    6
+   ],
+   "expected": [
+    0,
+    1
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2,
+     -3,
+     -4,
+     -5
+    ],
+    -8
+   ],
+   "expected": [
+    2,
+    4
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     0,
+     4,
+     3,
+     0
+    ],
+    0
+   ],
+   "expected": [
+    0,
+    3
+   ],
+   "tag": "zeros"
+  },
+  {
+   "args": [
+    [
+     0,
+     2,
+     -4,
+     6
+    ],
+    8
+   ],
+   "expected": [
+    1,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     -2,
+     3
+    ],
+    7
+   ],
+   "expected": [
+    0,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     2
+    ],
+    0
+   ],
+   "expected": [
+    0,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     3
+    ],
+    6
+   ],
+   "expected": [
+    0,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -3,
+     0,
+     1,
+     3
+    ],
+    3
+   ],
+   "expected": [
+    2,
+    4
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 199997]"
+  }
+ ],
+ "hints": {
+  "1_question": "For each number x, what exact value would you need to have seen before? How can you look that up instantly?",
+  "2_nudge": "Store each number's index in a dictionary as you go. Before inserting x, check whether target - x is already in it.",
+  "3_big_hint": "seen = {}; for i, x: if target - x in seen: return [seen[target - x], i]; then seen[x] = i."
+ },
+ "known_bugs": [
+  {
+   "name": "inserts before checking (reuses the same element)",
+   "code": "def twoSum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        seen[x] = i\n        if target - x in seen:\n            return [seen[target - x], i]\n    return []\n",
+   "fails_on": "no_reuse_same_element",
+   "followup": "For [3, 2, 4] and target 6, is the 3 allowed to pair with itself?"
+  },
+  {
+   "name": "returns the values instead of their indices",
+   "code": "def twoSum(nums, target):\n    seen = set()\n    for x in nums:\n        if target - x in seen:\n            return [target - x, x]\n        seen.add(x)\n    return []\n",
+   "fails_on": "normal",
+   "followup": "The problem asks for positions in the list. What are you returning?"
+  },
+  {
+   "name": "checks every pair (O(n^2))",
+   "code": "def twoSum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []\n",
+   "fails_on": "large",
+   "followup": "How many pairs are there for 100000 numbers? What lookup structure removes the inner loop?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "What if the input were sorted? Could you use O(1) space?",
+   "How do you handle several valid pairs if the problem asked for all of them?"
+  ]
+ }
+}

@@ -1,0 +1,273 @@
+{
+ "id": "bst-099",
+ "leetcode": 99,
+ "title": "Recover Binary Search Tree",
+ "pattern": "bst",
+ "difficulty": "medium",
+ "function": "recoverTree",
+ "signature": "recoverTree(root: TreeNode) -> None  # fix in place",
+ "adapter": "tree_inplace",
+ "statement": "Exactly two nodes of a BST had their values swapped by mistake. Recover the tree by swapping those two values back, without changing the structure. (The checker reads the tree after your function returns.)",
+ "reference_solution": "def recoverTree(root):\n    first = second = prev = None\n    st, cur = [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        if prev and prev.val > cur.val:\n            if not first:\n                first = prev\n            second = cur\n        prev = cur\n        cur = cur.right\n    first.val, second.val = second.val, first.val\n",
+ "brute_force_solution": "def recoverTree(root):\n    nodes, st, cur = [], [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        nodes.append(cur)\n        cur = cur.right\n    vals = sorted(n.val for n in nodes)\n    for n, v in zip(nodes, vals):\n        n.val = v\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     3,
+     null,
+     null,
+     2
+    ]
+   ],
+   "expected": [
+    3,
+    1,
+    null,
+    null,
+    2
+   ],
+   "tag": "non_adjacent"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     4,
+     null,
+     null,
+     2
+    ]
+   ],
+   "expected": [
+    2,
+    1,
+    4,
+    null,
+    null,
+    3
+   ],
+   "tag": "adjacent"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     1
+    ]
+   ],
+   "expected": [
+    2,
+    1,
+    3
+   ],
+   "tag": "root_swapped"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    2,
+    1
+   ],
+   "tag": "two_nodes"
+  },
+  {
+   "args": [
+    [
+     5,
+     3,
+     8,
+     9,
+     4,
+     7,
+     1
+    ]
+   ],
+   "expected": [
+    5,
+    3,
+    8,
+    1,
+    4,
+    7,
+    9
+   ],
+   "tag": "far_apart"
+  },
+  {
+   "args": [
+    [
+     6,
+     0,
+     17,
+     null,
+     null,
+     10,
+     18,
+     12,
+     null,
+     null,
+     19
+    ]
+   ],
+   "expected": [
+    6,
+    0,
+    17,
+    null,
+    null,
+    12,
+    18,
+    10,
+    null,
+    null,
+    19
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     14,
+     1,
+     5,
+     null,
+     null,
+     10,
+     null,
+     null,
+     12
+    ]
+   ],
+   "expected": [
+    5,
+    1,
+    14,
+    null,
+    null,
+    10,
+    null,
+    null,
+    12
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     null,
+     5,
+     null,
+     7,
+     null,
+     11,
+     null,
+     10
+    ]
+   ],
+   "expected": [
+    2,
+    null,
+    5,
+    null,
+    7,
+    null,
+    10,
+    null,
+    11
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     null,
+     19,
+     1,
+     null,
+     null,
+     11,
+     3
+    ]
+   ],
+   "expected": [
+    1,
+    null,
+    19,
+    2,
+    null,
+    null,
+    11,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     3,
+     10,
+     6,
+     null,
+     null,
+     19
+    ]
+   ],
+   "expected": [
+    6,
+    3,
+    10,
+    0,
+    null,
+    null,
+    19
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [],
+ "hints": {
+  "1_question": "In a valid BST an in-order traversal is strictly increasing. What does the in-order sequence look like after two values are swapped?",
+  "2_nudge": "There will be one or two places where a value is larger than the next one. The first violation's larger value and the last violation's smaller value are the culprits.",
+  "3_big_hint": "Iterative in-order: when prev.val > cur.val: first = first or prev; second = cur. Finally swap first.val and second.val."
+ },
+ "known_bugs": [
+  {
+   "name": "fixes only the first out-of-order pair",
+   "code": "def recoverTree(root):\n    prev = None\n    st, cur = [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        if prev and prev.val > cur.val:\n            prev.val, cur.val = cur.val, prev.val\n            return\n        prev = cur\n        cur = cur.right\n",
+   "fails_on": "non_adjacent",
+   "followup": "If the two swapped values are far apart in the in-order order, how many violations are there, and does your code look at the second?"
+  },
+  {
+   "name": "takes the wrong node for 'first'",
+   "code": "def recoverTree(root):\n    first = second = prev = None\n    st, cur = [], root\n    while st or cur:\n        while cur:\n            st.append(cur)\n            cur = cur.left\n        cur = st.pop()\n        if prev and prev.val > cur.val:\n            if not first:\n                first = cur\n            second = prev\n        prev = cur\n        cur = cur.right\n    if first and second:\n        first.val, second.val = second.val, first.val\n",
+   "fails_on": "non_adjacent",
+   "followup": "At a violation (prev > cur), which of the two nodes is out of place for the FIRST violation, and which for the LAST?"
+  },
+  {
+   "name": "does nothing",
+   "code": "def recoverTree(root):\n    return None\n",
+   "fails_on": "two_nodes",
+   "followup": "Does your function change the tree at all?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "Can you do it with O(1) space using Morris traversal?",
+   "Why can there be one or two violations?"
+  ]
+ }
+}

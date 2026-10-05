@@ -1,0 +1,281 @@
+{
+ "id": "graph-200",
+ "leetcode": 200,
+ "title": "Number of Islands",
+ "pattern": "graph_bfs_dfs",
+ "difficulty": "medium",
+ "function": "numIslands",
+ "signature": "numIslands(grid: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "The grid contains 1 (land) and 0 (water). An island is a group of land cells connected horizontally or vertically (not diagonally). Return the number of islands.",
+ "reference_solution": "def numIslands(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1 and not seen[i][j]:\n                n += 1\n                st = [(i, j)]\n                seen[i][j] = True\n                while st:\n                    r, c = st.pop()\n                    for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                        nr, nc = r + dr, c + dc\n                        if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1 and not seen[nr][nc]:\n                            seen[nr][nc] = True\n                            st.append((nr, nc))\n    return n\n",
+ "brute_force_solution": "def numIslands(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    p = list(range(R * C))\n    def f(x):\n        while p[x] != x:\n            p[x] = p[p[x]]\n            x = p[x]\n        return x\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1:\n                for di, dj in ((1, 0), (0, 1)):\n                    ni, nj = i + di, j + dj\n                    if ni < R and nj < C and grid[ni][nj] == 1:\n                        p[f(i * C + j)] = f(ni * C + nj)\n    return len({f(i * C + j) for i in range(R) for j in range(C) if grid[i][j] == 1})\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "no_land"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 5,
+   "tag": "diagonal_not_connected"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "all_land"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      0,
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ],
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ],
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(60)\n    return [[[1 if r.random() < 0.7 else 0 for _ in range(300)] for _ in range(300)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Every land cell belongs to exactly one island. How can you make sure you count each island once?",
+  "2_nudge": "Scan the grid. When you meet unvisited land, count an island and flood-fill (DFS/BFS) all connected land so it is never counted again.",
+  "3_big_hint": "For each unvisited 1: n += 1; explore with a stack/queue in 4 directions marking cells visited."
+ },
+ "known_bugs": [
+  {
+   "name": "treats diagonal neighbours as connected",
+   "code": "def numIslands(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1 and not seen[i][j]:\n                n += 1\n                st = [(i, j)]\n                seen[i][j] = True\n                while st:\n                    r, c = st.pop()\n                    for dr in (-1, 0, 1):\n                        for dc in (-1, 0, 1):\n                            nr, nc = r + dr, c + dc\n                            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1 and not seen[nr][nc]:\n                                seen[nr][nc] = True\n                                st.append((nr, nc))\n    return n\n",
+   "fails_on": "diagonal_not_connected",
+   "followup": "The statement says connected horizontally or vertically. Which neighbours do you visit?"
+  },
+  {
+   "name": "counts land cells instead of islands",
+   "code": "def numIslands(grid):\n    return sum(sum(row) for row in grid)\n",
+   "fails_on": "normal",
+   "followup": "Does each land cell form its own island, or do connected cells share one?"
+  },
+  {
+   "name": "recursive DFS (recursion limit on big islands)",
+   "code": "def numIslands(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    def dfs(r, c):\n        if r < 0 or c < 0 or r >= R or c >= C or grid[r][c] != 1 or seen[r][c]:\n            return\n        seen[r][c] = True\n        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1 and not seen[i][j]:\n                n += 1\n                dfs(i, j)\n    return n\n",
+   "fails_on": "large",
+   "followup": "How deep can this recursion get on a 300 x 300 grid that is mostly land, and what is Python's default limit?"
+  }
+ ],
+ "complexity": {
+  "time": "O(R * C)",
+  "space": "O(R * C)",
+  "followups": [
+   "How would union-find solve it, and when is that better (dynamic additions)?",
+   "Why mark cells visited when pushing, not when popping?"
+  ]
+ }
+}

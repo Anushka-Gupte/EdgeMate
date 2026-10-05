@@ -1,0 +1,201 @@
+{
+ "id": "greedy-055",
+ "leetcode": 55,
+ "title": "Jump Game",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "canJump",
+ "signature": "canJump(nums: List[int]) -> bool",
+ "adapter": null,
+ "statement": "nums[i] is the maximum jump length from index i. Starting at index 0, return True if you can reach the last index.",
+ "reference_solution": "def canJump(nums):\n    far = 0\n    for i, x in enumerate(nums):\n        if i > far:\n            return False\n        far = max(far, i + x)\n    return True\n",
+ "brute_force_solution": "def canJump(nums):\n    n = len(nums)\n    ok = [False] * n\n    ok[0] = True\n    for i in range(n):\n        if ok[i]:\n            for j in range(i + 1, min(n, i + nums[i] + 1)):\n                ok[j] = True\n    return ok[-1]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     3,
+     1,
+     1,
+     4
+    ]
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     1,
+     0,
+     4
+    ]
+   ],
+   "expected": false,
+   "tag": "stuck_at_zero"
+  },
+  {
+   "args": [
+    [
+     0
+    ]
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     0,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "stuck_at_start"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     0
+    ]
+   ],
+   "expected": true,
+   "tag": "zero_but_reachable"
+  },
+  {
+   "args": [
+    [
+     2,
+     5,
+     0,
+     0
+    ]
+   ],
+   "expected": true,
+   "tag": "greedy_biggest_step"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     0,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "stuck_at_zero"
+  },
+  {
+   "args": [
+    [
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     0,
+     2
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     2,
+     0,
+     0,
+     1,
+     3
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3,
+     1,
+     1,
+     2
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     2,
+     3,
+     0,
+     3,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[1] * 100000]"
+  }
+ ],
+ "hints": {
+  "1_question": "You don't need the exact path, only whether the last index can be reached. What single number summarises everything reachable so far?",
+  "2_nudge": "Keep the farthest index reachable. If you ever stand on an index beyond it, you are stuck.",
+  "3_big_hint": "far = 0; for i, x: if i > far: return False; far = max(far, i + x). Return True."
+ },
+ "known_bugs": [
+  {
+   "name": "any zero means failure",
+   "code": "def canJump(nums):\n    return 0 not in nums[:-1] if len(nums) > 1 else True\n",
+   "fails_on": "zero_but_reachable",
+   "followup": "In [2, 0, 0] you can jump over the zeros. Does the presence of a zero always block you?"
+  },
+  {
+   "name": "always jumps the full length",
+   "code": "def canJump(nums):\n    i = 0\n    while i < len(nums) - 1:\n        if nums[i] == 0:\n            return False\n        i += nums[i]\n    return True\n",
+   "fails_on": "greedy_biggest_step",
+   "followup": "In [2, 5, 0, 0] is it right to jump the full 2 from index 0, or would a shorter jump be better?"
+  },
+  {
+   "name": "farthest reach computed one short",
+   "code": "def canJump(nums):\n    far = 0\n    for i, x in enumerate(nums):\n        if i > far:\n            return False\n        far = max(far, i + x - 1)\n    return True\n",
+   "fails_on": "normal",
+   "followup": "From index i with value x, which index is the farthest you can land on - i + x or i + x - 1?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is tracking only the farthest reach enough?",
+   "How would you recover an actual path of jumps?"
+  ]
+ }
+}

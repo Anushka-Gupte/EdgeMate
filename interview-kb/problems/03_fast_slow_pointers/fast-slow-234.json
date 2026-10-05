@@ -1,0 +1,190 @@
+{
+ "id": "fast-slow-234",
+ "leetcode": 234,
+ "title": "Palindrome Linked List",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "easy",
+ "function": "isPalindrome",
+ "signature": "isPalindrome(head: ListNode) -> bool",
+ "adapter": "list_to_value",
+ "statement": "Return True if the values of a singly linked list read the same forwards and backwards. Try to use O(1) extra space.",
+ "reference_solution": "def isPalindrome(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    prev = None\n    while slow:\n        nxt = slow.next\n        slow.next = prev\n        prev = slow\n        slow = nxt\n    a, b = head, prev\n    while b:\n        if a.val != b.val:\n            return False\n        a = a.next\n        b = b.next\n    return True\n",
+ "brute_force_solution": "def isPalindrome(head):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    return vals == vals[::-1]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "even_palindrome"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "odd_palindrome"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": false,
+   "tag": "not_palindrome"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": true,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     2,
+     2
+    ]
+   ],
+   "expected": false,
+   "tag": "not_palindrome"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "only_ends_match"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     0,
+     2
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     0,
+     2,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     3,
+     1,
+     1,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     1,
+     3,
+     3,
+     0
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    a = list(range(50000))\n    return [a + a[::-1]]"
+  }
+ ],
+ "hints": {
+  "1_question": "A palindrome reads the same from both ends, but a singly linked list only goes one direction. How could you compare the second half backwards?",
+  "2_nudge": "Find the middle with slow/fast pointers, reverse the second half in place, then compare it with the first half.",
+  "3_big_hint": "Middle: slow/fast. Reverse from slow to the end. Walk a from head and b from the reversed half while b exists, comparing values."
+ },
+ "known_bugs": [
+  {
+   "name": "splits the value list in half without reversing",
+   "code": "def isPalindrome(head):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    h = len(vals) // 2\n    return vals[:h] == vals[h:]\n",
+   "fails_on": "even_palindrome",
+   "followup": "For [1,2,2,1] you compare [1,2] with [2,1]. Should the second half be read in the same order or reversed?"
+  },
+  {
+   "name": "only compares the first and last values",
+   "code": "def isPalindrome(head):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    return vals[0] == vals[-1]\n",
+   "fails_on": "only_ends_match",
+   "followup": "Is [1, 2, 3, 1] a palindrome? What about the values in between the ends?"
+  },
+  {
+   "name": "recursive comparison (stack overflow on long lists)",
+   "code": "def isPalindrome(head):\n    front = [head]\n    def check(node):\n        if node is None:\n            return True\n        if not check(node.next):\n            return False\n        ok = node.val == front[0].val\n        front[0] = front[0].next\n        return ok\n    return check(head)\n",
+   "fails_on": "large",
+   "followup": "How deep does your recursion go on a list of 100000 nodes, and what limit does Python put on that?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "This modifies the list. How would you restore it, and does the problem require that?",
+   "What are the trade-offs versus copying the values into an array?"
+  ]
+ }
+}

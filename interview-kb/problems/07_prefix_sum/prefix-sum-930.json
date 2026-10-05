@@ -1,0 +1,200 @@
+{
+ "id": "prefix-sum-930",
+ "leetcode": 930,
+ "title": "Binary Subarrays With Sum",
+ "pattern": "prefix_sum",
+ "difficulty": "medium",
+ "function": "numSubarraysWithSum",
+ "signature": "numSubarraysWithSum(nums: List[int], goal: int) -> int",
+ "adapter": null,
+ "statement": "The list contains only 0s and 1s. Return how many non-empty contiguous subarrays sum to exactly goal.",
+ "reference_solution": "def numSubarraysWithSum(nums, goal):\n    seen = {0: 1}\n    total = count = 0\n    for x in nums:\n        total += x\n        count += seen.get(total - goal, 0)\n        seen[total] = seen.get(total, 0) + 1\n    return count\n",
+ "brute_force_solution": "def numSubarraysWithSum(nums, goal):\n    count = 0\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s == goal:\n                count += 1\n    return count\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     0,
+     1,
+     0,
+     1
+    ],
+    2
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    0
+   ],
+   "expected": 15,
+   "tag": "all_zeros"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "from_start"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     0
+    ],
+    1
+   ],
+   "expected": 4,
+   "tag": "zeros_around"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1
+    ],
+    4
+   ],
+   "expected": 0,
+   "tag": "goal_too_large"
+  },
+  {
+   "args": [
+    [
+     1,
+     0,
+     1,
+     1,
+     0,
+     1,
+     0,
+     1,
+     1
+    ],
+    0
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     0,
+     1,
+     1,
+     1,
+     1,
+     0
+    ],
+    0
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     0,
+     1,
+     1,
+     1
+    ],
+    2
+   ],
+   "expected": 6,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     0
+    ],
+    3
+   ],
+   "expected": 8,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(27)\n    return [[r.randint(0, 1) for _ in range(100000)], 1000]"
+  }
+ ],
+ "hints": {
+  "1_question": "A subarray sum is a difference of two prefix sums. For each position, how many earlier prefixes equal (current - goal)?",
+  "2_nudge": "Keep a count map of prefix sums seen so far, starting with {0: 1} for the empty prefix.",
+  "3_big_hint": "total += x; count += seen.get(total - goal, 0); seen[total] += 1."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets the empty prefix",
+   "code": "def numSubarraysWithSum(nums, goal):\n    seen = {}\n    total = count = 0\n    for x in nums:\n        total += x\n        count += seen.get(total - goal, 0)\n        seen[total] = seen.get(total, 0) + 1\n    return count\n",
+   "fails_on": "from_start",
+   "followup": "How do you count a subarray that starts at index 0? Which prefix sum represents 'nothing taken yet'?"
+  },
+  {
+   "name": "sliding window that counts one subarray per right end",
+   "code": "def numSubarraysWithSum(nums, goal):\n    left = total = count = 0\n    for right, x in enumerate(nums):\n        total += x\n        while total > goal and left <= right:\n            total -= nums[left]\n            left += 1\n        if total == goal:\n            count += 1\n    return count\n",
+   "fails_on": "all_zeros",
+   "followup": "With zeros in the array, how many different left ends can share the same right end and the same sum?"
+  },
+  {
+   "name": "counts subarrays with sum at most goal",
+   "code": "def numSubarraysWithSum(nums, goal):\n    left = total = res = 0\n    for right, x in enumerate(nums):\n        total += x\n        while total > goal:\n            total -= nums[left]\n            left += 1\n        res += right - left + 1\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Does 'at most goal' equal 'exactly goal'? What would you subtract to isolate exactly goal?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "How does the 'at most(goal) - at most(goal-1)' sliding window solution compare?",
+   "Why does the zeros case trip up a plain sliding window?"
+  ]
+ }
+}

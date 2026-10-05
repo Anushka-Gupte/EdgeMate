@@ -1,0 +1,186 @@
+{
+ "id": "monotonic-stack-085",
+ "leetcode": 85,
+ "title": "Maximal Rectangle",
+ "pattern": "monotonic_stack",
+ "difficulty": "hard",
+ "function": "maximalRectangle",
+ "signature": "maximalRectangle(matrix: List[str]) -> int",
+ "adapter": null,
+ "statement": "The matrix is given as a list of equal-length strings of '0' and '1'. Return the area of the largest rectangle containing only '1's.",
+ "reference_solution": "def maximalRectangle(matrix):\n    if not matrix or not matrix[0]:\n        return 0\n    n = len(matrix[0])\n    h = [0] * n\n    best = 0\n    for row in matrix:\n        for j, ch in enumerate(row):\n            h[j] = h[j] + 1 if ch == \"1\" else 0\n        stack = []\n        for i, x in enumerate(h + [0]):\n            while stack and h[stack[-1]] > x:\n                height = h[stack.pop()]\n                width = i if not stack else i - stack[-1] - 1\n                best = max(best, height * width)\n            stack.append(i)\n    return best\n",
+ "brute_force_solution": "def maximalRectangle(matrix):\n    R = len(matrix)\n    C = len(matrix[0]) if R else 0\n    best = 0\n    for r1 in range(R):\n        for r2 in range(r1, R):\n            for c1 in range(C):\n                for c2 in range(c1, C):\n                    if all(matrix[r][c] == \"1\" for r in range(r1, r2 + 1) for c in range(c1, c2 + 1)):\n                        best = max(best, (r2 - r1 + 1) * (c2 - c1 + 1))\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     "10100",
+     "10111",
+     "11111",
+     "10010"
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     "0"
+    ]
+   ],
+   "expected": 0,
+   "tag": "all_zeros"
+  },
+  {
+   "args": [
+    [
+     "1"
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     "11",
+     "11"
+    ]
+   ],
+   "expected": 4,
+   "tag": "full_grid"
+  },
+  {
+   "args": [
+    [
+     "1",
+     "1",
+     "1"
+    ]
+   ],
+   "expected": 3,
+   "tag": "single_column"
+  },
+  {
+   "args": [
+    [
+     "10",
+     "01"
+    ]
+   ],
+   "expected": 1,
+   "tag": "diagonal"
+  },
+  {
+   "args": [
+    [
+     "0110",
+     "1111",
+     "0110"
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     "100",
+     "100",
+     "001",
+     "011"
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "00101",
+     "01100",
+     "10001"
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "0",
+     "0",
+     "1",
+     "0"
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "110",
+     "111",
+     "001"
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(33)\n    return [[''.join(r.choice('1110') for _ in range(300)) for _ in range(300)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Each row, together with the rows above it, forms a histogram of consecutive 1s. What problem have you already solved on histograms?",
+  "2_nudge": "Maintain heights[j] = number of consecutive 1s ending at the current row in column j (reset to 0 on a '0'). Run the largest-rectangle-in-histogram stack on every row.",
+  "3_big_hint": "h[j] = h[j] + 1 if ch == '1' else 0. Then for each row do the stack scan with a trailing 0 sentinel: pop while h[top] > x; width = i if stack empty else i - stack[-1] - 1."
+ },
+ "known_bugs": [
+  {
+   "name": "heights are not reset on a '0'",
+   "code": "def maximalRectangle(matrix):\n    if not matrix or not matrix[0]:\n        return 0\n    n = len(matrix[0])\n    h = [0] * n\n    best = 0\n    for row in matrix:\n        for j, ch in enumerate(row):\n            h[j] = h[j] + 1 if ch == \"1\" else h[j]\n        stack = []\n        for i, x in enumerate(h + [0]):\n            while stack and h[stack[-1]] > x:\n                height = h[stack.pop()]\n                width = i if not stack else i - stack[-1] - 1\n                best = max(best, height * width)\n            stack.append(i)\n    return best\n",
+   "fails_on": "diagonal",
+   "followup": "If a column has a '0' in the current row, how tall can a rectangle in that column be here?"
+  },
+  {
+   "name": "only considers each row on its own (never stacks rows)",
+   "code": "def maximalRectangle(matrix):\n    best = 0\n    for row in matrix:\n        run = 0\n        for ch in row:\n            run = run + 1 if ch == \"1\" else 0\n            best = max(best, run)\n    return best\n",
+   "fails_on": "single_column",
+   "followup": "A rectangle can span several rows. What does your code do with a column of 1s going down?"
+  },
+  {
+   "name": "no sentinel: bars left on the stack are never measured",
+   "code": "def maximalRectangle(matrix):\n    if not matrix or not matrix[0]:\n        return 0\n    n = len(matrix[0])\n    h = [0] * n\n    best = 0\n    for row in matrix:\n        for j, ch in enumerate(row):\n            h[j] = h[j] + 1 if ch == \"1\" else 0\n        stack = []\n        for i, x in enumerate(h):\n            while stack and h[stack[-1]] > x:\n                height = h[stack.pop()]\n                width = i if not stack else i - stack[-1] - 1\n                best = max(best, height * width)\n            stack.append(i)\n    return best\n",
+   "fails_on": "full_grid",
+   "followup": "After you finish scanning a row, which bars are still on the stack, and who computes their areas?"
+  }
+ ],
+ "complexity": {
+  "time": "O(rows * cols)",
+  "space": "O(cols)",
+  "followups": [
+   "Why does reusing the histogram solution give O(RC) instead of O(R^2 C^2)?",
+   "Could dynamic programming over left/right/height arrays give the same complexity?"
+  ]
+ }
+}

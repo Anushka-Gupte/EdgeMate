@@ -1,0 +1,252 @@
+{
+ "id": "graph-1091",
+ "leetcode": 1091,
+ "title": "Shortest Path in Binary Matrix",
+ "pattern": "graph_bfs_dfs",
+ "difficulty": "medium",
+ "function": "shortestPathBinaryMatrix",
+ "signature": "shortestPathBinaryMatrix(grid: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "In an n x n grid of 0s (open) and 1s (blocked), find the length of the shortest path from the top-left cell to the bottom-right cell moving through open cells in any of 8 directions. The length counts cells on the path (including both ends). Return -1 if no path exists.",
+ "reference_solution": "from collections import deque\ndef shortestPathBinaryMatrix(grid):\n    n = len(grid)\n    if n == 0 or grid[0][0] == 1 or grid[n - 1][n - 1] == 1:\n        return -1\n    q = deque([(0, 0, 1)])\n    seen = {(0, 0)}\n    while q:\n        r, c, d = q.popleft()\n        if r == n - 1 and c == n - 1:\n            return d\n        for dr in (-1, 0, 1):\n            for dc in (-1, 0, 1):\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0 and (nr, nc) not in seen:\n                    seen.add((nr, nc))\n                    q.append((nr, nc, d + 1))\n    return -1\n",
+ "brute_force_solution": "def shortestPathBinaryMatrix(grid):\n    n = len(grid)\n    if n == 0 or grid[0][0] == 1 or grid[n - 1][n - 1] == 1:\n        return -1\n    INF = 10 ** 9\n    d = [[INF] * n for _ in range(n)]\n    d[0][0] = 1\n    changed = True\n    while changed:\n        changed = False\n        for i in range(n):\n            for j in range(n):\n                if grid[i][j] == 0 and d[i][j] < INF:\n                    for di in (-1, 0, 1):\n                        for dj in (-1, 0, 1):\n                            ni, nj = i + di, j + dj\n                            if 0 <= ni < n and 0 <= nj < n and grid[ni][nj] == 0 and d[ni][nj] > d[i][j] + 1:\n                                d[ni][nj] = d[i][j] + 1\n                                changed = True\n    return d[n - 1][n - 1] if d[n - 1][n - 1] < INF else -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "diagonal"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "start_blocked"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "end_blocked"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "end_blocked"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[[0] * 200 for _ in range(200)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "You want the fewest steps in an unweighted grid. Which traversal gives shortest paths?",
+  "2_nudge": "BFS from the top-left, moving in all 8 directions through 0-cells, tracking the number of cells on the path. Check that start and end are open first.",
+  "3_big_hint": "If grid[0][0] or grid[n-1][n-1] is 1 return -1. Queue (r, c, 1); mark visited when enqueued; return d at the target; otherwise -1."
+ },
+ "known_bugs": [
+  {
+   "name": "only 4 directions",
+   "code": "from collections import deque\ndef shortestPathBinaryMatrix(grid):\n    n = len(grid)\n    if n == 0 or grid[0][0] == 1 or grid[n - 1][n - 1] == 1:\n        return -1\n    q = deque([(0, 0, 1)])\n    seen = {(0, 0)}\n    while q:\n        r, c, d = q.popleft()\n        if r == n - 1 and c == n - 1:\n            return d\n        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0 and (nr, nc) not in seen:\n                seen.add((nr, nc))\n                q.append((nr, nc, d + 1))\n    return -1\n",
+   "fails_on": "diagonal",
+   "followup": "The statement allows moves in 8 directions. Which do you try?"
+  },
+  {
+   "name": "counts steps (edges) instead of cells",
+   "code": "from collections import deque\ndef shortestPathBinaryMatrix(grid):\n    n = len(grid)\n    if n == 0 or grid[0][0] == 1 or grid[n - 1][n - 1] == 1:\n        return -1\n    q = deque([(0, 0, 0)])\n    seen = {(0, 0)}\n    while q:\n        r, c, d = q.popleft()\n        if r == n - 1 and c == n - 1:\n            return d\n        for dr in (-1, 0, 1):\n            for dc in (-1, 0, 1):\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0 and (nr, nc) not in seen:\n                    seen.add((nr, nc))\n                    q.append((nr, nc, d + 1))\n    return -1\n",
+   "fails_on": "single",
+   "followup": "In a 1 x 1 grid the path has one cell. What length do you report?"
+  },
+  {
+   "name": "does not check whether the start/end cells are blocked",
+   "code": "from collections import deque\ndef shortestPathBinaryMatrix(grid):\n    n = len(grid)\n    if n == 0:\n        return -1\n    q = deque([(0, 0, 1)])\n    seen = {(0, 0)}\n    while q:\n        r, c, d = q.popleft()\n        if r == n - 1 and c == n - 1:\n            return d\n        for dr in (-1, 0, 1):\n            for dc in (-1, 0, 1):\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0 and (nr, nc) not in seen:\n                    seen.add((nr, nc))\n                    q.append((nr, nc, d + 1))\n    return -1\n",
+   "fails_on": "start_blocked",
+   "followup": "What if the top-left cell itself is blocked?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n^2)",
+  "space": "O(n^2)",
+  "followups": [
+   "Why is marking visited at enqueue time important for speed?",
+   "When would A* beat plain BFS?"
+  ]
+ }
+}

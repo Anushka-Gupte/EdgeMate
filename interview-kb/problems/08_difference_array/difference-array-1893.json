@@ -1,0 +1,268 @@
+{
+ "id": "difference-array-1893",
+ "leetcode": 1893,
+ "title": "Check if All the Integers in a Range Are Covered",
+ "pattern": "difference_array",
+ "difficulty": "easy",
+ "function": "isCovered",
+ "signature": "isCovered(ranges: List[List[int]], left: int, right: int) -> bool",
+ "adapter": null,
+ "statement": "Each range [a, b] covers every integer from a to b inclusive (values are between 1 and 50). Return True if every integer from left to right inclusive is covered by at least one range.",
+ "reference_solution": "def isCovered(ranges, left, right):\n    diff = [0] * 52\n    for a, b in ranges:\n        diff[a] += 1\n        diff[b + 1] -= 1\n    cur = 0\n    for i in range(1, 51):\n        cur += diff[i]\n        if left <= i <= right and cur <= 0:\n            return False\n    return True\n",
+ "brute_force_solution": "def isCovered(ranges, left, right):\n    return all(any(a <= x <= b for a, b in ranges) for x in range(left, right + 1))\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      5,
+      6
+     ]
+    ],
+    2,
+    5
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      10
+     ],
+     [
+      10,
+      20
+     ]
+    ],
+    21,
+    21
+   ],
+   "expected": false,
+   "tag": "outside"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      50
+     ]
+    ],
+    1,
+    50
+   ],
+   "expected": true,
+   "tag": "full"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      5
+     ],
+     [
+      7,
+      10
+     ]
+    ],
+    1,
+    10
+   ],
+   "expected": false,
+   "tag": "gap_in_middle"
+  },
+  {
+   "args": [
+    [],
+    1,
+    1
+   ],
+   "expected": false,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1
+     ]
+    ],
+    1,
+    1
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      4
+     ],
+     [
+      1,
+      2
+     ]
+    ],
+    1,
+    4
+   ],
+   "expected": true,
+   "tag": "unsorted"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      9
+     ],
+     [
+      8,
+      12
+     ]
+    ],
+    4,
+    7
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      2
+     ],
+     [
+      4,
+      8
+     ]
+    ],
+    5,
+    6
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      11,
+      12
+     ],
+     [
+      12,
+      12
+     ],
+     [
+      1,
+      10
+     ],
+     [
+      7,
+      8
+     ]
+    ],
+    5,
+    10
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      6
+     ],
+     [
+      4,
+      11
+     ]
+    ],
+    9,
+    9
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      11,
+      11
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      1,
+      8
+     ],
+     [
+      7,
+      12
+     ]
+    ],
+    3,
+    12
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [],
+ "hints": {
+  "1_question": "You need to know, for each integer from left to right, whether at least one range includes it. How can you mark whole ranges cheaply?",
+  "2_nudge": "Add +1 where each range starts and -1 just after it ends in a small array, then sweep with a running sum.",
+  "3_big_hint": "diff[a] += 1; diff[b+1] -= 1. Sweep i from 1..50 with a running count; if left <= i <= right and the count is 0, return False."
+ },
+ "known_bugs": [
+  {
+   "name": "assumes ranges are given in order (greedy chain)",
+   "code": "def isCovered(ranges, left, right):\n    cur = left\n    for a, b in ranges:\n        if a <= cur <= b:\n            cur = b + 1\n    return cur > right\n",
+   "fails_on": "unsorted",
+   "followup": "Are the ranges guaranteed to be sorted? What happens if the range that covers `left` comes later in the list?"
+  },
+  {
+   "name": "treats the end of each range as exclusive",
+   "code": "def isCovered(ranges, left, right):\n    diff = [0] * 52\n    for a, b in ranges:\n        diff[a] += 1\n        diff[b] -= 1\n    cur = 0\n    for i in range(1, 51):\n        cur += diff[i]\n        if left <= i <= right and cur <= 0:\n            return False\n    return True\n",
+   "fails_on": "normal",
+   "followup": "Does the range [1, 2] cover the number 2? Where does your '-1' marker go?"
+  },
+  {
+   "name": "only checks that left and right themselves are covered",
+   "code": "def isCovered(ranges, left, right):\n    cl = any(a <= left <= b for a, b in ranges)\n    cr = any(a <= right <= b for a, b in ranges)\n    return cl and cr\n",
+   "fails_on": "gap_in_middle",
+   "followup": "If both endpoints are covered, can there still be an uncovered number between them?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + 50)",
+  "space": "O(1)",
+  "followups": [
+   "How does the difference-array approach scale if values go up to 10^9?",
+   "What is the sorted-intervals merge solution's complexity?"
+  ]
+ }
+}

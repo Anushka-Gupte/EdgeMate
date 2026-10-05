@@ -1,0 +1,346 @@
+{
+ "id": "hashing-049",
+ "leetcode": 49,
+ "title": "Group Anagrams",
+ "pattern": "hashing_frequency",
+ "difficulty": "medium",
+ "function": "groupAnagrams",
+ "signature": "groupAnagrams(strs: List[str]) -> List[List[str]]",
+ "adapter": "sort_nested",
+ "statement": "Group the strings so that each group contains words that are anagrams of one another (same letters, same counts). Group order and order within a group do not matter.",
+ "reference_solution": "def groupAnagrams(strs):\n    groups = {}\n    for s in strs:\n        groups.setdefault(\"\".join(sorted(s)), []).append(s)\n    return list(groups.values())\n",
+ "brute_force_solution": "def groupAnagrams(strs):\n    groups = []\n    for s in strs:\n        for g in groups:\n            if sorted(g[0]) == sorted(s):\n                g.append(s)\n                break\n        else:\n            groups.append([s])\n    return groups\n",
+ "tests": [
+  {
+   "args": [
+    [
+     "eat",
+     "tea",
+     "tan",
+     "ate",
+     "nat",
+     "bat"
+    ]
+   ],
+   "expected": [
+    [
+     "ate",
+     "eat",
+     "tea"
+    ],
+    [
+     "bat"
+    ],
+    [
+     "nat",
+     "tan"
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     ""
+    ]
+   ],
+   "expected": [
+    [
+     ""
+    ]
+   ],
+   "tag": "empty_string"
+  },
+  {
+   "args": [
+    [
+     "a"
+    ]
+   ],
+   "expected": [
+    [
+     "a"
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     "ab",
+     "ba",
+     "abc"
+    ]
+   ],
+   "expected": [
+    [
+     "ab",
+     "ba"
+    ],
+    [
+     "abc"
+    ]
+   ],
+   "tag": "different_lengths"
+  },
+  {
+   "args": [
+    [
+     "aab",
+     "aba",
+     "baa",
+     "abb"
+    ]
+   ],
+   "expected": [
+    [
+     "aab",
+     "aba",
+     "baa"
+    ],
+    [
+     "abb"
+    ]
+   ],
+   "tag": "repeated_letters"
+  },
+  {
+   "args": [
+    [
+     "ad",
+     "bc"
+    ]
+   ],
+   "expected": [
+    [
+     "ad"
+    ],
+    [
+     "bc"
+    ]
+   ],
+   "tag": "sum_collision"
+  },
+  {
+   "args": [
+    [
+     "aab",
+     "abb",
+     "ab"
+    ]
+   ],
+   "expected": [
+    [
+     "aab"
+    ],
+    [
+     "ab"
+    ],
+    [
+     "abb"
+    ]
+   ],
+   "tag": "counts_matter"
+  },
+  {
+   "args": [
+    [
+     "a",
+     "a"
+    ]
+   ],
+   "expected": [
+    [
+     "a",
+     "a"
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     "aa",
+     "cc",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "expected": [
+    [
+     "",
+     "",
+     ""
+    ],
+    [
+     "aa"
+    ],
+    [
+     "cc"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "",
+     "",
+     "",
+     "",
+     "baa",
+     "",
+     "ac"
+    ]
+   ],
+   "expected": [
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "ac"
+    ],
+    [
+     "baa"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "a",
+     "ba",
+     "ba",
+     "bc",
+     "bca",
+     "",
+     "b",
+     "baa"
+    ]
+   ],
+   "expected": [
+    [
+     ""
+    ],
+    [
+     "a"
+    ],
+    [
+     "b"
+    ],
+    [
+     "ba",
+     "ba"
+    ],
+    [
+     "baa"
+    ],
+    [
+     "bc"
+    ],
+    [
+     "bca"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "",
+     "cb",
+     "a",
+     "bcc",
+     "ca"
+    ]
+   ],
+   "expected": [
+    [
+     ""
+    ],
+    [
+     "a"
+    ],
+    [
+     "bcc"
+    ],
+    [
+     "ca"
+    ],
+    [
+     "cb"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "aca",
+     "abb"
+    ]
+   ],
+   "expected": [
+    [
+     "abb"
+    ],
+    [
+     "aca"
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(23)\n    return [[''.join(r.choice('abcdefgh') for _ in range(7)) for _ in range(30000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "What property do all words in one group share, regardless of letter order?",
+  "2_nudge": "If you sort the letters of each word you get a canonical key that is identical for anagrams. Use it as a dictionary key.",
+  "3_big_hint": "groups = {}; for s in strs: key = ''.join(sorted(s)); groups.setdefault(key, []).append(s). Return list(groups.values())."
+ },
+ "known_bugs": [
+  {
+   "name": "uses the sum of character codes as the key",
+   "code": "def groupAnagrams(strs):\n    groups = {}\n    for s in strs:\n        groups.setdefault(sum(map(ord, s)), []).append(s)\n    return list(groups.values())\n",
+   "fails_on": "sum_collision",
+   "followup": "Can two different multisets of letters have the same total of character codes? Try 'ad' and 'bc'."
+  },
+  {
+   "name": "uses the set of letters as the key",
+   "code": "def groupAnagrams(strs):\n    groups = {}\n    for s in strs:\n        groups.setdefault(frozenset(s), []).append(s)\n    return list(groups.values())\n",
+   "fails_on": "counts_matter",
+   "followup": "Are 'aab' and 'abb' anagrams? What does a set of letters throw away?"
+  },
+  {
+   "name": "compares each word against every existing group (O(n * groups))",
+   "code": "def groupAnagrams(strs):\n    groups = []\n    for s in strs:\n        for g in groups:\n            if sorted(g[0]) == sorted(s):\n                g.append(s)\n                break\n        else:\n            groups.append([s])\n    return groups\n",
+   "fails_on": "large",
+   "followup": "How many comparisons do you make per word if there are hundreds of groups? Which key lets a dictionary find the group in O(1)?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * L log L)",
+  "space": "O(n * L)",
+  "followups": [
+   "How would a 26-count tuple key change the complexity per word?",
+   "Why can't a list be a dictionary key, and what do you use instead?"
+  ]
+ }
+}

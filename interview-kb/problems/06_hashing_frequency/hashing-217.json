@@ -1,0 +1,171 @@
+{
+ "id": "hashing-217",
+ "leetcode": 217,
+ "title": "Contains Duplicate",
+ "pattern": "hashing_frequency",
+ "difficulty": "easy",
+ "function": "containsDuplicate",
+ "signature": "containsDuplicate(nums: List[int]) -> bool",
+ "adapter": null,
+ "statement": "Return True if any value appears at least twice in the list, otherwise False.",
+ "reference_solution": "def containsDuplicate(nums):\n    seen = set()\n    for x in nums:\n        if x in seen:\n            return True\n        seen.add(x)\n    return False\n",
+ "brute_force_solution": "def containsDuplicate(nums):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] == nums[j]:\n                return True\n    return False\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": false,
+   "tag": "all_distinct"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "non_adjacent"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": false,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": false,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -1
+    ]
+   ],
+   "expected": true,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2,
+     3,
+     0,
+     5,
+     3,
+     5,
+     -1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     4
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -1,
+     0
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -2,
+     4
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1
+    ]
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "What would let you ask 'have I seen this number before?' in constant time?",
+  "2_nudge": "A set remembers what you've seen. Check membership before inserting.",
+  "3_big_hint": "For each x: if x in seen return True; else add x. Return False at the end."
+ },
+ "known_bugs": [
+  {
+   "name": "only compares adjacent elements",
+   "code": "def containsDuplicate(nums):\n    for i in range(len(nums) - 1):\n        if nums[i] == nums[i + 1]:\n            return True\n    return False\n",
+   "fails_on": "non_adjacent",
+   "followup": "Are duplicates guaranteed to sit next to each other? What about [1, 2, 1]?"
+  },
+  {
+   "name": "answer inverted",
+   "code": "def containsDuplicate(nums):\n    return len(set(nums)) == len(nums)\n",
+   "fails_on": "all_distinct",
+   "followup": "When all elements are different, what should the function return, and what does yours?"
+  },
+  {
+   "name": "uses a list for 'seen' (O(n) lookups)",
+   "code": "def containsDuplicate(nums):\n    seen = []\n    for x in nums:\n        if x in seen:\n            return True\n        seen.append(x)\n    return False\n",
+   "fails_on": "large",
+   "followup": "What is the time complexity of `x in seen` when seen is a list? What data structure gives O(1)?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Can you do it with O(1) extra space? What do you give up?",
+   "Is `len(set(nums)) != len(nums)` better or worse than the early-exit loop?"
+  ]
+ }
+}

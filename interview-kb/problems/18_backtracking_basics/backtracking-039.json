@@ -1,0 +1,236 @@
+{
+ "id": "backtracking-039",
+ "leetcode": 39,
+ "title": "Combination Sum",
+ "pattern": "backtracking_basics",
+ "difficulty": "medium",
+ "function": "combinationSum",
+ "signature": "combinationSum(candidates: List[int], target: int) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "Candidates are distinct positive integers. Return all unique combinations that add up to the target, where the same candidate may be used any number of times. Order does not matter.",
+ "reference_solution": "def combinationSum(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            cur.append(cands[i])\n            bt(i, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+ "brute_force_solution": "def combinationSum(candidates, target):\n    out = []\n    def go(i, rem, cur):\n        if i == len(candidates):\n            if rem == 0:\n                out.append(cur[:])\n            return\n        c = candidates[i]\n        for cnt in range(rem // c + 1):\n            go(i + 1, rem - cnt * c, cur + [c] * cnt)\n    go(0, target, [])\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     3,
+     6,
+     7
+    ],
+    7
+   ],
+   "expected": [
+    [
+     2,
+     2,
+     3
+    ],
+    [
+     7
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     5
+    ],
+    8
+   ],
+   "expected": [
+    [
+     2,
+     2,
+     2,
+     2
+    ],
+    [
+     2,
+     3,
+     3
+    ],
+    [
+     3,
+     5
+    ]
+   ],
+   "tag": "reuse"
+  },
+  {
+   "args": [
+    [
+     2
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    3
+   ],
+   "expected": [
+    [
+     1,
+     1,
+     1
+    ]
+   ],
+   "tag": "reuse"
+  },
+  {
+   "args": [
+    [
+     7,
+     3,
+     2
+    ],
+    7
+   ],
+   "expected": [
+    [
+     2,
+     2,
+     3
+    ],
+    [
+     7
+    ]
+   ],
+   "tag": "unsorted_input"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    5
+   ],
+   "expected": [
+    [
+     5
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     7,
+     8,
+     4
+    ],
+    4
+   ],
+   "expected": [
+    [
+     4
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     7
+    ],
+    1
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    6
+   ],
+   "expected": [
+    [
+     3,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     6
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     6,
+     4,
+     2
+    ],
+    11
+   ],
+   "expected": [],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[2, 3, 5, 7], 40]"
+  }
+ ],
+ "hints": {
+  "1_question": "Each candidate can be used repeatedly. How do you let a number be chosen again but still avoid producing the same combination in a different order?",
+  "2_nudge": "Recurse with a `start` index: after choosing candidates[i], continue from i (not i + 1) so it can repeat, but never go back to earlier indices.",
+  "3_big_hint": "bt(start, rem): if rem == 0 record; for i from start: if cands[i] > rem break; append; bt(i, rem - cands[i]); pop."
+ },
+ "known_bugs": [
+  {
+   "name": "each candidate used at most once",
+   "code": "def combinationSum(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            cur.append(cands[i])\n            bt(i + 1, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+   "fails_on": "reuse",
+   "followup": "The same number may be used many times. After choosing index i, which index should the next call start from?"
+  },
+  {
+   "name": "restarts from index 0 (same combo in many orders)",
+   "code": "def combinationSum(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for c in cands:\n            if c > rem:\n                break\n            cur.append(c)\n            bt(rem - c)\n            cur.pop()\n    bt(target)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Are [2, 2, 3] and [2, 3, 2] different combinations?"
+  },
+  {
+   "name": "stops after the first solution",
+   "code": "def combinationSum(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            cur.append(cands[i])\n            bt(i, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res[:1]\n",
+   "fails_on": "normal",
+   "followup": "The task asks for ALL combinations. How many does your function return for [2,3,6,7] and 7?"
+  }
+ ],
+ "complexity": {
+  "time": "Exponential (output-sensitive)",
+  "space": "O(target / min(candidates))",
+  "followups": [
+   "Why does sorting allow an early break?",
+   "How would a DP over the target compare for just counting combinations?"
+  ]
+ }
+}

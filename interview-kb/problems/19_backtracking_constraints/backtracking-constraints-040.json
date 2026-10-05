@@ -1,0 +1,250 @@
+{
+ "id": "backtracking-constraints-040",
+ "leetcode": 40,
+ "title": "Combination Sum II",
+ "pattern": "backtracking_constraints",
+ "difficulty": "medium",
+ "function": "combinationSum2",
+ "signature": "combinationSum2(candidates: List[int], target: int) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "Candidates may contain duplicates. Return all unique combinations that sum to the target, using each candidate (each position) at most once. Combinations with the same values must not be repeated.",
+ "reference_solution": "def combinationSum2(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            if i > start and cands[i] == cands[i - 1]:\n                continue\n            cur.append(cands[i])\n            bt(i + 1, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+ "brute_force_solution": "import itertools\ndef combinationSum2(candidates, target):\n    out = set()\n    for k in range(len(candidates) + 1):\n        for c in itertools.combinations(candidates, k):\n            if sum(c) == target:\n                out.add(tuple(sorted(c)))\n    return [list(t) for t in out]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     10,
+     1,
+     2,
+     7,
+     6,
+     1,
+     5
+    ],
+    8
+   ],
+   "expected": [
+    [
+     1,
+     1,
+     6
+    ],
+    [
+     1,
+     2,
+     5
+    ],
+    [
+     1,
+     7
+    ],
+    [
+     2,
+     6
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     5,
+     2,
+     1,
+     2
+    ],
+    5
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     2
+    ],
+    [
+     5
+    ]
+   ],
+   "tag": "unsorted_input"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    2
+   ],
+   "expected": [],
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2
+    ],
+    4
+   ],
+   "expected": [
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     3,
+     5,
+     1,
+     1
+    ],
+    8
+   ],
+   "expected": [
+    [
+     1,
+     1,
+     1,
+     5
+    ],
+    [
+     1,
+     1,
+     3,
+     3
+    ],
+    [
+     3,
+     5
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     5,
+     5
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     3
+    ],
+    3
+   ],
+   "expected": [
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     4,
+     2
+    ],
+    1
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4
+    ],
+    5
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     6,
+     1,
+     3
+    ],
+    3
+   ],
+   "expected": [
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [],
+ "hints": {
+  "1_question": "Like Combination Sum, but each element is used once and equal values must not produce the same combination twice.",
+  "2_nudge": "Sort. Recurse with start = i + 1. Within one loop, skip a value that equals the previous sibling (i > start and cands[i] == cands[i-1]).",
+  "3_big_hint": "bt(start, rem): if rem == 0 record; for i from start: break if cands[i] > rem; skip duplicate siblings; append; bt(i+1, rem - cands[i]); pop."
+ },
+ "known_bugs": [
+  {
+   "name": "no duplicate handling",
+   "code": "def combinationSum2(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            cur.append(cands[i])\n            bt(i + 1, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+   "fails_on": "duplicates",
+   "followup": "With two 1s in the input, how many times does [1, 7] appear in your answer?"
+  },
+  {
+   "name": "allows reusing a candidate",
+   "code": "def combinationSum2(candidates, target):\n    cands = sorted(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                break\n            if i > start and cands[i] == cands[i - 1]:\n                continue\n            cur.append(cands[i])\n            bt(i, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Each element may be used only once. After choosing index i, which index should the next call start from?"
+  },
+  {
+   "name": "skip rule without sorting",
+   "code": "def combinationSum2(candidates, target):\n    cands = list(candidates)\n    res, cur = [], []\n    def bt(start, rem):\n        if rem == 0:\n            res.append(cur[:])\n            return\n        for i in range(start, len(cands)):\n            if cands[i] > rem:\n                continue\n            if i > start and cands[i] == cands[i - 1]:\n                continue\n            cur.append(cands[i])\n            bt(i + 1, rem - cands[i])\n            cur.pop()\n    bt(0, target)\n    return res\n",
+   "fails_on": "unsorted_input",
+   "followup": "Your duplicate check compares neighbours. In [2, 5, 2, 1, 2] are equal values next to each other?"
+  }
+ ],
+ "complexity": {
+  "time": "Exponential (output-sensitive)",
+  "space": "O(n)",
+  "followups": [
+   "Why must the skip check use `i > start` rather than `i > 0`?",
+   "How would counting distinct values avoid sorting?"
+  ]
+ }
+}

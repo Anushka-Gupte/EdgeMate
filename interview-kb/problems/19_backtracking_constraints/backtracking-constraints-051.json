@@ -1,0 +1,302 @@
+{
+ "id": "backtracking-constraints-051",
+ "leetcode": 51,
+ "title": "N-Queens",
+ "pattern": "backtracking_constraints",
+ "difficulty": "hard",
+ "function": "solveNQueens",
+ "signature": "solveNQueens(n: int) -> List[List[str]]",
+ "adapter": "sort_outer",
+ "statement": "Place n queens on an n x n board so that no two attack each other (same row, column or diagonal). Return every distinct solution as a list of n strings made of 'Q' and '.'.",
+ "reference_solution": "def solveNQueens(n):\n    res, board = [], []\n    cols, d1, d2 = set(), set(), set()\n    def bt(r):\n        if r == n:\n            res.append([\"\".join(\"Q\" if c == q else \".\" for c in range(n)) for q in board])\n            return\n        for c in range(n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c); d1.add(r - c); d2.add(r + c); board.append(c)\n            bt(r + 1)\n            board.pop(); cols.remove(c); d1.remove(r - c); d2.remove(r + c)\n    bt(0)\n    return res\n",
+ "brute_force_solution": "import itertools\ndef solveNQueens(n):\n    res = []\n    for perm in itertools.permutations(range(n)):\n        if all(abs(perm[i] - perm[j]) != j - i for i in range(n) for j in range(i + 1, n)):\n            res.append([\"\".join(\"Q\" if c == q else \".\" for c in range(n)) for q in perm])\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    4
+   ],
+   "expected": [
+    [
+     "..Q.",
+     "Q...",
+     "...Q",
+     ".Q.."
+    ],
+    [
+     ".Q..",
+     "...Q",
+     "Q...",
+     "..Q."
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    1
+   ],
+   "expected": [
+    [
+     "Q"
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    2
+   ],
+   "expected": [],
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    3
+   ],
+   "expected": [],
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    5
+   ],
+   "expected": [
+    [
+     "....Q",
+     "..Q..",
+     "Q....",
+     "...Q.",
+     ".Q..."
+    ],
+    [
+     "....Q",
+     ".Q...",
+     "...Q.",
+     "Q....",
+     "..Q.."
+    ],
+    [
+     "...Q.",
+     ".Q...",
+     "....Q",
+     "..Q..",
+     "Q...."
+    ],
+    [
+     "...Q.",
+     "Q....",
+     "..Q..",
+     "....Q",
+     ".Q..."
+    ],
+    [
+     "..Q..",
+     "....Q",
+     ".Q...",
+     "...Q.",
+     "Q...."
+    ],
+    [
+     "..Q..",
+     "Q....",
+     "...Q.",
+     ".Q...",
+     "....Q"
+    ],
+    [
+     ".Q...",
+     "....Q",
+     "..Q..",
+     "Q....",
+     "...Q."
+    ],
+    [
+     ".Q...",
+     "...Q.",
+     "Q....",
+     "..Q..",
+     "....Q"
+    ],
+    [
+     "Q....",
+     "...Q.",
+     ".Q...",
+     "....Q",
+     "..Q.."
+    ],
+    [
+     "Q....",
+     "..Q..",
+     "....Q",
+     ".Q...",
+     "...Q."
+    ]
+   ],
+   "tag": "ten_solutions"
+  },
+  {
+   "args": [
+    6
+   ],
+   "expected": [
+    [
+     "....Q.",
+     "..Q...",
+     "Q.....",
+     ".....Q",
+     "...Q..",
+     ".Q...."
+    ],
+    [
+     "...Q..",
+     "Q.....",
+     "....Q.",
+     ".Q....",
+     ".....Q",
+     "..Q..."
+    ],
+    [
+     "..Q...",
+     ".....Q",
+     ".Q....",
+     "....Q.",
+     "Q.....",
+     "...Q.."
+    ],
+    [
+     ".Q....",
+     "...Q..",
+     ".....Q",
+     "Q.....",
+     "..Q...",
+     "....Q."
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    2
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    6
+   ],
+   "expected": [
+    [
+     "....Q.",
+     "..Q...",
+     "Q.....",
+     ".....Q",
+     "...Q..",
+     ".Q...."
+    ],
+    [
+     "...Q..",
+     "Q.....",
+     "....Q.",
+     ".Q....",
+     ".....Q",
+     "..Q..."
+    ],
+    [
+     "..Q...",
+     ".....Q",
+     ".Q....",
+     "....Q.",
+     "Q.....",
+     "...Q.."
+    ],
+    [
+     ".Q....",
+     "...Q..",
+     ".....Q",
+     "Q.....",
+     "..Q...",
+     "....Q."
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    4
+   ],
+   "expected": [
+    [
+     "..Q.",
+     "Q...",
+     "...Q",
+     ".Q.."
+    ],
+    [
+     ".Q..",
+     "...Q",
+     "Q...",
+     "..Q."
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    2
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    1
+   ],
+   "expected": [
+    [
+     "Q"
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [8]"
+  }
+ ],
+ "hints": {
+  "1_question": "Place one queen per row. For each row, which columns are still safe?",
+  "2_nudge": "Track occupied columns and both diagonal directions (row - col and row + col). Recurse row by row, undoing the placement afterwards.",
+  "3_big_hint": "bt(r): for c in range(n): skip if c in cols or r-c in d1 or r+c in d2; place; bt(r+1); remove. At r == n build the board strings."
+ },
+ "known_bugs": [
+  {
+   "name": "ignores diagonals",
+   "code": "def solveNQueens(n):\n    res, board = [], []\n    cols = set()\n    def bt(r):\n        if r == n:\n            res.append([\"\".join(\"Q\" if c == q else \".\" for c in range(n)) for q in board])\n            return\n        for c in range(n):\n            if c in cols:\n                continue\n            cols.add(c); board.append(c)\n            bt(r + 1)\n            board.pop(); cols.remove(c)\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Two queens on the same diagonal attack each other. Where do you check diagonals?"
+  },
+  {
+   "name": "checks only one diagonal direction",
+   "code": "def solveNQueens(n):\n    res, board = [], []\n    cols, d1 = set(), set()\n    def bt(r):\n        if r == n:\n            res.append([\"\".join(\"Q\" if c == q else \".\" for c in range(n)) for q in board])\n            return\n        for c in range(n):\n            if c in cols or (r - c) in d1:\n                continue\n            cols.add(c); d1.add(r - c); board.append(c)\n            bt(r + 1)\n            board.pop(); cols.remove(c); d1.remove(r - c)\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "A queen attacks along two diagonals: down-right and down-left. Which one do you track?"
+  },
+  {
+   "name": "returns only the first solution",
+   "code": "def solveNQueens(n):\n    res, board = [], []\n    cols, d1, d2 = set(), set(), set()\n    def bt(r):\n        if res:\n            return\n        if r == n:\n            res.append([\"\".join(\"Q\" if c == q else \".\" for c in range(n)) for q in board])\n            return\n        for c in range(n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c); d1.add(r - c); d2.add(r + c); board.append(c)\n            bt(r + 1)\n            board.pop(); cols.remove(c); d1.remove(r - c); d2.remove(r + c)\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "The task asks for every solution. How many does n = 4 have?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n!)",
+  "space": "O(n)",
+  "followups": [
+   "Why do row - col and row + col identify diagonals?",
+   "How would bitmasks speed this up?"
+  ]
+ }
+}

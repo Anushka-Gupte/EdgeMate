@@ -1,0 +1,282 @@
+{
+ "id": "backtracking-constraints-131",
+ "leetcode": 131,
+ "title": "Palindrome Partitioning",
+ "pattern": "backtracking_constraints",
+ "difficulty": "medium",
+ "function": "partition",
+ "signature": "partition(s: str) -> List[List[str]]",
+ "adapter": "sort_outer",
+ "statement": "Split the string into consecutive pieces so that every piece is a palindrome. Return all possible partitions, in any order. The string has at least one character.",
+ "reference_solution": "def partition(s):\n    res, cur = [], []\n    def bt(start):\n        if start == len(s):\n            res.append(cur[:])\n            return\n        for end in range(start + 1, len(s) + 1):\n            sub = s[start:end]\n            if sub == sub[::-1]:\n                cur.append(sub)\n                bt(end)\n                cur.pop()\n    bt(0)\n    return res\n",
+ "brute_force_solution": "def partition(s):\n    n = len(s)\n    res = []\n    for mask in range(1 << (n - 1)):\n        parts, start = [], 0\n        for i in range(n - 1):\n            if (mask >> i) & 1:\n                parts.append(s[start:i + 1])\n                start = i + 1\n        parts.append(s[start:])\n        if all(p == p[::-1] for p in parts):\n            res.append(parts)\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    "aab"
+   ],
+   "expected": [
+    [
+     "a",
+     "a",
+     "b"
+    ],
+    [
+     "aa",
+     "b"
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "a"
+   ],
+   "expected": [
+    [
+     "a"
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    "aba"
+   ],
+   "expected": [
+    [
+     "a",
+     "b",
+     "a"
+    ],
+    [
+     "aba"
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "abc"
+   ],
+   "expected": [
+    [
+     "a",
+     "b",
+     "c"
+    ]
+   ],
+   "tag": "no_multichar_palindromes"
+  },
+  {
+   "args": [
+    "aaa"
+   ],
+   "expected": [
+    [
+     "a",
+     "a",
+     "a"
+    ],
+    [
+     "a",
+     "aa"
+    ],
+    [
+     "aa",
+     "a"
+    ],
+    [
+     "aaa"
+    ]
+   ],
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    "abba"
+   ],
+   "expected": [
+    [
+     "a",
+     "b",
+     "b",
+     "a"
+    ],
+    [
+     "a",
+     "bb",
+     "a"
+    ],
+    [
+     "abba"
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "baaab"
+   ],
+   "expected": [
+    [
+     "b",
+     "a",
+     "a",
+     "a",
+     "b"
+    ],
+    [
+     "b",
+     "a",
+     "aa",
+     "b"
+    ],
+    [
+     "b",
+     "aa",
+     "a",
+     "b"
+    ],
+    [
+     "b",
+     "aaa",
+     "b"
+    ],
+    [
+     "baaab"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "aaaa"
+   ],
+   "expected": [
+    [
+     "a",
+     "a",
+     "a",
+     "a"
+    ],
+    [
+     "a",
+     "a",
+     "aa"
+    ],
+    [
+     "a",
+     "aa",
+     "a"
+    ],
+    [
+     "a",
+     "aaa"
+    ],
+    [
+     "aa",
+     "a",
+     "a"
+    ],
+    [
+     "aa",
+     "aa"
+    ],
+    [
+     "aaa",
+     "a"
+    ],
+    [
+     "aaaa"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "aaa"
+   ],
+   "expected": [
+    [
+     "a",
+     "a",
+     "a"
+    ],
+    [
+     "a",
+     "aa"
+    ],
+    [
+     "aa",
+     "a"
+    ],
+    [
+     "aaa"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "b"
+   ],
+   "expected": [
+    [
+     "b"
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "a"
+   ],
+   "expected": [
+    [
+     "a"
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return ['a' * 14]"
+  }
+ ],
+ "hints": {
+  "1_question": "A partition is a sequence of cut positions. At each start position, which prefixes are allowed as the next piece?",
+  "2_nudge": "Try every prefix s[start:end]; if it is a palindrome, take it and recurse on the rest; otherwise skip it.",
+  "3_big_hint": "bt(start): if start == len(s) record a copy; for end in start+1..len(s): sub = s[start:end]; if sub == sub[::-1]: append, bt(end), pop."
+ },
+ "known_bugs": [
+  {
+   "name": "only splits into single characters",
+   "code": "def partition(s):\n    return [list(s)]\n",
+   "fails_on": "normal",
+   "followup": "In 'aab' can 'aa' stay together as one palindromic piece?"
+  },
+  {
+   "name": "never checks that pieces are palindromes",
+   "code": "def partition(s):\n    res, cur = [], []\n    def bt(start):\n        if start == len(s):\n            res.append(cur[:])\n            return\n        for end in range(start + 1, len(s) + 1):\n            cur.append(s[start:end])\n            bt(end)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "no_multichar_palindromes",
+   "followup": "For 'abc', is 'ab' a palindrome? Where do you check?"
+  },
+  {
+   "name": "stores the live list instead of a copy",
+   "code": "def partition(s):\n    res, cur = [], []\n    def bt(start):\n        if start == len(s):\n            res.append(cur)\n            return\n        for end in range(start + 1, len(s) + 1):\n            sub = s[start:end]\n            if sub == sub[::-1]:\n                cur.append(sub)\n                bt(end)\n                cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "After the search ends, what do the lists in `res` contain?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * 2^n)",
+  "space": "O(n)",
+  "followups": [
+   "How can you precompute which substrings are palindromes (DP) to speed up the checks?",
+   "How many partitions can a string of n equal letters have?"
+  ]
+ }
+}

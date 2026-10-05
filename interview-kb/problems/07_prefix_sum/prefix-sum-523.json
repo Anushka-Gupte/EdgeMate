@@ -1,0 +1,204 @@
+{
+ "id": "prefix-sum-523",
+ "leetcode": 523,
+ "title": "Continuous Subarray Sum",
+ "pattern": "prefix_sum",
+ "difficulty": "medium",
+ "function": "checkSubarraySum",
+ "signature": "checkSubarraySum(nums: List[int], k: int) -> bool",
+ "adapter": null,
+ "statement": "Return True if some contiguous subarray of length at least 2 has a sum that is a multiple of k (0 counts as a multiple). Values are non-negative and k >= 1.",
+ "reference_solution": "def checkSubarraySum(nums, k):\n    seen = {0: -1}\n    total = 0\n    for i, x in enumerate(nums):\n        total = (total + x) % k\n        if total in seen:\n            if i - seen[total] >= 2:\n                return True\n        else:\n            seen[total] = i\n    return False\n",
+ "brute_force_solution": "def checkSubarraySum(nums, k):\n    for i in range(len(nums)):\n        s = nums[i]\n        for j in range(i + 1, len(nums)):\n            s += nums[j]\n            if s % k == 0:\n                return True\n    return False\n",
+ "tests": [
+  {
+   "args": [
+    [
+     23,
+     2,
+     4,
+     6,
+     7
+    ],
+    6
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     23,
+     2,
+     6,
+     4,
+     7
+    ],
+    6
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     23,
+     2,
+     6,
+     4,
+     7
+    ],
+    13
+   ],
+   "expected": false,
+   "tag": "no_match"
+  },
+  {
+   "args": [
+    [
+     5,
+     0,
+     0
+    ],
+    3
+   ],
+   "expected": true,
+   "tag": "zeros"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    5
+   ],
+   "expected": false,
+   "tag": "too_short"
+  },
+  {
+   "args": [
+    [
+     0
+    ],
+    1
+   ],
+   "expected": false,
+   "tag": "too_short"
+  },
+  {
+   "args": [
+    [
+     0,
+     0
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "zeros"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3
+    ],
+    3
+   ],
+   "expected": true,
+   "tag": "same_remainder_repeats"
+  },
+  {
+   "args": [
+    [
+     2
+    ],
+    4
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    1
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    4
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     2
+    ],
+    2
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     6,
+     2,
+     2,
+     0
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[1] * 100000, 10**9 + 7]"
+  }
+ ],
+ "hints": {
+  "1_question": "Two prefix sums with the same remainder mod k mean the numbers between them sum to a multiple of k. What extra condition does the problem add?",
+  "2_nudge": "Store, for each remainder, the first index where it appeared. A repeat is valid only if the two positions are at least 2 apart.",
+  "3_big_hint": "seen = {0: -1}; for i, x: total = (total + x) % k; if total in seen: if i - seen[total] >= 2 return True; else seen[total] = i. Never overwrite the first index."
+ },
+ "known_bugs": [
+  {
+   "name": "accepts subarrays of length 1",
+   "code": "def checkSubarraySum(nums, k):\n    seen = {0: -1}\n    total = 0\n    for i, x in enumerate(nums):\n        total = (total + x) % k\n        if total in seen:\n            return True\n        seen[total] = i\n    return False\n",
+   "fails_on": "too_short",
+   "followup": "The subarray needs at least two elements. How far apart must the two matching prefixes be?"
+  },
+  {
+   "name": "overwrites the first index of a remainder",
+   "code": "def checkSubarraySum(nums, k):\n    seen = {0: -1}\n    total = 0\n    for i, x in enumerate(nums):\n        total = (total + x) % k\n        if total in seen and i - seen[total] >= 2:\n            return True\n        seen[total] = i\n    return False\n",
+   "fails_on": "same_remainder_repeats",
+   "followup": "If the same remainder shows up three times in a row, which earlier index gives you the widest subarray? Are you keeping it?"
+  },
+  {
+   "name": "checks every subarray (O(n^2))",
+   "code": "def checkSubarraySum(nums, k):\n    for i in range(len(nums)):\n        s = nums[i]\n        for j in range(i + 1, len(nums)):\n            s += nums[j]\n            if s % k == 0:\n                return True\n    return False\n",
+   "fails_on": "large",
+   "followup": "How many (i, j) pairs does this try when no subarray matches? Which dictionary lookup replaces the inner loop?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(min(n, k))",
+  "followups": [
+   "Why do you only need the earliest index per remainder?",
+   "What changes if k can be 0?"
+  ]
+ }
+}

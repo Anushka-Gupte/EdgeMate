@@ -1,0 +1,231 @@
+{
+ "id": "two-pointers-167",
+ "leetcode": 167,
+ "title": "Two Sum II - Input Array Is Sorted",
+ "pattern": "two_pointers",
+ "difficulty": "medium",
+ "function": "twoSum",
+ "signature": "twoSum(numbers: List[int], target: int) -> List[int]",
+ "adapter": null,
+ "statement": "Given a list sorted in non-decreasing order and a target, find the two positions whose values add up to the target. Return them as 1-based indices [i, j] with i < j. Exactly one pair exists.",
+ "reference_solution": "def twoSum(numbers, target):\n    l, r = 0, len(numbers) - 1\n    while l < r:\n        s = numbers[l] + numbers[r]\n        if s == target:\n            return [l + 1, r + 1]\n        if s < target:\n            l += 1\n        else:\n            r -= 1\n    return []\n",
+ "brute_force_solution": "def twoSum(numbers, target):\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if numbers[i] + numbers[j] == target:\n                return [i + 1, j + 1]\n    return []\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     7,
+     11,
+     15
+    ],
+    9
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     4
+    ],
+    6
+   ],
+   "expected": [
+    1,
+    3
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -1,
+     0
+    ],
+    -1
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -1,
+     2
+    ],
+    -4
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "negative_target"
+  },
+  {
+   "args": [
+    [
+     5,
+     5
+    ],
+    10
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     3,
+     9
+    ],
+    6
+   ],
+   "expected": [
+    2,
+    3
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     -9,
+     -5,
+     10,
+     11,
+     13,
+     14
+    ],
+    6
+   ],
+   "expected": [
+    2,
+    4
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -10,
+     0,
+     1,
+     2,
+     7,
+     12,
+     13
+    ],
+    19
+   ],
+   "expected": [
+    5,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -10,
+     -8,
+     -7,
+     -6,
+     -2,
+     4,
+     8,
+     12
+    ],
+    1
+   ],
+   "expected": [
+    3,
+    7
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     11,
+     14
+    ],
+    25
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     -2,
+     1,
+     8
+    ],
+    -1
+   ],
+   "expected": [
+    2,
+    3
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 199997]"
+  }
+ ],
+ "hints": {
+  "1_question": "The array is sorted. How could looking at the smallest and largest value together tell you which one to change?",
+  "2_nudge": "Put one pointer at each end. If the sum is too small, which pointer should move? If too big?",
+  "3_big_hint": "While l < r: s = a[l] + a[r]. If s == target return [l+1, r+1]; if s < target l += 1; else r -= 1."
+ },
+ "known_bugs": [
+  {
+   "name": "returns 0-based indices",
+   "code": "def twoSum(numbers, target):\n    l, r = 0, len(numbers) - 1\n    while l < r:\n        s = numbers[l] + numbers[r]\n        if s == target:\n            return [l, r]\n        if s < target:\n            l += 1\n        else:\n            r -= 1\n    return []\n",
+   "fails_on": "normal",
+   "followup": "Re-read the output format. Are indices counted from 0 or from 1?"
+  },
+  {
+   "name": "moves pointers the wrong way",
+   "code": "def twoSum(numbers, target):\n    l, r = 0, len(numbers) - 1\n    while l < r:\n        s = numbers[l] + numbers[r]\n        if s == target:\n            return [l + 1, r + 1]\n        if s < target:\n            r -= 1\n        else:\n            l += 1\n    return []\n",
+   "fails_on": "normal",
+   "followup": "If the sum is too small, would moving the right pointer left make it bigger or smaller?"
+  },
+  {
+   "name": "assumes values are positive",
+   "code": "def twoSum(numbers, target):\n    l, r = 0, len(numbers) - 1\n    while l < r:\n        if numbers[l] > target:\n            break\n        s = numbers[l] + numbers[r]\n        if s == target:\n            return [l + 1, r + 1]\n        if s < target:\n            l += 1\n        else:\n            r -= 1\n    return []\n",
+   "fails_on": "negative_target",
+   "followup": "Is it always true that a number bigger than the target can't be part of the answer? What if values can be negative?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "What would you do if the array were not sorted?",
+   "Why doesn't this approach miss a valid pair when it moves a pointer?"
+  ]
+ }
+}

@@ -1,0 +1,211 @@
+{
+ "id": "binary-search-answer-774",
+ "leetcode": 774,
+ "title": "Minimize Max Distance to Gas Station",
+ "pattern": "binary_search_on_answer",
+ "difficulty": "hard",
+ "function": "minmaxGasDist",
+ "signature": "minmaxGasDist(stations: List[int], k: int) -> float",
+ "adapter": null,
+ "statement": "Gas stations sit at sorted positions on a line. You may add k more stations at any real-valued positions. Return the smallest achievable value of the largest gap between neighbouring stations. Answers within 1e-5 are accepted.",
+ "reference_solution": "def minmaxGasDist(stations, k):\n    gaps = [stations[i + 1] - stations[i] for i in range(len(stations) - 1)]\n    lo, hi = 0.0, float(max(gaps))\n    while hi - lo > 1e-8:\n        mid = (lo + hi) / 2\n        need = sum(int(g / mid) for g in gaps)\n        if need <= k:\n            hi = mid\n        else:\n            lo = mid\n    return hi\n",
+ "brute_force_solution": "def minmaxGasDist(stations, k):\n    gaps = [stations[i + 1] - stations[i] for i in range(len(stations) - 1)]\n    INF = float('inf')\n    dp = [0.0] + [INF] * k\n    for g in gaps:\n        ndp = [INF] * (k + 1)\n        for j in range(k + 1):\n            for c in range(j + 1):\n                if dp[j - c] < INF:\n                    ndp[j] = min(ndp[j], max(dp[j - c], g / (c + 1)))\n        dp = ndp\n    return min(dp)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ],
+    9
+   ],
+   "expected": 0.5,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     23,
+     24,
+     36,
+     39,
+     46,
+     56,
+     57,
+     65,
+     84,
+     98
+    ],
+    1
+   ],
+   "expected": 14.0,
+   "tag": "k_is_one"
+  },
+  {
+   "args": [
+    [
+     0,
+     10
+    ],
+    1
+   ],
+   "expected": 5.0,
+   "tag": "two_stations"
+  },
+  {
+   "args": [
+    [
+     0,
+     10
+    ],
+    3
+   ],
+   "expected": 2.5,
+   "tag": "two_stations"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     10
+    ],
+    1
+   ],
+   "expected": 4.5,
+   "tag": "uneven_gaps"
+  },
+  {
+   "args": [
+    [
+     0,
+     10
+    ],
+    2
+   ],
+   "expected": 3.3333333333333335,
+   "tag": "split_not_halve"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     2
+    ],
+    100
+   ],
+   "expected": 0.0196078431372549,
+   "tag": "many_stations"
+  },
+  {
+   "args": [
+    [
+     0,
+     8,
+     9,
+     24
+    ],
+    4
+   ],
+   "expected": 4.0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     16,
+     26,
+     27
+    ],
+    2
+   ],
+   "expected": 5.0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     15,
+     21,
+     28
+    ],
+    2
+   ],
+   "expected": 7.0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     27
+    ],
+    5
+   ],
+   "expected": 3.5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     25,
+     26
+    ],
+    5
+   ],
+   "expected": 3.0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[i * 7 + (i * i) % 13 for i in range(2000)], 100000]"
+  }
+ ],
+ "hints": {
+  "1_question": "If someone claims the largest gap can be at most D, how many extra stations would you need? How does that number change as D grows?",
+  "2_nudge": "Binary search D on real numbers. For a gap g you need ceil(g / D) - 1 extra stations so no piece exceeds D. Sum them and compare with k.",
+  "3_big_hint": "lo = 0, hi = largest gap. Repeat ~50-100 times: mid; need = sum(int(g / mid)); if need <= k: hi = mid else lo = mid. Return hi."
+ },
+ "known_bugs": [
+  {
+   "name": "upper bound is the smallest gap",
+   "code": "def minmaxGasDist(stations, k):\n    gaps = [stations[i + 1] - stations[i] for i in range(len(stations) - 1)]\n    lo, hi = 0.0, float(min(gaps))\n    while hi - lo > 1e-8:\n        mid = (lo + hi) / 2\n        need = sum(int(g / mid) for g in gaps)\n        if need <= k:\n            hi = mid\n        else:\n            lo = mid\n    return hi\n",
+   "fails_on": "uneven_gaps",
+   "followup": "With gaps 1 and 9 and one new station, can the answer be 1? What is the largest value the answer could ever be?"
+  },
+  {
+   "name": "stops searching with a coarse tolerance",
+   "code": "def minmaxGasDist(stations, k):\n    gaps = [stations[i + 1] - stations[i] for i in range(len(stations) - 1)]\n    lo, hi = 0.0, float(max(gaps))\n    while hi - lo > 0.5:\n        mid = (lo + hi) / 2\n        need = sum(int(g / mid) for g in gaps)\n        if need <= k:\n            hi = mid\n        else:\n            lo = mid\n    return hi\n",
+   "fails_on": "normal",
+   "followup": "How close must the answer be to the true value? What precision does your loop stop at?"
+  },
+  {
+   "name": "halves the biggest gap repeatedly (greedy)",
+   "code": "def minmaxGasDist(stations, k):\n    gaps = [float(stations[i + 1] - stations[i]) for i in range(len(stations) - 1)]\n    for _ in range(k):\n        i = gaps.index(max(gaps))\n        gaps[i] /= 2\n    return max(gaps)\n",
+   "fails_on": "split_not_halve",
+   "followup": "With one gap of 10 and two new stations, what is the best result? Does halving the gap twice give it?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log(W / eps))",
+  "space": "O(n)",
+  "followups": [
+   "Why can't a normal integer binary search be used here directly?",
+   "How would a max-heap greedy solution behave, and why is it slower?"
+  ]
+ }
+}

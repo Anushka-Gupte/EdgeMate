@@ -1,0 +1,268 @@
+{
+ "id": "graph-994",
+ "leetcode": 994,
+ "title": "Rotting Oranges",
+ "pattern": "graph_bfs_dfs",
+ "difficulty": "medium",
+ "function": "orangesRotting",
+ "signature": "orangesRotting(grid: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "0 = empty, 1 = fresh orange, 2 = rotten orange. Each minute, every fresh orange adjacent (4 directions) to a rotten one becomes rotten. Return the minutes until no fresh orange remains, or -1 if some can never rot.",
+ "reference_solution": "from collections import deque\ndef orangesRotting(grid):\n    R, C = len(grid), len(grid[0]) if grid else 0\n    q = deque()\n    fresh = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 2:\n                q.append((i, j, 0))\n            elif grid[i][j] == 1:\n                fresh += 1\n    t = 0\n    while q:\n        r, c, t = q.popleft()\n        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:\n                grid[nr][nc] = 2\n                fresh -= 1\n                q.append((nr, nc, t + 1))\n    return -1 if fresh else t\n",
+ "brute_force_solution": "def orangesRotting(grid):\n    g = [row[:] for row in grid]\n    R, C = len(g), len(g[0]) if g else 0\n    minutes = 0\n    while True:\n        new = []\n        for i in range(R):\n            for j in range(C):\n                if g[i][j] == 1 and any(0 <= i + di < R and 0 <= j + dj < C and g[i + di][j + dj] == 2\n                                        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1))):\n                    new.append((i, j))\n        if not new:\n            break\n        for i, j in new:\n            g[i][j] = 2\n        minutes += 1\n    return -1 if any(1 in row for row in g) else minutes\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      1
+     ],
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      0,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      1
+     ],
+     [
+      0,
+      1,
+      1
+     ],
+     [
+      1,
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "unreachable"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      2
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "no_fresh"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "empty_grid"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "no_rotten"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 4,
+   "tag": "chain"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      1,
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "multiple_sources"
+  },
+  {
+   "args": [
+    [
+     [
+      2
+     ],
+     [
+      2
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1,
+      2,
+      2
+     ],
+     [
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      1,
+      1,
+      2
+     ],
+     [
+      0,
+      2,
+      2,
+      1
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": -1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    g = [[1] * 300 for _ in range(300)]\n    g[0][0] = 2\n    return [g]"
+  }
+ ],
+ "hints": {
+  "1_question": "Rotting spreads one layer per minute, from ALL rotten oranges at the same time. Which traversal models that?",
+  "2_nudge": "Multi-source BFS: start with every rotten orange in the queue, spread to fresh neighbours, and track the minute. If any fresh orange remains at the end, return -1.",
+  "3_big_hint": "Queue all 2s with time 0, count fresh. BFS marking neighbours rotten with time + 1, decrementing fresh. Return -1 if fresh > 0 else the last time."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets to check for unreachable fresh oranges",
+   "code": "from collections import deque\ndef orangesRotting(grid):\n    R, C = len(grid), len(grid[0]) if grid else 0\n    q = deque()\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 2:\n                q.append((i, j, 0))\n    t = 0\n    while q:\n        r, c, t = q.popleft()\n        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:\n                grid[nr][nc] = 2\n                q.append((nr, nc, t + 1))\n    return t\n",
+   "fails_on": "unreachable",
+   "followup": "After the spreading stops, could a fresh orange still remain? What should you return then?"
+  },
+  {
+   "name": "counts one extra minute",
+   "code": "def orangesRotting(grid):\n    R, C = len(grid), len(grid[0]) if grid else 0\n    level = [(i, j) for i in range(R) for j in range(C) if grid[i][j] == 2]\n    fresh = sum(row.count(1) for row in grid)\n    minutes = 0\n    while level:\n        minutes += 1\n        nxt = []\n        for r, c in level:\n            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                nr, nc = r + dr, c + dc\n                if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:\n                    grid[nr][nc] = 2\n                    fresh -= 1\n                    nxt.append((nr, nc))\n        level = nxt\n    return -1 if fresh else minutes\n",
+   "fails_on": "no_fresh",
+   "followup": "If there are no fresh oranges at all, how many minutes should it take, and how many does your loop count?"
+  },
+  {
+   "name": "starts spreading from only one rotten orange",
+   "code": "from collections import deque\ndef orangesRotting(grid):\n    R, C = len(grid), len(grid[0]) if grid else 0\n    q = deque()\n    fresh = sum(row.count(1) for row in grid)\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 2 and not q:\n                q.append((i, j, 0))\n    t = 0\n    while q:\n        r, c, t = q.popleft()\n        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:\n                grid[nr][nc] = 2\n                fresh -= 1\n                q.append((nr, nc, t + 1))\n    return -1 if fresh else t\n",
+   "fails_on": "multiple_sources",
+   "followup": "Every rotten orange spreads at the same time. How many do you put in the queue at the start?"
+  }
+ ],
+ "complexity": {
+  "time": "O(R * C)",
+  "space": "O(R * C)",
+  "followups": [
+   "Why is BFS (not DFS) needed for the minimum time?",
+   "What does the multi-source start have in common with a virtual super-source node?"
+  ]
+ }
+}

@@ -1,0 +1,198 @@
+{
+ "id": "sliding-window-904",
+ "leetcode": 904,
+ "title": "Fruit Into Baskets",
+ "pattern": "sliding_window",
+ "difficulty": "medium",
+ "function": "totalFruit",
+ "signature": "totalFruit(fruits: List[int]) -> int",
+ "adapter": null,
+ "statement": "Trees in a row each bear one fruit type. You have two baskets, each holding a single type. Starting anywhere, pick one fruit from each consecutive tree going right until you meet a third type. Return the most fruit you can collect.",
+ "reference_solution": "def totalFruit(fruits):\n    count = {}\n    left = best = 0\n    for right, f in enumerate(fruits):\n        count[f] = count.get(f, 0) + 1\n        while len(count) > 2:\n            count[fruits[left]] -= 1\n            if count[fruits[left]] == 0:\n                del count[fruits[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+ "brute_force_solution": "def totalFruit(fruits):\n    best = 0\n    for i in range(len(fruits)):\n        kinds = set()\n        for j in range(i, len(fruits)):\n            kinds.add(fruits[j])\n            if len(kinds) > 2:\n                break\n            best = max(best, j - i + 1)\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     1
+    ]
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     2,
+     2
+    ]
+   ],
+   "expected": 3,
+   "tag": "three_types"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     2,
+     2
+    ]
+   ],
+   "expected": 4,
+   "tag": "restart_loses_run"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3,
+     1,
+     2,
+     1,
+     1,
+     2,
+     3,
+     3,
+     4
+    ]
+   ],
+   "expected": 5,
+   "tag": "long_mixed"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     7,
+     7,
+     7
+    ]
+   ],
+   "expected": 3,
+   "tag": "one_type"
+  },
+  {
+   "args": [
+    [
+     3,
+     0,
+     3,
+     1,
+     0,
+     1,
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     3,
+     0,
+     0,
+     3
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     0,
+     1
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     1,
+     2,
+     0,
+     2,
+     0
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(15)\n    return [[r.randint(0, 9) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "This is the longest subarray with at most 2 distinct values. What do you need to track about the current window?",
+  "2_nudge": "Keep counts of each fruit type in the window. When a third type appears, move the left edge until one type disappears.",
+  "3_big_hint": "Add fruits[right]; while len(count) > 2: decrement fruits[left]; delete the key if it reaches 0; left += 1. Update the best length."
+ },
+ "known_bugs": [
+  {
+   "name": "never deletes a type when its count hits zero",
+   "code": "def totalFruit(fruits):\n    count = {}\n    left = best = 0\n    for right, f in enumerate(fruits):\n        count[f] = count.get(f, 0) + 1\n        while len(count) > 2:\n            count[fruits[left]] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "three_types",
+   "followup": "A type with count 0 is no longer in your baskets. Does `len(count)` still say so?"
+  },
+  {
+   "name": "restarts the window at the new tree",
+   "code": "def totalFruit(fruits):\n    count = {}\n    left = best = 0\n    for right, f in enumerate(fruits):\n        if f not in count and len(count) == 2:\n            count = {}\n            left = right\n        count[f] = count.get(f, 0) + 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "restart_loses_run",
+   "followup": "When the third type appears, do you lose the whole run behind you, or can some of it still be reused (for example the most recent repeated type)?"
+  },
+  {
+   "name": "allows three types (> 3)",
+   "code": "def totalFruit(fruits):\n    count = {}\n    left = best = 0\n    for right, f in enumerate(fruits):\n        count[f] = count.get(f, 0) + 1\n        while len(count) > 3:\n            count[fruits[left]] -= 1\n            if count[fruits[left]] == 0:\n                del count[fruits[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "long_mixed",
+   "followup": "How many baskets do you have? How many types does your window allow?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How would you generalize this to k baskets?",
+   "Why can the dictionary never hold more than 3 keys?"
+  ]
+ }
+}

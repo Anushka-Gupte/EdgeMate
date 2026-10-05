@@ -1,0 +1,245 @@
+{
+ "id": "fast-slow-160",
+ "leetcode": 160,
+ "title": "Intersection of Two Linked Lists",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "easy",
+ "function": "getIntersectionNode",
+ "signature": "getIntersectionNode(headA: ListNode, headB: ListNode) -> ListNode",
+ "adapter": "intersection",
+ "statement": "Two singly linked lists may merge into a shared tail. Return the first node they share (the same node object, not merely equal values), or None if they never meet. (The checker reports the index of that node within the shared tail, -1 for None.)",
+ "reference_solution": "def getIntersectionNode(headA, headB):\n    a, b = headA, headB\n    while a is not b:\n        a = a.next if a else headB\n        b = b.next if b else headA\n    return a\n",
+ "brute_force_solution": "def getIntersectionNode(headA, headB):\n    seen = set()\n    while headA:\n        seen.add(id(headA))\n        headA = headA.next\n    while headB:\n        if id(headB) in seen:\n            return headB\n        headB = headB.next\n    return None\n",
+ "tests": [
+  {
+   "args": [
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     6,
+     1
+    ],
+    [
+     8,
+     4,
+     5
+    ]
+   ],
+   "expected": 0,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     9,
+     1
+    ],
+    [
+     3
+    ],
+    [
+     2,
+     4
+    ]
+   ],
+   "expected": 0,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     6,
+     4
+    ],
+    [
+     1,
+     5
+    ],
+    []
+   ],
+   "expected": -1,
+   "tag": "no_intersection"
+  },
+  {
+   "args": [
+    [],
+    [],
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "only_shared_tail"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    [
+     1
+    ],
+    [
+     1
+    ]
+   ],
+   "expected": 0,
+   "tag": "same_values_diff_nodes"
+  },
+  {
+   "args": [
+    [],
+    [],
+    []
+   ],
+   "expected": -1,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    [],
+    [
+     7
+    ]
+   ],
+   "expected": 0,
+   "tag": "different_lengths"
+  },
+  {
+   "args": [
+    [],
+    [
+     3,
+     1
+    ],
+    []
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    [
+     0
+    ],
+    [
+     3,
+     1,
+     0,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    [
+     1,
+     2,
+     3,
+     2
+    ],
+    [
+     3,
+     3,
+     2,
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     2
+    ],
+    [
+     0,
+     1,
+     3,
+     1
+    ],
+    [
+     3,
+     0,
+     1,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    [
+     2
+    ],
+    [
+     3,
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], list(range(50000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "If the lists have different lengths before the merge point, how could you make both pointers cover the same total distance?",
+  "2_nudge": "Walk pointer a over list A then list B, and pointer b over list B then list A. Both travel lenA + lenB, so they line up at the intersection.",
+  "3_big_hint": "a, b = headA, headB. While a is not b: a = a.next if a else headB; b = b.next if b else headA. Return a (None if no intersection, since both reach None together)."
+ },
+ "known_bugs": [
+  {
+   "name": "compares node values instead of node identity",
+   "code": "def getIntersectionNode(headA, headB):\n    a = headA\n    while a:\n        b = headB\n        while b:\n            if a.val == b.val:\n                return a\n            b = b.next\n        a = a.next\n    return None\n",
+   "fails_on": "same_values_diff_nodes",
+   "followup": "Two different nodes can hold the same number. What does `==` on values tell you about whether they are the same node?"
+  },
+  {
+   "name": "walks both lists in lockstep without aligning lengths",
+   "code": "def getIntersectionNode(headA, headB):\n    a, b = headA, headB\n    while a and b:\n        if a is b:\n            return a\n        a, b = a.next, b.next\n    return None\n",
+   "fails_on": "different_lengths",
+   "followup": "If list A has 3 nodes before the shared part and B has none, will both pointers ever stand on the shared node at the same time?"
+  },
+  {
+   "name": "never terminates when there is no intersection",
+   "code": "def getIntersectionNode(headA, headB):\n    a, b = headA, headB\n    while a is not b:\n        a = a.next if a.next else headB\n        b = b.next if b.next else headA\n    return a\n",
+   "fails_on": "no_intersection",
+   "followup": "If the lists never meet, what do your pointers equal when they finally agree, and does that ever happen?"
+  }
+ ],
+ "complexity": {
+  "time": "O(m + n)",
+  "space": "O(1)",
+  "followups": [
+   "Why do both pointers reach None at the same time if there is no intersection?",
+   "How would you solve it if you were allowed O(m) extra space?"
+  ]
+ }
+}

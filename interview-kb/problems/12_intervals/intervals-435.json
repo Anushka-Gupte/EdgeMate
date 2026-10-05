@@ -1,0 +1,264 @@
+{
+ "id": "intervals-435",
+ "leetcode": 435,
+ "title": "Non-overlapping Intervals",
+ "pattern": "intervals",
+ "difficulty": "medium",
+ "function": "eraseOverlapIntervals",
+ "signature": "eraseOverlapIntervals(intervals: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "Return the minimum number of intervals to remove so that the rest do not overlap. Intervals that only touch at an endpoint ([1,2] and [2,3]) do not overlap.",
+ "reference_solution": "def eraseOverlapIntervals(intervals):\n    removed = 0\n    end = float('-inf')\n    for s, e in sorted(intervals, key=lambda x: x[1]):\n        if s >= end:\n            end = e\n        else:\n            removed += 1\n    return removed\n",
+ "brute_force_solution": "def eraseOverlapIntervals(intervals):\n    n = len(intervals)\n    best = 0\n    def go(i, chosen):\n        nonlocal best\n        if i == n:\n            best = max(best, len(chosen))\n            return\n        go(i + 1, chosen)\n        s, e = intervals[i]\n        if all(e <= cs or ce <= s for cs, ce in chosen):\n            go(i + 1, chosen + [(s, e)])\n    go(0, [])\n    return n - best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      1,
+      3
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "touching"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      10
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      6,
+      7
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "long_interval"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "chain"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      7,
+      10
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      4
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      7,
+      8
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      9
+     ],
+     [
+      8,
+      9
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      5,
+      7
+     ],
+     [
+      0,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      8,
+      11
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(47)\n    return [[(lambda a: [a, a + r.randint(1, 50)])(r.randint(0, 10**6)) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Removing the fewest intervals means keeping the most. Which interval should you always keep first to leave maximum room for the rest?",
+  "2_nudge": "Sort by END time. Keep an interval if it starts at or after the last kept end; otherwise it must be removed.",
+  "3_big_hint": "end = -inf; for s, e in sorted by e: if s >= end: end = e else removed += 1."
+ },
+ "known_bugs": [
+  {
+   "name": "sorts by start (keeps long intervals)",
+   "code": "def eraseOverlapIntervals(intervals):\n    removed = 0\n    end = float('-inf')\n    for s, e in sorted(intervals):\n        if s >= end:\n            end = e\n        else:\n            removed += 1\n    return removed\n",
+   "fails_on": "long_interval",
+   "followup": "If the first interval is very long, how many others does it block? Is keeping it the best choice?"
+  },
+  {
+   "name": "touching intervals counted as overlapping (>)",
+   "code": "def eraseOverlapIntervals(intervals):\n    removed = 0\n    end = float('-inf')\n    for s, e in sorted(intervals, key=lambda x: x[1]):\n        if s > end:\n            end = e\n        else:\n            removed += 1\n    return removed\n",
+   "fails_on": "touching",
+   "followup": "Do [1,2] and [2,3] overlap according to the statement?"
+  },
+  {
+   "name": "counts overlapping pairs instead of removals",
+   "code": "def eraseOverlapIntervals(intervals):\n    c = 0\n    for i in range(len(intervals)):\n        for j in range(i + 1, len(intervals)):\n            a, b = intervals[i], intervals[j]\n            if a[0] < b[1] and b[0] < a[1]:\n                c += 1\n    return c\n",
+   "fails_on": "duplicates",
+   "followup": "Three identical intervals overlap in 3 pairs, but how many must you remove so that none overlap?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(1) extra",
+  "followups": [
+   "Why does sorting by end time give an optimal greedy choice?",
+   "How is this the same as activity selection?"
+  ]
+ }
+}

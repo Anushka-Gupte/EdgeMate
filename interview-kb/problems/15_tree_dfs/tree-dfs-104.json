@@ -1,0 +1,211 @@
+{
+ "id": "tree-dfs-104",
+ "leetcode": 104,
+ "title": "Maximum Depth of Binary Tree",
+ "pattern": "tree_dfs",
+ "difficulty": "easy",
+ "function": "maxDepth",
+ "signature": "maxDepth(root: TreeNode) -> int",
+ "adapter": "tree_value",
+ "statement": "Return the number of nodes along the longest path from the root down to a leaf (0 for an empty tree). Trees are given as level-order lists with None for missing children.",
+ "reference_solution": "def maxDepth(root):\n    if not root:\n        return 0\n    return 1 + max(maxDepth(root.left), maxDepth(root.right))\n",
+ "brute_force_solution": "def maxDepth(root):\n    if not root:\n        return 0\n    d, level = 0, [root]\n    while level:\n        d += 1\n        level = [c for n in level for c in (n.left, n.right) if c]\n    return d\n",
+ "tests": [
+  {
+   "args": [
+    [
+     3,
+     9,
+     20,
+     null,
+     null,
+     15,
+     7
+    ]
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     null,
+     2
+    ]
+   ],
+   "expected": 2,
+   "tag": "right_skew"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     null,
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "left_skew"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "expected": 3,
+   "tag": "perfect"
+  },
+  {
+   "args": [
+    [
+     4,
+     -4,
+     4,
+     null,
+     null,
+     -4
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     null,
+     1,
+     9,
+     null,
+     null,
+     9
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     -1,
+     9,
+     9,
+     1,
+     null,
+     null,
+     null,
+     null,
+     4,
+     null,
+     null,
+     4,
+     9
+    ]
+   ],
+   "expected": 6,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     9,
+     -3,
+     null,
+     null,
+     null,
+     5,
+     null,
+     2
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     -3,
+     -5,
+     null,
+     -2,
+     null,
+     -4,
+     null,
+     -5,
+     null,
+     null,
+     -2
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(1)\n    return [rand_tree(r, 60000)]"
+  }
+ ],
+ "hints": {
+  "1_question": "The depth of a tree depends on the depths of its two subtrees. What is the depth of an empty tree?",
+  "2_nudge": "Recursion: depth(node) = 1 + max(depth(left), depth(right)), with depth(None) = 0.",
+  "3_big_hint": "if not root: return 0; return 1 + max(maxDepth(root.left), maxDepth(root.right))."
+ },
+ "known_bugs": [
+  {
+   "name": "counts all nodes",
+   "code": "def maxDepth(root):\n    if not root:\n        return 0\n    return 1 + maxDepth(root.left) + maxDepth(root.right)\n",
+   "fails_on": "normal",
+   "followup": "Depth is the longest root-to-leaf path. Does adding both subtrees measure that?"
+  },
+  {
+   "name": "only follows left children",
+   "code": "def maxDepth(root):\n    if not root:\n        return 0\n    return 1 + maxDepth(root.left)\n",
+   "fails_on": "right_skew",
+   "followup": "What if the only child of the root is on the right?"
+  },
+  {
+   "name": "uses min instead of max",
+   "code": "def maxDepth(root):\n    if not root:\n        return 0\n    return 1 + min(maxDepth(root.left), maxDepth(root.right))\n",
+   "fails_on": "left_skew",
+   "followup": "A node with one child: what is min(depth(left), depth(right)) when one side is empty?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "How would you compute it iteratively with a queue (BFS)?",
+   "What is the recursion depth for a skewed tree and why does it matter?"
+  ]
+ }
+}

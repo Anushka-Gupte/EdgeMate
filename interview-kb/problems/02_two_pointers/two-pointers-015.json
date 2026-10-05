@@ -1,0 +1,256 @@
+{
+ "id": "two-pointers-015",
+ "leetcode": 15,
+ "title": "3Sum",
+ "pattern": "two_pointers",
+ "difficulty": "medium",
+ "function": "threeSum",
+ "signature": "threeSum(nums: List[int]) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "Return every unique triplet of values from the list that adds up to zero. A triplet must use three different positions, and the same set of values must not be reported twice. Order of triplets and of numbers inside them does not matter.",
+ "reference_solution": "def threeSum(nums):\n    nums = sorted(nums)\n    res = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                res.append([nums[i], nums[l], nums[r]])\n                l += 1\n                while l < r and nums[l] == nums[l - 1]:\n                    l += 1\n                r -= 1\n    return res\n",
+ "brute_force_solution": "def threeSum(nums):\n    res = set()\n    n = len(nums)\n    for i in range(n):\n        for j in range(i + 1, n):\n            for k in range(j + 1, n):\n                if nums[i] + nums[j] + nums[k] == 0:\n                    res.add(tuple(sorted((nums[i], nums[j], nums[k]))))\n    return [list(t) for t in res]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     -1,
+     0,
+     1,
+     2,
+     -1,
+     -4
+    ]
+   ],
+   "expected": [
+    [
+     -1,
+     -1,
+     2
+    ],
+    [
+     -1,
+     0,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     1
+    ]
+   ],
+   "expected": [],
+   "tag": "no_triplet"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "tag": "all_zeros"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     -2,
+     0,
+     0,
+     2,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     -2,
+     0,
+     2
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     3,
+     -1,
+     -2,
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     -2,
+     -1,
+     3
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -1,
+     -2,
+     4,
+     3,
+     -4
+    ]
+   ],
+   "expected": [
+    [
+     -2,
+     -2,
+     4
+    ],
+    [
+     -2,
+     -1,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     2,
+     -1,
+     -4,
+     -4,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     -4,
+     0,
+     4
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     1,
+     0,
+     1,
+     -4
+    ]
+   ],
+   "expected": [
+    [
+     -1,
+     0,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -4,
+     3,
+     3
+    ]
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -4,
+     -1
+    ]
+   ],
+   "expected": [],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(16)\n    return [[r.randint(-1000, 1000) for _ in range(1500)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "If you fix one number, the other two must add up to its negative. Which sorted-array technique finds a pair with a given sum?",
+  "2_nudge": "Sort the array. For each i, run two pointers l and r over the rest. Skip repeated values so you never emit the same triplet twice.",
+  "3_big_hint": "Skip i if nums[i] == nums[i-1]. While l < r: if the sum is < 0 move l, if > 0 move r, else record, move l past duplicates, and move r."
+ },
+ "known_bugs": [
+  {
+   "name": "no duplicate handling",
+   "code": "def threeSum(nums):\n    nums = sorted(nums)\n    res = []\n    for i in range(len(nums) - 2):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                res.append([nums[i], nums[l], nums[r]])\n                l += 1\n                r -= 1\n    return res\n",
+   "fails_on": "duplicates",
+   "followup": "For [0, 0, 0, 0] how many times does your code report [0, 0, 0]?"
+  },
+  {
+   "name": "two pointers on an unsorted array",
+   "code": "def threeSum(nums):\n    res = []\n    seen = set()\n    for i in range(len(nums) - 2):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                t = tuple(sorted((nums[i], nums[l], nums[r])))\n                if t not in seen:\n                    seen.add(t)\n                    res.append(list(t))\n                l += 1\n                r -= 1\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Moving l right only makes the sum bigger if the array is sorted. Is yours?"
+  },
+  {
+   "name": "tries every triple (O(n^3))",
+   "code": "def threeSum(nums):\n    res = set()\n    n = len(nums)\n    for i in range(n):\n        for j in range(i + 1, n):\n            for k in range(j + 1, n):\n                if nums[i] + nums[j] + nums[k] == 0:\n                    res.add(tuple(sorted((nums[i], nums[j], nums[k]))))\n    return [list(t) for t in res]\n",
+   "fails_on": "large",
+   "followup": "With 1500 numbers, roughly how many triples is that? Which loop can two pointers replace?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n^2)",
+  "space": "O(1) extra (ignoring output)",
+  "followups": [
+   "Why do you skip duplicates only for i and after a match, not at every step?",
+   "How would you extend this to 4Sum (problem 18)?"
+  ]
+ }
+}

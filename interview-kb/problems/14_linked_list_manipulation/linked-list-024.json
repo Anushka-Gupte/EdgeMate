@@ -1,0 +1,219 @@
+{
+ "id": "linked-list-024",
+ "leetcode": 24,
+ "title": "Swap Nodes in Pairs",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "medium",
+ "function": "swapPairs",
+ "signature": "swapPairs(head: ListNode) -> ListNode",
+ "adapter": "list_to_list",
+ "statement": "Swap every two adjacent nodes of a linked list and return the new head. Change the links, not the values. A leftover last node stays where it is.",
+ "reference_solution": "def swapPairs(head):\n    dummy = ListNode(0, head)\n    prev = dummy\n    while prev.next and prev.next.next:\n        a = prev.next\n        b = a.next\n        a.next = b.next\n        b.next = a\n        prev.next = b\n        prev = a\n    return dummy.next\n",
+ "brute_force_solution": "def swapPairs(head):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    for i in range(0, len(vals) - 1, 2):\n        vals[i], vals[i + 1] = vals[i + 1], vals[i]\n    out = None\n    for v in reversed(vals):\n        out = ListNode(v, out)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    2,
+    1,
+    4,
+    3
+   ],
+   "tag": "even_length"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    2,
+    1,
+    3
+   ],
+   "tag": "odd_length"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    2,
+    1
+   ],
+   "tag": "even_length"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   ],
+   "expected": [
+    2,
+    1,
+    4,
+    3,
+    6,
+    5
+   ],
+   "tag": "even_length"
+  },
+  {
+   "args": [
+    [
+     4,
+     6,
+     3,
+     4,
+     6,
+     0
+    ]
+   ],
+   "expected": [
+    6,
+    4,
+    4,
+    3,
+    0,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     1,
+     2,
+     1,
+     9,
+     8,
+     7
+    ]
+   ],
+   "expected": [
+    1,
+    8,
+    1,
+    2,
+    8,
+    9,
+    7
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ]
+   ],
+   "expected": [
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     4,
+     7,
+     8,
+     7
+    ]
+   ],
+   "expected": [
+    4,
+    0,
+    8,
+    7,
+    7
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "After swapping a pair, the node before it must point to the new first node of the pair. What helps you keep track of that previous node?",
+  "2_nudge": "Use a dummy head. For prev, take a = prev.next and b = a.next; rewire prev -> b -> a -> (rest), then move prev to a.",
+  "3_big_hint": "a.next = b.next; b.next = a; prev.next = b; prev = a. Loop while prev.next and prev.next.next."
+ },
+ "known_bugs": [
+  {
+   "name": "drops the unpaired last node",
+   "code": "def swapPairs(head):\n    dummy = ListNode(0)\n    tail = dummy\n    while head and head.next:\n        a = head\n        b = head.next\n        head = b.next\n        b.next = a\n        a.next = None\n        tail.next = b\n        tail = a\n    return dummy.next\n",
+   "fails_on": "odd_length",
+   "followup": "For [1, 2, 3], where does the 3 go in your result?"
+  },
+  {
+   "name": "forgets to link the previous pair to the swapped pair",
+   "code": "def swapPairs(head):\n    if not head or not head.next:\n        return head\n    new_head = head.next\n    prev = None\n    cur = head\n    while cur and cur.next:\n        a = cur\n        b = cur.next\n        nxt = b.next\n        b.next = a\n        a.next = nxt\n        cur = nxt\n    return new_head\n",
+   "fails_on": "even_length",
+   "followup": "After you swap (1,2) the node 1 should point to the next pair's NEW first node (4), not to 3. Where is that link set?"
+  },
+  {
+   "name": "recursive version (recursion limit)",
+   "code": "def swapPairs(head):\n    if not head or not head.next:\n        return head\n    second = head.next\n    head.next = swapPairs(second.next)\n    second.next = head\n    return second\n",
+   "fails_on": "large",
+   "followup": "How deep does the recursion get on 100000 nodes?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How does this generalise to reversing groups of k (problem 25)?",
+   "Why does a dummy node avoid a special case for the head?"
+  ]
+ }
+}

@@ -1,0 +1,193 @@
+{
+ "id": "binary-search-153",
+ "leetcode": 153,
+ "title": "Find Minimum in Rotated Sorted Array",
+ "pattern": "binary_search_sorted",
+ "difficulty": "medium",
+ "function": "findMin",
+ "signature": "findMin(nums: List[int]) -> int",
+ "adapter": null,
+ "statement": "A sorted list of distinct integers has been rotated an unknown number of times. Return the smallest element in O(log n). The list is non-empty.",
+ "reference_solution": "def findMin(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\n",
+ "brute_force_solution": "def findMin(nums):\n    return min(nums)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     3,
+     4,
+     5,
+     1,
+     2
+    ]
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     6,
+     7,
+     0,
+     1,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     11,
+     13,
+     15,
+     17
+    ]
+   ],
+   "expected": 11,
+   "tag": "not_rotated"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     2,
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     5,
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": 1,
+   "tag": "pivot_at_1"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     4,
+     5,
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "min_at_end"
+  },
+  {
+   "args": [
+    [
+     3,
+     7,
+     8,
+     15
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     13,
+     18,
+     9
+    ]
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     15,
+     3,
+     4
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7
+    ]
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     6
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    a = list(range(200000))\n    k = 77777\n    return [a[k:] + a[:k]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Compare the middle element with something that tells you which side the minimum is on.",
+  "2_nudge": "If nums[mid] > nums[hi], the drop (and the minimum) is to the right of mid. Otherwise the minimum is at mid or to its left.",
+  "3_big_hint": "While lo < hi: mid; if nums[mid] > nums[hi]: lo = mid + 1 else hi = mid. Return nums[lo]."
+ },
+ "known_bugs": [
+  {
+   "name": "compares with nums[lo] instead of nums[hi]",
+   "code": "def findMin(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[lo]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\n",
+   "fails_on": "not_rotated",
+   "followup": "In an array that is not rotated at all, nums[mid] > nums[lo]. Does that mean the minimum is to the right?"
+  },
+  {
+   "name": "lo = mid never makes progress",
+   "code": "def findMin(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid\n        else:\n            hi = mid\n    return nums[lo]\n",
+   "fails_on": "two_elements",
+   "followup": "With two elements, what is mid, and does lo = mid shrink the range?"
+  },
+  {
+   "name": "returns the index instead of the value",
+   "code": "def findMin(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+   "fails_on": "normal",
+   "followup": "Re-read what the function is supposed to return: the minimum value or its position?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "What changes when duplicates are allowed (problem 154)?",
+   "Why compare against nums[hi] rather than nums[lo]?"
+  ]
+ }
+}

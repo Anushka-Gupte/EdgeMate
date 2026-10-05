@@ -1,0 +1,207 @@
+{
+ "id": "monotonic-queue-862",
+ "leetcode": 862,
+ "title": "Shortest Subarray with Sum at Least K",
+ "pattern": "monotonic_queue",
+ "difficulty": "hard",
+ "function": "shortestSubarray",
+ "signature": "shortestSubarray(nums: List[int], k: int) -> int",
+ "adapter": null,
+ "statement": "Return the length of the shortest non-empty contiguous subarray with a sum of at least k, or -1 if none exists. The list may contain negative numbers.",
+ "reference_solution": "from collections import deque\ndef shortestSubarray(nums, k):\n    n = len(nums)\n    pre = [0] * (n + 1)\n    for i in range(n):\n        pre[i + 1] = pre[i] + nums[i]\n    dq = deque()\n    best = n + 1\n    for i in range(n + 1):\n        while dq and pre[i] - pre[dq[0]] >= k:\n            best = min(best, i - dq.popleft())\n        while dq and pre[dq[-1]] >= pre[i]:\n            dq.pop()\n        dq.append(i)\n    return best if best <= n else -1\n",
+ "brute_force_solution": "def shortestSubarray(nums, k):\n    best = None\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s >= k:\n                if best is None or j - i + 1 < best:\n                    best = j - i + 1\n                break\n    return -1 if best is None else best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    4
+   ],
+   "expected": -1,
+   "tag": "impossible"
+  },
+  {
+   "args": [
+    [
+     2,
+     -1,
+     2
+    ],
+    3
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     84,
+     -37,
+     32,
+     40,
+     95
+    ],
+    167
+   ],
+   "expected": 3,
+   "tag": "negatives_needed"
+  },
+  {
+   "args": [
+    [
+     -28,
+     81,
+     -20,
+     28,
+     -29
+    ],
+    89
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [],
+    1
+   ],
+   "expected": -1,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     5,
+     -10,
+     6
+    ],
+    6
+   ],
+   "expected": 1,
+   "tag": "negatives_needed"
+  },
+  {
+   "args": [
+    [
+     4
+    ],
+    5
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     -1,
+     -1
+    ],
+    1
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -3,
+     -2,
+     3,
+     4,
+     -3,
+     -3,
+     -1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     -2,
+     0,
+     -3,
+     2,
+     -2,
+     -1,
+     0,
+     -3
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     -2,
+     0,
+     0,
+     -1,
+     1
+    ],
+    5
+   ],
+   "expected": -1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(34)\n    return [[r.randint(-5, 10) for _ in range(100000)], 5000]"
+  }
+ ],
+ "hints": {
+  "1_question": "With negative numbers a sliding window breaks. Think in prefix sums: you want the closest earlier index j with prefix[i] - prefix[j] >= k.",
+  "2_nudge": "Keep a deque of candidate start indices whose prefix sums are increasing. Pop from the front while the current prefix minus the front's prefix reaches k (record the length), and pop from the back while their prefix is not smaller than the current one.",
+  "3_big_hint": "For each i in 0..n: while dq and pre[i] - pre[dq[0]] >= k: best = min(best, i - dq.popleft()); while dq and pre[dq[-1]] >= pre[i]: dq.pop(); dq.append(i)."
+ },
+ "known_bugs": [
+  {
+   "name": "sliding window that assumes positive numbers",
+   "code": "def shortestSubarray(nums, k):\n    left = total = 0\n    best = len(nums) + 1\n    for right, x in enumerate(nums):\n        total += x\n        while total >= k and left <= right:\n            best = min(best, right - left + 1)\n            total -= nums[left]\n            left += 1\n    return best if best <= len(nums) else -1\n",
+   "fails_on": "negatives_needed",
+   "followup": "When a negative number is added, the sum goes down. Does shrinking from the left still find every candidate?"
+  },
+  {
+   "name": "never discards larger prefix sums from the back",
+   "code": "from collections import deque\ndef shortestSubarray(nums, k):\n    n = len(nums)\n    pre = [0] * (n + 1)\n    for i in range(n):\n        pre[i + 1] = pre[i] + nums[i]\n    dq = deque()\n    best = n + 1\n    for i in range(n + 1):\n        while dq and pre[i] - pre[dq[0]] >= k:\n            best = min(best, i - dq.popleft())\n        dq.append(i)\n    return best if best <= n else -1\n",
+   "fails_on": "negatives_needed",
+   "followup": "If an earlier prefix is larger than the current one, can it ever give a better start for a future index than the current one?"
+  },
+  {
+   "name": "checks every start index (O(n^2))",
+   "code": "def shortestSubarray(nums, k):\n    best = None\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s >= k:\n                if best is None or j - i + 1 < best:\n                    best = j - i + 1\n                break\n    return -1 if best is None else best\n",
+   "fails_on": "large",
+   "followup": "How many (i, j) pairs does this try when most subarrays fall short of k? What can a monotonic deque rule out?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why must the deque keep prefix sums increasing?",
+   "Why does popping the front after use never lose a better answer later?"
+  ]
+ }
+}

@@ -1,0 +1,270 @@
+{
+ "id": "linked-list-025",
+ "leetcode": 25,
+ "title": "Reverse Nodes in k-Group",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "hard",
+ "function": "reverseKGroup",
+ "signature": "reverseKGroup(head: ListNode, k: int) -> ListNode",
+ "adapter": "list_args_to_list",
+ "statement": "Reverse the nodes of the list k at a time and return the modified list. If the number of nodes is not a multiple of k, the final leftover nodes stay in their original order.",
+ "reference_solution": "def reverseKGroup(head, k):\n    dummy = ListNode(0, head)\n    prev = dummy\n    while True:\n        node = prev\n        cnt = 0\n        while cnt < k and node.next:\n            node = node.next\n            cnt += 1\n        if cnt < k:\n            break\n        group_start = prev.next\n        cur, p = group_start, node.next\n        for _ in range(k):\n            tmp = cur.next\n            cur.next = p\n            p = cur\n            cur = tmp\n        prev.next = p\n        prev = group_start\n    return dummy.next\n",
+ "brute_force_solution": "def reverseKGroup(head, k):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    out = []\n    for i in range(0, len(vals), k):\n        chunk = vals[i:i + k]\n        out += chunk[::-1] if len(chunk) == k else chunk\n    res = None\n    for v in reversed(out):\n        res = ListNode(v, res)\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    2
+   ],
+   "expected": [
+    2,
+    1,
+    4,
+    3,
+    5
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    3
+   ],
+   "expected": [
+    3,
+    2,
+    1,
+    4,
+    5
+   ],
+   "tag": "leftover_stays"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    1
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "k_is_one"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    4
+   ],
+   "expected": [
+    1,
+    2,
+    3
+   ],
+   "tag": "k_exceeds_length"
+  },
+  {
+   "args": [
+    [],
+    2
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    4
+   ],
+   "expected": [
+    4,
+    3,
+    2,
+    1
+   ],
+   "tag": "whole_list"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     1
+    ],
+    1
+   ],
+   "expected": [
+    3,
+    1,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     5,
+     0,
+     4,
+     8,
+     2
+    ],
+    1
+   ],
+   "expected": [
+    0,
+    5,
+    0,
+    4,
+    8,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     5,
+     3,
+     1,
+     3,
+     4,
+     8
+    ],
+    4
+   ],
+   "expected": [
+    3,
+    5,
+    0,
+    2,
+    8,
+    4,
+    3,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     7,
+     8,
+     5,
+     6,
+     4,
+     2,
+     9
+    ],
+    4
+   ],
+   "expected": [
+    5,
+    8,
+    7,
+    8,
+    9,
+    2,
+    4,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     4,
+     4,
+     0
+    ],
+    2
+   ],
+   "expected": [
+    4,
+    6,
+    0,
+    4
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 7]"
+  }
+ ],
+ "hints": {
+  "1_question": "First check that there are really k nodes left. If not, stop and leave the rest alone.",
+  "2_nudge": "For each full group: reverse k nodes in place (like reversing a list), then connect the previous group's tail to the new head and this group's old head to what follows.",
+  "3_big_hint": "Find the k-th node from prev. If fewer than k remain, break. Reverse k nodes with cur/p; prev.next = p; prev = group_start."
+ },
+ "known_bugs": [
+  {
+   "name": "also reverses the final short group",
+   "code": "def reverseKGroup(head, k):\n    dummy = ListNode(0, head)\n    prev = dummy\n    while prev.next:\n        node = prev\n        cnt = 0\n        while cnt < k and node.next:\n            node = node.next\n            cnt += 1\n        group_start = prev.next\n        cur, p = group_start, node.next\n        for _ in range(cnt):\n            tmp = cur.next\n            cur.next = p\n            p = cur\n            cur = tmp\n        prev.next = p\n        prev = group_start\n    return dummy.next\n",
+   "fails_on": "k_exceeds_length",
+   "followup": "The problem says leftover nodes (fewer than k) keep their order. Does your loop check that a full group exists?"
+  },
+  {
+   "name": "groups are one node too small",
+   "code": "def reverseKGroup(head, k):\n    k = k - 1\n    dummy = ListNode(0, head)\n    prev = dummy\n    guard = 0\n    while guard < 1000:\n        guard += 1\n        node = prev\n        cnt = 0\n        while cnt < k and node.next:\n            node = node.next\n            cnt += 1\n        if cnt < k or k <= 0:\n            break\n        group_start = prev.next\n        cur, p = group_start, node.next\n        for _ in range(k):\n            tmp = cur.next\n            cur.next = p\n            p = cur\n            cur = tmp\n        prev.next = p\n        prev = group_start\n    return dummy.next\n",
+   "fails_on": "normal",
+   "followup": "With k = 2, how many nodes does each reversed group contain in your code?"
+  },
+  {
+   "name": "forgets to attach the reversed group to the previous part",
+   "code": "def reverseKGroup(head, k):\n    dummy = ListNode(0, head)\n    prev = dummy\n    while True:\n        node = prev\n        cnt = 0\n        while cnt < k and node.next:\n            node = node.next\n            cnt += 1\n        if cnt < k:\n            break\n        group_start = prev.next\n        cur, p = group_start, node.next\n        for _ in range(k):\n            tmp = cur.next\n            cur.next = p\n            p = cur\n            cur = tmp\n        prev = group_start\n    return dummy.next\n",
+   "fails_on": "normal",
+   "followup": "After reversing a group, which node should prev.next point to?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How would a recursive version handle the leftover check?",
+   "Why do you count k nodes ahead before reversing?"
+  ]
+ }
+}

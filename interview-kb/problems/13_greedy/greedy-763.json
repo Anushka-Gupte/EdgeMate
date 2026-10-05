@@ -1,0 +1,162 @@
+{
+ "id": "greedy-763",
+ "leetcode": 763,
+ "title": "Partition Labels",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "partitionLabels",
+ "signature": "partitionLabels(s: str) -> List[int]",
+ "adapter": null,
+ "statement": "Split the string into as many parts as possible so that each letter appears in at most one part. Return the sizes of the parts in order.",
+ "reference_solution": "def partitionLabels(s):\n    last = {c: i for i, c in enumerate(s)}\n    out = []\n    start = end = 0\n    for i, c in enumerate(s):\n        end = max(end, last[c])\n        if i == end:\n            out.append(end - start + 1)\n            start = i + 1\n    return out\n",
+ "brute_force_solution": "def partitionLabels(s):\n    iv = sorted((s.index(c), s.rindex(c)) for c in set(s))\n    out = []\n    cs = ce = None\n    for a, b in iv:\n        if ce is None or a > ce:\n            if ce is not None:\n                out.append(ce - cs + 1)\n            cs, ce = a, b\n        else:\n            ce = max(ce, b)\n    if ce is not None:\n        out.append(ce - cs + 1)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    "ababcbacadefegdehijhklij"
+   ],
+   "expected": [
+    9,
+    7,
+    8
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "eccbbbbdec"
+   ],
+   "expected": [
+    10
+   ],
+   "tag": "one_part"
+  },
+  {
+   "args": [
+    "a"
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    ""
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "abc"
+   ],
+   "expected": [
+    1,
+    1,
+    1
+   ],
+   "tag": "all_distinct"
+  },
+  {
+   "args": [
+    "aaaa"
+   ],
+   "expected": [
+    4
+   ],
+   "tag": "same_letter"
+  },
+  {
+   "args": [
+    "abab"
+   ],
+   "expected": [
+    4
+   ],
+   "tag": "overlap_chars"
+  },
+  {
+   "args": [
+    ""
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "abba"
+   ],
+   "expected": [
+    4
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "dd"
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "cc"
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    "adcddad"
+   ],
+   "expected": [
+    7
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(52)\n    return [''.join(r.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(100000))]"
+  }
+ ],
+ "hints": {
+  "1_question": "A part must at least extend to the last occurrence of every letter inside it. How can you find those last occurrences quickly?",
+  "2_nudge": "Precompute the last index of each letter. Scan left to right keeping the farthest last-index needed; when i reaches it, the part can be cut.",
+  "3_big_hint": "last = {c: i}. end = max(end, last[c]) at each step; if i == end: record end - start + 1 and set start = i + 1."
+ },
+ "known_bugs": [
+  {
+   "name": "only extends the part by the first letter's last index",
+   "code": "def partitionLabels(s):\n    last = {c: i for i, c in enumerate(s)}\n    out = []\n    i = 0\n    while i < len(s):\n        end = last[s[i]]\n        out.append(end - i + 1)\n        i = end + 1\n    return out\n",
+   "fails_on": "overlap_chars",
+   "followup": "In 'abab', a's last index is 2 but b occurs at 3. Is cutting after index 2 allowed?"
+  },
+  {
+   "name": "replaces the end instead of taking the max",
+   "code": "def partitionLabels(s):\n    last = {c: i for i, c in enumerate(s)}\n    out = []\n    start = end = 0\n    for i, c in enumerate(s):\n        end = last[c]\n        if i == end:\n            out.append(end - start + 1)\n            start = i + 1\n    return out\n",
+   "fails_on": "normal",
+   "followup": "A later letter may have an earlier last index than the one you already needed. Should that shrink your end?"
+  },
+  {
+   "name": "rescans the whole string for each letter's last index (O(n^2))",
+   "code": "def partitionLabels(s):\n    out = []\n    start = end = 0\n    for i, c in enumerate(s):\n        end = max(end, max(j for j, x in enumerate(s) if x == c))\n        if i == end:\n            out.append(end - start + 1)\n            start = i + 1\n    return out\n",
+   "fails_on": "large",
+   "followup": "How many characters do you scan to find one letter's last position? Could you compute all of them once?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1) (26 letters)",
+  "followups": [
+   "Why is the greedy cut at the first possible place optimal?",
+   "How is this related to merging intervals?"
+  ]
+ }
+}

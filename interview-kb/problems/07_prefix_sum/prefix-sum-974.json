@@ -1,0 +1,200 @@
+{
+ "id": "prefix-sum-974",
+ "leetcode": 974,
+ "title": "Subarray Sums Divisible by K",
+ "pattern": "prefix_sum",
+ "difficulty": "medium",
+ "function": "subarraysDivByK",
+ "signature": "subarraysDivByK(nums: List[int], k: int) -> int",
+ "adapter": null,
+ "statement": "Return how many non-empty contiguous subarrays have a sum divisible by k. Values may be negative.",
+ "reference_solution": "def subarraysDivByK(nums, k):\n    cnt = {0: 1}\n    total = res = 0\n    for x in nums:\n        total = (total + x) % k\n        res += cnt.get(total, 0)\n        cnt[total] = cnt.get(total, 0) + 1\n    return res\n",
+ "brute_force_solution": "def subarraysDivByK(nums, k):\n    res = 0\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s % k == 0:\n                res += 1\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     4,
+     5,
+     0,
+     -2,
+     -3,
+     1
+    ],
+    5
+   ],
+   "expected": 7,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    9
+   ],
+   "expected": 0,
+   "tag": "single_no_match"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    5
+   ],
+   "expected": 1,
+   "tag": "from_start"
+  },
+  {
+   "args": [
+    [
+     0
+    ],
+    5
+   ],
+   "expected": 1,
+   "tag": "zero_element"
+  },
+  {
+   "args": [
+    [
+     -1,
+     2,
+     9
+    ],
+    2
+   ],
+   "expected": 2,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -2,
+     4
+    ],
+    4
+   ],
+   "expected": 3,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -2,
+     5,
+     -3,
+     -3,
+     1,
+     1,
+     -1,
+     2
+    ],
+    4
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -1
+    ],
+    3
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     0,
+     2,
+     -1,
+     3,
+     -2,
+     0,
+     -3
+    ],
+    2
+   ],
+   "expected": 22,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     0,
+     -2,
+     2,
+     1,
+     0,
+     2
+    ],
+    5
+   ],
+   "expected": 8,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(28)\n    return [[r.randint(-1000, 1000) for _ in range(100000)], 1000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Two prefix sums differ by a multiple of k exactly when they have the same remainder mod k. What can you count?",
+  "2_nudge": "Track how many times each remainder of the running sum has occurred. Each new prefix with remainder r forms a valid subarray with every earlier prefix of remainder r.",
+  "3_big_hint": "cnt = {0: 1}; total = (total + x) % k; res += cnt.get(total, 0); cnt[total] += 1. In Python % already returns a non-negative remainder."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets the empty prefix",
+   "code": "def subarraysDivByK(nums, k):\n    cnt = {}\n    total = res = 0\n    for x in nums:\n        total = (total + x) % k\n        res += cnt.get(total, 0)\n        cnt[total] = cnt.get(total, 0) + 1\n    return res\n",
+   "fails_on": "from_start",
+   "followup": "A subarray that begins at index 0 pairs with which 'empty' prefix? What remainder does it have?"
+  },
+  {
+   "name": "negative remainders treated as different from positive ones",
+   "code": "def subarraysDivByK(nums, k):\n    cnt = {0: 1}\n    total = res = 0\n    for x in nums:\n        total = total + x\n        total = total - k * int(total / k)\n        res += cnt.get(total, 0)\n        cnt[total] = cnt.get(total, 0) + 1\n    return res\n",
+   "fails_on": "negative",
+   "followup": "Is -1 mod 5 the same remainder class as 4 mod 5? Does your code treat them as equal?"
+  },
+  {
+   "name": "checks every subarray (O(n^2))",
+   "code": "def subarraysDivByK(nums, k):\n    res = 0\n    for i in range(len(nums)):\n        s = 0\n        for j in range(i, len(nums)):\n            s += nums[j]\n            if s % k == 0:\n                res += 1\n    return res\n",
+   "fails_on": "large",
+   "followup": "How many subarrays are there in 100000 elements? How can remainders let you count them without enumerating?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(k)",
+  "followups": [
+   "Why do negative numbers need extra care in some languages (C++/Java)?",
+   "How would you return the longest such subarray instead?"
+  ]
+ }
+}

@@ -1,0 +1,182 @@
+{
+ "id": "fast-slow-141",
+ "leetcode": 141,
+ "title": "Linked List Cycle",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "easy",
+ "function": "hasCycle",
+ "signature": "hasCycle(head: ListNode) -> bool",
+ "adapter": "cycle",
+ "statement": "Given the head of a singly linked list, return True if following next pointers ever revisits a node (the list contains a cycle), otherwise False.",
+ "reference_solution": "def hasCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            return True\n    return False\n",
+ "brute_force_solution": "def hasCycle(head):\n    seen = set()\n    while head:\n        if id(head) in seen:\n            return True\n        seen.add(id(head))\n        head = head.next\n    return False\n",
+ "tests": [
+  {
+   "args": [
+    [
+     3,
+     2,
+     0,
+     -4
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "cycle_not_at_head"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    0
+   ],
+   "expected": true,
+   "tag": "cycle_at_head"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    -1
+   ],
+   "expected": false,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    0
+   ],
+   "expected": true,
+   "tag": "self_loop"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": false,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3
+    ],
+    -1
+   ],
+   "expected": false,
+   "tag": "duplicate_values"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "cycle_not_at_head"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     0,
+     3
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    0
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 50000]"
+  },
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), -1]"
+  }
+ ],
+ "hints": {
+  "1_question": "Imagine two runners on a circular track at different speeds. What eventually happens?",
+  "2_nudge": "Use two pointers: slow moves 1 step, fast moves 2. If there is a cycle they will meet; if not, fast hits the end.",
+  "3_big_hint": "while fast and fast.next: advance both; if slow is fast return True. After the loop return False. Compare nodes, not values."
+ },
+ "known_bugs": [
+  {
+   "name": "compares values instead of nodes",
+   "code": "def hasCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if fast and slow.val == fast.val:\n            return True\n    return False\n",
+   "fails_on": "duplicate_values",
+   "followup": "Two different nodes can hold the same number. Is equal value the same as being the same node?"
+  },
+  {
+   "name": "crashes on an empty list",
+   "code": "def hasCycle(head):\n    slow = head\n    fast = head.next\n    while fast and fast.next:\n        if slow is fast:\n            return True\n        slow = slow.next\n        fast = fast.next.next\n    return False\n",
+   "fails_on": "empty",
+   "followup": "What is `head` when the list is empty, and what does head.next do then?"
+  },
+  {
+   "name": "only detects cycles that return to the head",
+   "code": "def hasCycle(head):\n    cur = head\n    while cur:\n        cur = cur.next\n        if cur is head:\n            return True\n    return False\n",
+   "fails_on": "cycle_not_at_head",
+   "followup": "What if the cycle starts in the middle of the list and never points back to the head? What does your loop do?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How would you find the node where the cycle begins (the follow-up problem, 142)?",
+   "Why are two pointers with speeds 1 and 2 guaranteed to meet inside a cycle?"
+  ]
+ }
+}

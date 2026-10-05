@@ -1,0 +1,293 @@
+{
+ "id": "intervals-452",
+ "leetcode": 452,
+ "title": "Minimum Number of Arrows to Burst Balloons",
+ "pattern": "intervals",
+ "difficulty": "medium",
+ "function": "findMinArrowShots",
+ "signature": "findMinArrowShots(points: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "Each balloon spans [xstart, xend] on the x-axis. An arrow shot straight up at x bursts every balloon with xstart <= x <= xend. Return the minimum number of arrows needed to burst all balloons.",
+ "reference_solution": "def findMinArrowShots(points):\n    arrows = 0\n    end = float('-inf')\n    for s, e in sorted(points, key=lambda p: p[1]):\n        if s > end:\n            arrows += 1\n            end = e\n    return arrows\n",
+ "brute_force_solution": "import itertools\ndef findMinArrowShots(points):\n    if not points:\n        return 0\n    cands = sorted({x for p in points for x in p})\n    for k in range(1, len(points) + 1):\n        for comb in itertools.combinations(cands, min(k, len(cands))):\n            if all(any(s <= x <= e for x in comb) for s, e in points):\n                return k\n    return len(points)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      10,
+      16
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      7,
+      12
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      7,
+      8
+     ]
+    ]
+   ],
+   "expected": 4,
+   "tag": "disjoint"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      4,
+      5
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "touching"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      -2147483648,
+      2147483647
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "extreme_values"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      7
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "chain_overlap"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      5
+     ],
+     [
+      0,
+      1
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      8,
+      9
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      7,
+      8
+     ],
+     [
+      4,
+      6
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      10
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      2,
+      6
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      4,
+      6
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      3,
+      6
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      7
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      8,
+      12
+     ],
+     [
+      2,
+      6
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(48)\n    return [[(lambda a: [a, a + r.randint(0, 100)])(r.randint(0, 10**6)) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "One arrow can burst a whole group if they all share a common x. When is it safe to say 'this arrow is as far right as it can usefully be'?",
+  "2_nudge": "Sort by end. Shoot at the end of the first balloon; every balloon starting at or before that x is burst. A balloon starting after it needs a new arrow.",
+  "3_big_hint": "arrows = 0, end = -inf; for s, e in sorted by e: if s > end: arrows += 1; end = e."
+ },
+ "known_bugs": [
+  {
+   "name": "touching balloons need separate arrows (>=)",
+   "code": "def findMinArrowShots(points):\n    arrows = 0\n    end = float('-inf')\n    for s, e in sorted(points, key=lambda p: p[1]):\n        if s >= end:\n            arrows += 1\n            end = e\n    return arrows\n",
+   "fails_on": "touching",
+   "followup": "A balloon ending at 2 and one starting at 2 can both be hit at x = 2. Does your comparison allow that?"
+  },
+  {
+   "name": "merges chains of overlaps (needs a common point, not just a chain)",
+   "code": "def findMinArrowShots(points):\n    arrows = 0\n    end = float('-inf')\n    for s, e in sorted(points):\n        if s > end:\n            arrows += 1\n            end = e\n        else:\n            end = max(end, e)\n    return arrows\n",
+   "fails_on": "chain_overlap",
+   "followup": "Balloons [1,3] and [4,7] each overlap [2,5], but is there one x that hits all three?"
+  },
+  {
+   "name": "sorts by end but never starts a new group's end",
+   "code": "def findMinArrowShots(points):\n    arrows = 0\n    end = float('-inf')\n    for s, e in sorted(points, key=lambda p: p[1]):\n        if s > end:\n            arrows += 1\n    return arrows\n",
+   "fails_on": "normal",
+   "followup": "After you decide to shoot a new arrow, what should the 'current arrow position' become?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(1) extra",
+  "followups": [
+   "How is this related to problem 435?",
+   "Why is shooting at the earliest end optimal?"
+  ]
+ }
+}

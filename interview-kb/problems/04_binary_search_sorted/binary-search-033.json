@@ -1,0 +1,232 @@
+{
+ "id": "binary-search-033",
+ "leetcode": 33,
+ "title": "Search in Rotated Sorted Array",
+ "pattern": "binary_search_sorted",
+ "difficulty": "medium",
+ "function": "search",
+ "signature": "search(nums: List[int], target: int) -> int",
+ "adapter": null,
+ "statement": "A sorted list of distinct integers was rotated at some unknown pivot (for example [0,1,2,4,5,6,7] became [4,5,6,7,0,1,2]). Return the index of the target, or -1 if it is absent, in O(log n).",
+ "reference_solution": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\n",
+ "brute_force_solution": "def search(nums, target):\n    return nums.index(target) if target in nums else -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     4,
+     5,
+     6,
+     7,
+     0,
+     1,
+     2
+    ],
+    0
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     6,
+     7,
+     0,
+     1,
+     2
+    ],
+    3
+   ],
+   "expected": -1,
+   "tag": "not_found"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    0
+   ],
+   "expected": -1,
+   "tag": "not_found"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     3
+    ],
+    3
+   ],
+   "expected": 1,
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     3,
+     1
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     5,
+     1,
+     3
+    ],
+    5
+   ],
+   "expected": 0,
+   "tag": "target_at_start"
+  },
+  {
+   "args": [
+    [],
+    5
+   ],
+   "expected": -1,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     4,
+     5,
+     6,
+     7,
+     0,
+     1,
+     2
+    ],
+    7
+   ],
+   "expected": 3,
+   "tag": "pivot_edge"
+  },
+  {
+   "args": [
+    [
+     2,
+     11,
+     12,
+     14,
+     16
+    ],
+    15
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     9,
+     10,
+     11,
+     12,
+     15
+    ],
+    14
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     17,
+     0,
+     4,
+     7,
+     10,
+     11,
+     15
+    ],
+    14
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     18
+    ],
+    13
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     8,
+     12,
+     14
+    ],
+    11
+   ],
+   "expected": -1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    a = list(range(200000))\n    k = 77777\n    return [a[k:] + a[:k], 12345]"
+  }
+ ],
+ "hints": {
+  "1_question": "After rotation the array is no longer sorted, but what is always true about at least one half when you split at mid?",
+  "2_nudge": "At each step one half [lo..mid] or [mid..hi] is properly sorted. Check whether the target lies inside the sorted half; if so go there, otherwise go to the other half.",
+  "3_big_hint": "If nums[lo] <= nums[mid] the left half is sorted: if nums[lo] <= target < nums[mid] hi = mid-1 else lo = mid+1. Otherwise the right half is sorted: if nums[mid] < target <= nums[hi] lo = mid+1 else hi = mid-1."
+ },
+ "known_bugs": [
+  {
+   "name": "ignores the rotation (plain binary search)",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+   "fails_on": "normal",
+   "followup": "In [4,5,6,7,0,1,2], if nums[mid] = 7 and the target is 0, is the target to the left or right of mid?"
+  },
+  {
+   "name": "uses < instead of <= when detecting the sorted half",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] < nums[mid]:\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\n",
+   "fails_on": "two_elements",
+   "followup": "When lo == mid (two elements left), is the 'left half' sorted? What does your comparison say?"
+  },
+  {
+   "name": "checks only one bound of the sorted half",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            if target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if target > nums[mid]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\n",
+   "fails_on": "normal",
+   "followup": "Being smaller than nums[mid] only means 'left of mid' in a sorted half if the target is also at least nums[lo]. Where do you check that?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "What breaks if the array may contain duplicates (problem 81)?",
+   "Could you first find the pivot, then do two ordinary binary searches?"
+  ]
+ }
+}

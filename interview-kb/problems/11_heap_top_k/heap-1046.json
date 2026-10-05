@@ -1,0 +1,184 @@
+{
+ "id": "heap-1046",
+ "leetcode": 1046,
+ "title": "Last Stone Weight",
+ "pattern": "heap_top_k",
+ "difficulty": "easy",
+ "function": "lastStoneWeight",
+ "signature": "lastStoneWeight(stones: List[int]) -> int",
+ "adapter": null,
+ "statement": "Repeatedly take the two heaviest stones. If they weigh the same both are destroyed; otherwise the lighter is destroyed and the heavier is reduced by the lighter's weight. Return the weight of the last remaining stone, or 0 if none remain.",
+ "reference_solution": "import heapq\ndef lastStoneWeight(stones):\n    h = [-s for s in stones]\n    heapq.heapify(h)\n    while len(h) > 1:\n        a = -heapq.heappop(h)\n        b = -heapq.heappop(h)\n        if a != b:\n            heapq.heappush(h, -(a - b))\n    return -h[0] if h else 0\n",
+ "brute_force_solution": "def lastStoneWeight(stones):\n    s = sorted(stones)\n    while len(s) > 1:\n        a = s.pop()\n        b = s.pop()\n        if a != b:\n            s.append(a - b)\n            s.sort()\n    return s[0] if s else 0\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     7,
+     4,
+     1,
+     8,
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     2,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "equal_pair"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "odd_count"
+  },
+  {
+   "args": [
+    [
+     10,
+     4
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5,
+     2,
+     1
+    ]
+   ],
+   "expected": 2,
+   "tag": "wrong_sign_push"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     5
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     1,
+     9,
+     8,
+     9,
+     8,
+     9
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8
+    ]
+   ],
+   "expected": 8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     5,
+     2,
+     5,
+     9,
+     8
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(44)\n    return [[r.randint(1, 10**6) for _ in range(50000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Each round needs the current two heaviest stones. Which structure gives you the maximum quickly after changes?",
+  "2_nudge": "Use a max-heap (in Python a min-heap of negatives). Pop two, push back the difference if it is non-zero.",
+  "3_big_hint": "While len(h) > 1: a = -pop, b = -pop; if a != b: push -(a - b). Return -h[0] if h else 0."
+ },
+ "known_bugs": [
+  {
+   "name": "smashes the two lightest stones",
+   "code": "import heapq\ndef lastStoneWeight(stones):\n    h = list(stones)\n    heapq.heapify(h)\n    while len(h) > 1:\n        a = heapq.heappop(h)\n        b = heapq.heappop(h)\n        if a != b:\n            heapq.heappush(h, b - a)\n    return h[0] if h else 0\n",
+   "fails_on": "normal",
+   "followup": "The rule says the two HEAVIEST stones. Which two does a plain min-heap pop?"
+  },
+  {
+   "name": "crashes when everything is destroyed",
+   "code": "import heapq\ndef lastStoneWeight(stones):\n    h = [-s for s in stones]\n    heapq.heapify(h)\n    while len(h) > 1:\n        a = -heapq.heappop(h)\n        b = -heapq.heappop(h)\n        if a != b:\n            heapq.heappush(h, -(a - b))\n    return -h[0]\n",
+   "fails_on": "equal_pair",
+   "followup": "What does your final line do if the heap is empty?"
+  },
+  {
+   "name": "pushes the difference with the wrong sign",
+   "code": "import heapq\ndef lastStoneWeight(stones):\n    h = [-s for s in stones]\n    heapq.heapify(h)\n    while len(h) > 1:\n        a = -heapq.heappop(h)\n        b = -heapq.heappop(h)\n        if a != b:\n            heapq.heappush(h, a - b)\n    return abs(h[0]) if h else 0\n",
+   "fails_on": "wrong_sign_push",
+   "followup": "Your heap stores negatives. What sign should the new stone have when you push it?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(n)",
+  "followups": [
+   "Could a sorted list work, and what would each round cost?",
+   "Why is a heap better than re-sorting after each smash?"
+  ]
+ }
+}

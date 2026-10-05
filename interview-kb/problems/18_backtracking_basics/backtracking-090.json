@@ -1,0 +1,543 @@
+{
+ "id": "backtracking-090",
+ "leetcode": 90,
+ "title": "Subsets II",
+ "pattern": "backtracking_basics",
+ "difficulty": "medium",
+ "function": "subsetsWithDup",
+ "signature": "subsetsWithDup(nums: List[int]) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "The list may contain duplicates. Return all UNIQUE subsets (no two with the same multiset of values), in any order.",
+ "reference_solution": "def subsetsWithDup(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i - 1]:\n                continue\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+ "brute_force_solution": "import itertools\ndef subsetsWithDup(nums):\n    out = set()\n    for k in range(len(nums) + 1):\n        for c in itertools.combinations(nums, k):\n            out.add(tuple(sorted(c)))\n    return [list(t) for t in out]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     2
+    ],
+    [
+     2
+    ],
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     0
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [
+    []
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     2,
+     2,
+     2
+    ]
+   ],
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    [
+     4,
+     4,
+     4,
+     1,
+     4
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     1,
+     4,
+     4
+    ],
+    [
+     1,
+     4,
+     4,
+     4
+    ],
+    [
+     1,
+     4,
+     4,
+     4,
+     4
+    ],
+    [
+     4
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     4,
+     4
+    ],
+    [
+     4,
+     4,
+     4,
+     4
+    ]
+   ],
+   "tag": "unsorted_input"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3
+    ]
+   ],
+   "tag": "all_distinct"
+  },
+  {
+   "args": [
+    [
+     2,
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     2
+    ],
+    [
+     2
+    ],
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "unsorted_input"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     1,
+     3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     1,
+     3
+    ],
+    [
+     1,
+     1,
+     3,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     1,
+     3,
+     3
+    ],
+    [
+     3
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     2,
+     2,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     3,
+     3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     1,
+     3
+    ],
+    [
+     0,
+     1,
+     3,
+     3
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     3,
+     3
+    ],
+    [
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     1,
+     3,
+     3
+    ],
+    [
+     3
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     3,
+     1,
+     1
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     1,
+     1
+    ],
+    [
+     0,
+     1,
+     1,
+     2
+    ],
+    [
+     0,
+     1,
+     1,
+     2,
+     3
+    ],
+    [
+     0,
+     1,
+     1,
+     3
+    ],
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     0,
+     1,
+     2,
+     3
+    ],
+    [
+     0,
+     1,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     2,
+     3
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     1,
+     2
+    ],
+    [
+     1,
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     1,
+     3
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Equal values create identical subsets if you choose them in different 'positions'. How can you force a fixed way of choosing among equals?",
+  "2_nudge": "Sort the array. At one level of recursion, don't start a branch with a value equal to the previous sibling.",
+  "3_big_hint": "Sort. In the loop over i from start: if i > start and nums[i] == nums[i-1]: continue."
+ },
+ "known_bugs": [
+  {
+   "name": "no duplicate handling",
+   "code": "def subsetsWithDup(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums)):\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "For [1, 2, 2], how many times does the subset [1, 2] appear?"
+  },
+  {
+   "name": "skip rule without sorting",
+   "code": "def subsetsWithDup(nums):\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i - 1]:\n                continue\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "unsorted_input",
+   "followup": "In [2, 1, 2] the equal values are not neighbours. What do you need to do first?"
+  },
+  {
+   "name": "skip condition i > 0 instead of i > start",
+   "code": "def subsetsWithDup(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums)):\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "normal",
+   "followup": "For [1, 2, 2], the subset [2, 2] needs the second 2 to be picked after the first. Does your skip rule allow that?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * 2^n)",
+  "space": "O(n)",
+  "followups": [
+   "Why is the condition i > start and not i > 0?",
+   "How would a counter of distinct values avoid sorting?"
+  ]
+ }
+}

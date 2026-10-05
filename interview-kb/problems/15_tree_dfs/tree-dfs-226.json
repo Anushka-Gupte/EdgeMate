@@ -1,0 +1,277 @@
+{
+ "id": "tree-dfs-226",
+ "leetcode": 226,
+ "title": "Invert Binary Tree",
+ "pattern": "tree_dfs",
+ "difficulty": "easy",
+ "function": "invertTree",
+ "signature": "invertTree(root: TreeNode) -> TreeNode",
+ "adapter": "tree_tree",
+ "statement": "Mirror the tree: swap the left and right child of every node. Return the root.",
+ "reference_solution": "def invertTree(root):\n    if root:\n        root.left, root.right = invertTree(root.right), invertTree(root.left)\n    return root\n",
+ "brute_force_solution": "def invertTree(root):\n    q = [root] if root else []\n    for n in q:\n        n.left, n.right = n.right, n.left\n        for c in (n.left, n.right):\n            if c:\n                q.append(c)\n    return root\n",
+ "tests": [
+  {
+   "args": [
+    [
+     4,
+     2,
+     7,
+     1,
+     3,
+     6,
+     9
+    ]
+   ],
+   "expected": [
+    4,
+    7,
+    2,
+    9,
+    6,
+    3,
+    1
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     1,
+     3
+    ]
+   ],
+   "expected": [
+    2,
+    3,
+    1
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    1,
+    null,
+    2
+   ],
+   "tag": "one_child"
+  },
+  {
+   "args": [
+    [
+     1,
+     null,
+     2
+    ]
+   ],
+   "expected": [
+    1,
+    2
+   ],
+   "tag": "one_child"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ]
+   ],
+   "expected": [
+    1,
+    3,
+    2,
+    7,
+    6,
+    5,
+    4,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    9,
+    8
+   ],
+   "tag": "deep"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2
+    ]
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     9,
+     9,
+     3,
+     5,
+     6,
+     4,
+     4
+    ]
+   ],
+   "expected": [
+    5,
+    9,
+    9,
+    4,
+    6,
+    5,
+    3,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    4
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     3,
+     null,
+     null,
+     6
+    ]
+   ],
+   "expected": [
+    8,
+    null,
+    3,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     9,
+     9,
+     0,
+     1,
+     null,
+     null,
+     0,
+     5,
+     3,
+     null,
+     null,
+     null,
+     4
+    ]
+   ],
+   "expected": [
+    1,
+    9,
+    9,
+    null,
+    null,
+    1,
+    0,
+    null,
+    3,
+    5,
+    0,
+    null,
+    null,
+    null,
+    4
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(5)\n    return [rand_tree(r, 60000)]"
+  }
+ ],
+ "hints": {
+  "1_question": "Each node's children swap places. What about the nodes inside those children?",
+  "2_nudge": "Recursively invert the left and right subtrees, then swap them (or swap first then recurse).",
+  "3_big_hint": "root.left, root.right = invert(root.right), invert(root.left)."
+ },
+ "known_bugs": [
+  {
+   "name": "swaps only the root's children",
+   "code": "def invertTree(root):\n    if root:\n        root.left, root.right = root.right, root.left\n    return root\n",
+   "fails_on": "normal",
+   "followup": "After swapping the root's children, what about the children's own children?"
+  },
+  {
+   "name": "never inverts the right subtree",
+   "code": "def invertTree(root):\n    if root:\n        root.left, root.right = invertTree(root.right), root.left\n    return root\n",
+   "fails_on": "normal",
+   "followup": "The old left subtree becomes the right child. Is it inverted too?"
+  },
+  {
+   "name": "second assignment uses the already-overwritten left child",
+   "code": "def invertTree(root):\n    if root:\n        root.left = invertTree(root.right)\n        root.right = invertTree(root.left)\n    return root\n",
+   "fails_on": "one_child",
+   "followup": "After the first line, what does root.left point to? Is that still the original left subtree?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "How would you do it iteratively with a queue or stack?",
+   "Why does the order of the two assignments matter?"
+  ]
+ }
+}

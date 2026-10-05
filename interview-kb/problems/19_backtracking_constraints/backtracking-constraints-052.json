@@ -1,0 +1,131 @@
+{
+ "id": "backtracking-constraints-052",
+ "leetcode": 52,
+ "title": "N-Queens II",
+ "pattern": "backtracking_constraints",
+ "difficulty": "hard",
+ "function": "totalNQueens",
+ "signature": "totalNQueens(n: int) -> int",
+ "adapter": null,
+ "statement": "Return the number of distinct ways to place n non-attacking queens on an n x n board.",
+ "reference_solution": "def totalNQueens(n):\n    cols, d1, d2 = set(), set(), set()\n    def bt(r):\n        if r == n:\n            return 1\n        total = 0\n        for c in range(n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c); d1.add(r - c); d2.add(r + c)\n            total += bt(r + 1)\n            cols.remove(c); d1.remove(r - c); d2.remove(r + c)\n        return total\n    return bt(0)\n",
+ "brute_force_solution": "import itertools\ndef totalNQueens(n):\n    return sum(1 for perm in itertools.permutations(range(n))\n               if all(abs(perm[i] - perm[j]) != j - i for i in range(n) for j in range(i + 1, n)))\n",
+ "tests": [
+  {
+   "args": [
+    4
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    1
+   ],
+   "expected": 1,
+   "tag": "odd_n"
+  },
+  {
+   "args": [
+    2
+   ],
+   "expected": 0,
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    3
+   ],
+   "expected": 0,
+   "tag": "no_solution"
+  },
+  {
+   "args": [
+    5
+   ],
+   "expected": 10,
+   "tag": "odd_n"
+  },
+  {
+   "args": [
+    8
+   ],
+   "expected": 92,
+   "tag": "eight"
+  },
+  {
+   "args": [
+    4
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    6
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    2
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    4
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    6
+   ],
+   "expected": 4,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [10]"
+  }
+ ],
+ "hints": {
+  "1_question": "You only need the count, not the boards. What state do you need while placing queens row by row?",
+  "2_nudge": "Track used columns and the two diagonals in sets (or bitmasks); count placements that reach row n.",
+  "3_big_hint": "bt(r): if r == n return 1; sum over safe columns c of bt(r + 1) after marking; unmark."
+ },
+ "known_bugs": [
+  {
+   "name": "counts only column-safe placements (n!)",
+   "code": "def totalNQueens(n):\n    cols = set()\n    def bt(r):\n        if r == n:\n            return 1\n        total = 0\n        for c in range(n):\n            if c in cols:\n                continue\n            cols.add(c)\n            total += bt(r + 1)\n            cols.remove(c)\n        return total\n    return bt(0)\n",
+   "fails_on": "normal",
+   "followup": "A column-only check counts all permutations. What else must be checked?"
+  },
+  {
+   "name": "doubles the left half (breaks for odd n)",
+   "code": "def totalNQueens(n):\n    cols, d1, d2 = set(), set(), set()\n    def bt(r, lim):\n        if r == n:\n            return 1\n        total = 0\n        for c in range(lim if r == 0 else n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c); d1.add(r - c); d2.add(r + c)\n            total += bt(r + 1, lim)\n            cols.remove(c); d1.remove(r - c); d2.remove(r + c)\n        return total\n    return 2 * bt(0, n // 2)\n",
+   "fails_on": "odd_n",
+   "followup": "Mirroring only works if the first queen can't be in the middle column. What happens when n is odd?"
+  },
+  {
+   "name": "checks every permutation of columns (O(n!) with an O(n^2) test)",
+   "code": "import itertools\ndef totalNQueens(n):\n    return sum(1 for perm in itertools.permutations(range(n))\n               if all(abs(perm[i] - perm[j]) != j - i for i in range(n) for j in range(i + 1, n)))\n",
+   "fails_on": "large",
+   "followup": "How many permutations exist for n = 10, and how many partial placements does early pruning avoid?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n!) worst case, far less with pruning",
+  "space": "O(n)",
+  "followups": [
+   "How do bitmasks make each safety check O(1)?",
+   "Can symmetry halve the work?"
+  ]
+ }
+}

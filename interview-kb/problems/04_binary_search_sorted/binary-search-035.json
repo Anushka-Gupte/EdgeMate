@@ -1,0 +1,217 @@
+{
+ "id": "binary-search-035",
+ "leetcode": 35,
+ "title": "Search Insert Position",
+ "pattern": "binary_search_sorted",
+ "difficulty": "easy",
+ "function": "searchInsert",
+ "signature": "searchInsert(nums: List[int], target: int) -> int",
+ "adapter": null,
+ "statement": "Given a sorted list of distinct integers and a target, return the index of the target if present; otherwise return the index where it would have to be inserted to keep the list sorted.",
+ "reference_solution": "def searchInsert(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+ "brute_force_solution": "def searchInsert(nums, target):\n    for i, x in enumerate(nums):\n        if x >= target:\n            return i\n    return len(nums)\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     3,
+     5,
+     6
+    ],
+    5
+   ],
+   "expected": 2,
+   "tag": "found"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     5,
+     6
+    ],
+    2
+   ],
+   "expected": 1,
+   "tag": "between_elements"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     5,
+     6
+    ],
+    7
+   ],
+   "expected": 4,
+   "tag": "insert_at_end"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     5,
+     6
+    ],
+    0
+   ],
+   "expected": 0,
+   "tag": "before_start"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     4
+    ],
+    4
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     4
+    ],
+    5
+   ],
+   "expected": 1,
+   "tag": "insert_at_end"
+  },
+  {
+   "args": [
+    [
+     -5,
+     -2,
+     0
+    ],
+    -3
+   ],
+   "expected": 1,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -10,
+     -9,
+     -4,
+     -1,
+     5,
+     7
+    ],
+    -4
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -4,
+     5,
+     8,
+     10,
+     16
+    ],
+    -12
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3
+    ],
+    19
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -9,
+     -8,
+     -4,
+     13,
+     14,
+     16
+    ],
+    -11
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -10,
+     -9,
+     -7,
+     -2,
+     -1,
+     6,
+     9,
+     17
+    ],
+    -10
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(0, 400000, 2)), 399999]"
+  }
+ ],
+ "hints": {
+  "1_question": "Instead of searching for equality, what question does each probe answer about where the target belongs?",
+  "2_nudge": "You want the first index whose value is >= target. If nums[mid] < target the answer is to the right of mid; otherwise mid could be the answer.",
+  "3_big_hint": "lo, hi = 0, len(nums). While lo < hi: mid; if nums[mid] < target: lo = mid+1 else hi = mid. Return lo. Note hi starts at len(nums), not len-1."
+ },
+ "known_bugs": [
+  {
+   "name": "returns -1 when the target is absent",
+   "code": "def searchInsert(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+   "fails_on": "before_start",
+   "followup": "The problem asks for where the target would be inserted. What does your function return when it isn't found?"
+  },
+  {
+   "name": "can never return len(nums)",
+   "code": "def searchInsert(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+   "fails_on": "insert_at_end",
+   "followup": "If the target is bigger than everything, what is the largest index your search can ever return?"
+  },
+  {
+   "name": "lo = mid never makes progress",
+   "code": "def searchInsert(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid\n        else:\n            hi = mid\n    return lo\n",
+   "fails_on": "between_elements",
+   "followup": "When lo and hi are adjacent and nums[mid] < target, what are lo and mid, and does the range shrink?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is `hi = len(nums)` instead of `len(nums) - 1` right for this problem?",
+   "How does this change if duplicates are allowed and you want the first or last position?"
+  ]
+ }
+}

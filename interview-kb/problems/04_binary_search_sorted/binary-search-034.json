@@ -1,0 +1,239 @@
+{
+ "id": "binary-search-034",
+ "leetcode": 34,
+ "title": "Find First and Last Position of Element in Sorted Array",
+ "pattern": "binary_search_sorted",
+ "difficulty": "medium",
+ "function": "searchRange",
+ "signature": "searchRange(nums: List[int], target: int) -> List[int]",
+ "adapter": null,
+ "statement": "Given a list sorted in non-decreasing order (duplicates allowed), return [first index, last index] of the target, or [-1, -1] if it is absent. Aim for O(log n).",
+ "reference_solution": "def searchRange(nums, target):\n    def lower(t):\n        lo, hi = 0, len(nums)\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if nums[mid] < t:\n                lo = mid + 1\n            else:\n                hi = mid\n        return lo\n    a = lower(target)\n    if a == len(nums) or nums[a] != target:\n        return [-1, -1]\n    return [a, lower(target + 1) - 1]\n",
+ "brute_force_solution": "def searchRange(nums, target):\n    idx = [i for i, x in enumerate(nums) if x == target]\n    return [idx[0], idx[-1]] if idx else [-1, -1]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     5,
+     7,
+     7,
+     8,
+     8,
+     10
+    ],
+    8
+   ],
+   "expected": [
+    3,
+    4
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5,
+     7,
+     7,
+     8,
+     8,
+     10
+    ],
+    6
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "not_found"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [
+    0,
+    0
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2,
+     2
+    ],
+    2
+   ],
+   "expected": [
+    0,
+    3
+   ],
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    3
+   ],
+   "expected": [
+    2,
+    2
+   ],
+   "tag": "at_end"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    1
+   ],
+   "expected": [
+    0,
+    0
+   ],
+   "tag": "at_start"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     2
+    ],
+    3
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     1,
+     4,
+     5,
+     5,
+     5
+    ],
+    3
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     2,
+     4
+    ],
+    6
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     3,
+     4,
+     5
+    ],
+    4
+   ],
+   "expected": [
+    3,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[0] * 50000 + [1] * 50000, 1]"
+  }
+ ],
+ "hints": {
+  "1_question": "Plain binary search finds some occurrence. What if you ask two different questions instead: 'where does the target first appear?' and 'where do values larger than the target start?'",
+  "2_nudge": "Write a lower-bound search (first index with value >= x). The first position is lower(target); the last is lower(target + 1) - 1.",
+  "3_big_hint": "lower(t): lo, hi = 0, len(nums); while lo < hi: mid; if nums[mid] < t: lo = mid+1 else hi = mid. If nums[lower(target)] != target return [-1,-1]."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the single index it happens to find",
+   "code": "def searchRange(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return [mid, mid]\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return [-1, -1]\n",
+   "fails_on": "normal",
+   "followup": "If the target appears several times, which occurrence does a plain binary search stop at?"
+  },
+  {
+   "name": "forgets the - 1 when computing the last index",
+   "code": "def searchRange(nums, target):\n    def lower(t):\n        lo, hi = 0, len(nums)\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if nums[mid] < t:\n                lo = mid + 1\n            else:\n                hi = mid\n        return lo\n    a = lower(target)\n    if a == len(nums) or nums[a] != target:\n        return [-1, -1]\n    return [a, lower(target + 1)]\n",
+   "fails_on": "single",
+   "followup": "lower(target + 1) is the first index AFTER the run. Is that the last index of the run?"
+  },
+  {
+   "name": "lower bound can't return len(nums)",
+   "code": "def searchRange(nums, target):\n    def lower(t):\n        lo, hi = 0, len(nums) - 1\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if nums[mid] < t:\n                lo = mid + 1\n            else:\n                hi = mid\n        return lo\n    a = lower(target)\n    if not nums or nums[a] != target:\n        return [-1, -1]\n    return [a, lower(target + 1) - 1]\n",
+   "fails_on": "at_end",
+   "followup": "If the target is the largest value, what should lower(target + 1) return, and what is the biggest value your search can produce?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "Why does searching for target + 1 work for integers but not for floats?",
+   "How would you count occurrences in O(log n)?"
+  ]
+ }
+}

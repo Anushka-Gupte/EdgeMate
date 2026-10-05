@@ -1,0 +1,289 @@
+{
+ "id": "bst-235",
+ "leetcode": 235,
+ "title": "Lowest Common Ancestor of a Binary Search Tree",
+ "pattern": "bst",
+ "difficulty": "medium",
+ "function": "lowestCommonAncestor",
+ "signature": "lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode",
+ "adapter": "tree_lca",
+ "statement": "Given a BST and two different nodes p and q in it, return their lowest common ancestor: the lowest node that has both as descendants (a node counts as a descendant of itself). (The checker passes the nodes found by value and reads the returned node's value.)",
+ "reference_solution": "def lowestCommonAncestor(root, p, q):\n    cur = root\n    while cur:\n        if p.val < cur.val and q.val < cur.val:\n            cur = cur.left\n        elif p.val > cur.val and q.val > cur.val:\n            cur = cur.right\n        else:\n            return cur\n    return None\n",
+ "brute_force_solution": "def lowestCommonAncestor(root, p, q):\n    def path(n, t):\n        if not n:\n            return None\n        if n is t:\n            return [n]\n        sub = path(n.left, t) or path(n.right, t)\n        return [n] + sub if sub else None\n    a, b = path(root, p), path(root, q)\n    res = None\n    for x, y in zip(a, b):\n        if x is y:\n            res = x\n        else:\n            break\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    2,
+    8
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    2,
+    4
+   ],
+   "expected": 2,
+   "tag": "ancestor_is_node"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    3,
+    5
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    8,
+    2
+   ],
+   "expected": 6,
+   "tag": "swapped_order"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    0,
+    5
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     8,
+     0,
+     4,
+     7,
+     9,
+     null,
+     null,
+     3,
+     5
+    ],
+    7,
+    9
+   ],
+   "expected": 8,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     1
+    ],
+    2,
+    1
+   ],
+   "expected": 2,
+   "tag": "ancestor_is_node"
+  },
+  {
+   "args": [
+    [
+     2,
+     1
+    ],
+    1,
+    2
+   ],
+   "expected": 2,
+   "tag": "swapped_order"
+  },
+  {
+   "args": [
+    [
+     1,
+     null,
+     18,
+     9,
+     null,
+     3,
+     15,
+     null,
+     7,
+     11,
+     17
+    ],
+    9,
+    7
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     5,
+     12,
+     2,
+     6,
+     null,
+     19
+    ],
+    5,
+    12
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     18,
+     0,
+     null,
+     null,
+     12,
+     2,
+     13,
+     null,
+     9
+    ],
+    0,
+    18
+   ],
+   "expected": 18,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     12,
+     7,
+     17,
+     0,
+     9
+    ],
+    9,
+    0
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     null,
+     12
+    ],
+    5,
+    12
+   ],
+   "expected": 5,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(13)\n    return (lambda t: [t, [v for v in t if v is not None][100], [v for v in t if v is not None][40000]])(rand_bst(r, 60000, 0, 10**6))"
+  }
+ ],
+ "hints": {
+  "1_question": "In a BST, where must the LCA be relative to p and q's values compared with the current node's value?",
+  "2_nudge": "Start at the root. If both values are smaller go left; if both are larger go right; otherwise the current node splits them (or equals one of them) and is the LCA.",
+  "3_big_hint": "while cur: if p.val < cur.val and q.val < cur.val: cur = cur.left; elif p.val > cur.val and q.val > cur.val: cur = cur.right; else return cur."
+ },
+ "known_bugs": [
+  {
+   "name": "always returns the root",
+   "code": "def lowestCommonAncestor(root, p, q):\n    return root\n",
+   "fails_on": "ancestor_is_node",
+   "followup": "For p = 2 and q = 4 in the example tree, is the root really their lowest shared ancestor?"
+  },
+  {
+   "name": "goes left if EITHER value is smaller",
+   "code": "def lowestCommonAncestor(root, p, q):\n    cur = root\n    while cur:\n        if p.val < cur.val or q.val < cur.val:\n            cur = cur.left\n        elif p.val > cur.val or q.val > cur.val:\n            cur = cur.right\n        else:\n            return cur\n    return None\n",
+   "fails_on": "normal",
+   "followup": "If p is smaller than the current node but q is larger, which way should you go?"
+  },
+  {
+   "name": "assumes p < q",
+   "code": "def lowestCommonAncestor(root, p, q):\n    cur = root\n    while cur:\n        if q.val < cur.val:\n            cur = cur.left\n        elif p.val > cur.val:\n            cur = cur.right\n        else:\n            return cur\n    return None\n",
+   "fails_on": "swapped_order",
+   "followup": "Does your code still work if p's value is larger than q's?"
+  }
+ ],
+ "complexity": {
+  "time": "O(h)",
+  "space": "O(1)",
+  "followups": [
+   "How does the solution change for a general binary tree (problem 236)?",
+   "Why is a node allowed to be its own ancestor here?"
+  ]
+ }
+}

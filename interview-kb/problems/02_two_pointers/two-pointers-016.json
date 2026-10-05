@@ -1,0 +1,203 @@
+{
+ "id": "two-pointers-016",
+ "leetcode": 16,
+ "title": "3Sum Closest",
+ "pattern": "two_pointers",
+ "difficulty": "medium",
+ "function": "threeSumClosest",
+ "signature": "threeSumClosest(nums: List[int], target: int) -> int",
+ "adapter": null,
+ "statement": "Pick three different elements whose sum is as close as possible to the target and return that sum. The list has at least three numbers and the closest sum is unique.",
+ "reference_solution": "def threeSumClosest(nums, target):\n    nums = sorted(nums)\n    best = nums[0] + nums[1] + nums[2]\n    for i in range(len(nums) - 2):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if abs(s - target) < abs(best - target):\n                best = s\n            if s < target:\n                l += 1\n            elif s > target:\n                r -= 1\n            else:\n                return s\n    return best\n",
+ "brute_force_solution": "def threeSumClosest(nums, target):\n    best = None\n    n = len(nums)\n    for i in range(n):\n        for j in range(i + 1, n):\n            for k in range(j + 1, n):\n                s = nums[i] + nums[j] + nums[k]\n                if best is None or abs(s - target) < abs(best - target):\n                    best = s\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     -1,
+     2,
+     1,
+     -4
+    ],
+    1
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0
+    ],
+    1
+   ],
+   "expected": 0,
+   "tag": "exactly_three_numbers"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1,
+     0
+    ],
+    -100
+   ],
+   "expected": 2,
+   "tag": "target_far_below"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1,
+     0
+    ],
+    100
+   ],
+   "expected": 3,
+   "tag": "target_far_above"
+  },
+  {
+   "args": [
+    [
+     -5,
+     -4,
+     -3
+    ],
+    0
+   ],
+   "expected": -12,
+   "tag": "all_negative"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     4,
+     8,
+     16,
+     32,
+     64,
+     128
+    ],
+    82
+   ],
+   "expected": 82,
+   "tag": "exact_match"
+  },
+  {
+   "args": [
+    [
+     -4,
+     -4,
+     -3,
+     -1
+    ],
+    -5
+   ],
+   "expected": -8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     6,
+     4
+    ],
+    -3
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     0,
+     5,
+     -6,
+     0
+    ],
+    2
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -3,
+     -6,
+     6,
+     -6,
+     -4
+    ],
+    5
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     4,
+     -4,
+     4,
+     -2,
+     -4
+    ],
+    6
+   ],
+   "expected": 6,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(17)\n    return [[r.randint(-1000, 1000) for _ in range(1000)], 7]"
+  }
+ ],
+ "hints": {
+  "1_question": "Like 3Sum, but instead of equality you want the smallest distance to the target. What does sorting buy you?",
+  "2_nudge": "Fix i, then move l and r inward: a sum below the target needs a bigger value (move l), a sum above needs a smaller one (move r). Remember the best sum seen.",
+  "3_big_hint": "Start best as the sum of the first three. For each (i, l, r) update best when |s - target| improves. Return early if s == target."
+ },
+ "known_bugs": [
+  {
+   "name": "best starts at 0",
+   "code": "def threeSumClosest(nums, target):\n    nums = sorted(nums)\n    best = 0\n    for i in range(len(nums) - 2):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if abs(s - target) < abs(best - target):\n                best = s\n            if s < target:\n                l += 1\n            elif s > target:\n                r -= 1\n            else:\n                return s\n    return best\n",
+   "fails_on": "target_far_below",
+   "followup": "Is 0 actually a sum of three of these numbers? What should `best` start as?"
+  },
+  {
+   "name": "compares the sum (not its distance) with best",
+   "code": "def threeSumClosest(nums, target):\n    nums = sorted(nums)\n    best = nums[0] + nums[1] + nums[2]\n    for i in range(len(nums) - 2):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if abs(s - target) < best:\n                best = s\n            if s < target:\n                l += 1\n            elif s > target:\n                r -= 1\n            else:\n                return s\n    return best\n",
+   "fails_on": "normal",
+   "followup": "What are you comparing here: a distance to a sum? Should both sides be distances from the target?"
+  },
+  {
+   "name": "only tries the first element as i",
+   "code": "def threeSumClosest(nums, target):\n    nums = sorted(nums)\n    best = nums[0] + nums[1] + nums[2]\n    for i in range(1):\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if abs(s - target) < abs(best - target):\n                best = s\n            if s < target:\n                l += 1\n            elif s > target:\n                r -= 1\n            else:\n                return s\n    return best\n",
+   "fails_on": "exact_match",
+   "followup": "Which values of i does your outer loop try?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n^2)",
+  "space": "O(1)",
+  "followups": [
+   "Why can you return immediately when the sum equals the target?",
+   "What if two sums were equally close, which would your code return?"
+  ]
+ }
+}

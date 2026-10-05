@@ -1,0 +1,360 @@
+{
+ "id": "graph-1254",
+ "leetcode": 1254,
+ "title": "Number of Closed Islands",
+ "pattern": "graph_bfs_dfs",
+ "difficulty": "medium",
+ "function": "closedIsland",
+ "signature": "closedIsland(grid: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "In this grid 0 is LAND and 1 is WATER. An island is a maximal group of land cells connected in 4 directions. It is closed if it is completely surrounded by water, i.e. it touches no edge of the grid. Return the number of closed islands.",
+ "reference_solution": "def closedIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    def flood(r, c):\n        st = [(r, c)]\n        grid[r][c] = 1\n        while st:\n            x, y = st.pop()\n            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 0:\n                    grid[nx][ny] = 1\n                    st.append((nx, ny))\n    for i in range(R):\n        for j in range(C):\n            if (i in (0, R - 1) or j in (0, C - 1)) and grid[i][j] == 0:\n                flood(i, j)\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 0:\n                n += 1\n                flood(i, j)\n    return n\n",
+ "brute_force_solution": "def closedIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = set()\n    cnt = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 0 and (i, j) not in seen:\n                q = [(i, j)]\n                seen.add((i, j))\n                closed = True\n                for x, y in q:\n                    if x in (0, R - 1) or y in (0, C - 1):\n                        closed = False\n                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                        nx, ny = x + dx, y + dy\n                        if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 0 and (nx, ny) not in seen:\n                            seen.add((nx, ny))\n                            q.append((nx, ny))\n                cnt += closed\n    return cnt\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0
+     ],
+     [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      1,
+      1,
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "border_land"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "no_land"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "ring_touching_border"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "simple"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      1,
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "right_bottom_border"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1,
+      0,
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      0,
+      1,
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      1
+     ],
+     [
+      0,
+      0,
+      1
+     ],
+     [
+      0,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ],
+     [
+      0
+     ],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    g = [[1] * 300 for _ in range(300)]\n    for i in range(2, 298, 4):\n        for j in range(2, 298, 4):\n            g[i][j] = 0\n    return [g]"
+  }
+ ],
+ "hints": {
+  "1_question": "Land that touches the border can never be closed - and neither can any land connected to it. How can you remove all of that first?",
+  "2_nudge": "Flood-fill from every border land cell, turning it into water. Then count the remaining islands with a normal flood-fill count.",
+  "3_big_hint": "For each border cell with 0: flood it to 1. Afterwards, for every remaining 0: count += 1 and flood it."
+ },
+ "known_bugs": [
+  {
+   "name": "counts the islands that touch the border",
+   "code": "def closedIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = set()\n    cnt = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 0 and (i, j) not in seen:\n                q = [(i, j)]\n                seen.add((i, j))\n                touches = False\n                for x, y in q:\n                    if x in (0, R - 1) or y in (0, C - 1):\n                        touches = True\n                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                        nx, ny = x + dx, y + dy\n                        if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 0 and (nx, ny) not in seen:\n                            seen.add((nx, ny))\n                            q.append((nx, ny))\n                cnt += touches\n    return cnt\n",
+   "fails_on": "border_land",
+   "followup": "Is an island that touches the edge closed or not closed?"
+  },
+  {
+   "name": "counts every island, closed or not",
+   "code": "def closedIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 0:\n                n += 1\n                st = [(i, j)]\n                grid[i][j] = 1\n                while st:\n                    x, y = st.pop()\n                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                        nx, ny = x + dx, y + dy\n                        if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 0:\n                            grid[nx][ny] = 1\n                            st.append((nx, ny))\n    return n\n",
+   "fails_on": "ring_touching_border",
+   "followup": "An island along the edge of the grid is not surrounded by water. Where do you exclude such islands?"
+  },
+  {
+   "name": "only removes land connected to the top and left edges",
+   "code": "def closedIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    def flood(r, c):\n        st = [(r, c)]\n        grid[r][c] = 1\n        while st:\n            x, y = st.pop()\n            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 0:\n                    grid[nx][ny] = 1\n                    st.append((nx, ny))\n    for i in range(R):\n        for j in range(C):\n            if (i == 0 or j == 0) and grid[i][j] == 0:\n                flood(i, j)\n    n = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 0:\n                n += 1\n                flood(i, j)\n    return n\n",
+   "fails_on": "right_bottom_border",
+   "followup": "Which edges of the grid does your border check cover? What about the bottom row and right column?"
+  }
+ ],
+ "complexity": {
+  "time": "O(R * C)",
+  "space": "O(R * C)",
+  "followups": [
+   "How would the answer change if diagonal connections counted?",
+   "How could union-find with a virtual 'outside' node solve it?"
+  ]
+ }
+}

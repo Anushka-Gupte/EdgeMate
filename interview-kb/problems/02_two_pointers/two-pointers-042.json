@@ -1,0 +1,212 @@
+{
+ "id": "two-pointers-042",
+ "leetcode": 42,
+ "title": "Trapping Rain Water",
+ "pattern": "two_pointers",
+ "difficulty": "hard",
+ "function": "trap",
+ "signature": "trap(height: List[int]) -> int",
+ "adapter": null,
+ "statement": "Each number is the height of a unit-width bar. After rain, water collects between bars. Return the total units of water trapped.",
+ "reference_solution": "def trap(height):\n    l, r = 0, len(height) - 1\n    lm = rm = water = 0\n    while l < r:\n        if height[l] < height[r]:\n            lm = max(lm, height[l])\n            water += lm - height[l]\n            l += 1\n        else:\n            rm = max(rm, height[r])\n            water += rm - height[r]\n            r -= 1\n    return water\n",
+ "brute_force_solution": "def trap(height):\n    total = 0\n    for i, h in enumerate(height):\n        total += min(max(height[:i + 1]), max(height[i:])) - h\n    return total\n",
+ "tests": [
+  {
+   "args": [
+    [
+     0,
+     1,
+     0,
+     2,
+     1,
+     0,
+     1,
+     3,
+     2,
+     1,
+     2,
+     1
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     4,
+     2,
+     0,
+     3,
+     2,
+     5
+    ]
+   ],
+   "expected": 9,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     3
+    ]
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": 0,
+   "tag": "no_water"
+  },
+  {
+   "args": [
+    [
+     3,
+     0,
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "one_valley"
+  },
+  {
+   "args": [
+    [
+     5,
+     4,
+     3,
+     2,
+     1
+    ]
+   ],
+   "expected": 0,
+   "tag": "decreasing"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     5,
+     5,
+     5,
+     1,
+     1,
+     4,
+     3,
+     0
+    ]
+   ],
+   "expected": 8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     3,
+     1,
+     0,
+     0,
+     2
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     5,
+     2,
+     2,
+     5
+    ]
+   ],
+   "expected": 6,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     2,
+     5,
+     0,
+     5,
+     0,
+     3,
+     3
+    ]
+   ],
+   "expected": 10,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     5,
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(19)\n    return [[r.randint(0, 1000) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Water above a bar is limited by the shorter of the tallest bar to its left and the tallest to its right. How could you know both without scanning every time?",
+  "2_nudge": "Two pointers from both ends. Whichever side currently has the shorter wall is the side whose water level is already decided.",
+  "3_big_hint": "Keep left_max and right_max. If height[l] < height[r]: left_max = max(left_max, height[l]); water += left_max - height[l]; l += 1. Else do the mirror image on r."
+ },
+ "known_bugs": [
+  {
+   "name": "only considers the tallest bar on the left",
+   "code": "def trap(height):\n    water = 0\n    lm = 0\n    for h in height:\n        lm = max(lm, h)\n        water += lm - h\n    return water\n",
+   "fails_on": "decreasing",
+   "followup": "On a staircase going down, is there any wall on the right to hold water in? What does your code assume?"
+  },
+  {
+   "name": "updates the running max after adding to water",
+   "code": "def trap(height):\n    l, r = 0, len(height) - 1\n    lm = rm = water = 0\n    while l < r:\n        if height[l] < height[r]:\n            water += lm - height[l]\n            lm = max(lm, height[l])\n            l += 1\n        else:\n            water += rm - height[r]\n            rm = max(rm, height[r])\n            r -= 1\n    return water\n",
+   "fails_on": "no_water",
+   "followup": "What is left_max when you first look at a bar taller than everything before it, and what does `left_max - height` become?"
+  },
+  {
+   "name": "rescans for max on both sides of every bar (O(n^2))",
+   "code": "def trap(height):\n    total = 0\n    for i, h in enumerate(height):\n        total += min(max(height[:i + 1]), max(height[i:])) - h\n    return total\n",
+   "fails_on": "large",
+   "followup": "How many elements does max() look at for each bar? Can you carry the running maximum instead?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How does the prefix-max / suffix-max array approach compare in space?",
+   "Can you solve it with a monotonic stack? How does that differ?"
+  ]
+ }
+}

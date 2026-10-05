@@ -1,0 +1,204 @@
+{
+ "id": "binary-search-answer-1011",
+ "leetcode": 1011,
+ "title": "Capacity To Ship Packages Within D Days",
+ "pattern": "binary_search_on_answer",
+ "difficulty": "medium",
+ "function": "shipWithinDays",
+ "signature": "shipWithinDays(weights: List[int], days: int) -> int",
+ "adapter": null,
+ "statement": "Packages must be shipped in the given order, loaded onto a ship day by day. Each day's load can't exceed the ship's capacity. Return the smallest capacity that ships everything within the given number of days.",
+ "reference_solution": "def shipWithinDays(weights, days):\n    def need(cap):\n        d, cur = 1, 0\n        for w in weights:\n            if cur + w > cap:\n                d += 1\n                cur = 0\n            cur += w\n        return d\n    lo, hi = max(weights), sum(weights)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if need(mid) <= days:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+ "brute_force_solution": "def shipWithinDays(weights, days):\n    def need(cap):\n        d, cur = 1, 0\n        for w in weights:\n            if cur + w > cap:\n                d += 1\n                cur = 0\n            cur += w\n        return d\n    cap = max(weights)\n    while need(cap) > days:\n        cap += 1\n    return cap\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ],
+    5
+   ],
+   "expected": 15,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     2,
+     4,
+     1,
+     4
+    ],
+    3
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     1,
+     1
+    ],
+    4
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    1
+   ],
+   "expected": 5,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    1
+   ],
+   "expected": 6,
+   "tag": "single_day"
+  },
+  {
+   "args": [
+    [
+     10,
+     50,
+     5
+    ],
+    3
+   ],
+   "expected": 50,
+   "tag": "heavy_item"
+  },
+  {
+   "args": [
+    [
+     9,
+     4,
+     2,
+     7,
+     2
+    ],
+    2
+   ],
+   "expected": 13,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     3
+    ],
+    2
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     5,
+     4,
+     4,
+     7,
+     5
+    ],
+    1
+   ],
+   "expected": 33,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     6
+    ],
+    1
+   ],
+   "expected": 13,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     9,
+     1,
+     3,
+     7,
+     7,
+     8,
+     2
+    ],
+    2
+   ],
+   "expected": 23,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(5)\n    return [[r.randint(1, 500) for _ in range(50000)], 500]"
+  }
+ ],
+ "hints": {
+  "1_question": "If someone hands you a capacity, can you tell how many days it takes? Does a bigger capacity ever need more days?",
+  "2_nudge": "Binary search the capacity. The ship must at least fit the heaviest package, and never needs more than the total weight.",
+  "3_big_hint": "lo = max(weights), hi = sum(weights). need(cap) greedily fills each day in order. If need(mid) <= days: hi = mid else lo = mid + 1."
+ },
+ "known_bugs": [
+  {
+   "name": "lower bound of 1 allows capacity below the heaviest package",
+   "code": "def shipWithinDays(weights, days):\n    def need(cap):\n        d, cur = 1, 0\n        for w in weights:\n            if cur + w > cap:\n                d += 1\n                cur = 0\n            cur += w\n        return d\n    lo, hi = 1, sum(weights)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if need(mid) <= days:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "heavy_item",
+   "followup": "Can a ship with capacity 1 ever carry a package that weighs 50? What is the smallest capacity that makes sense?"
+  },
+  {
+   "name": "day counter starts at zero",
+   "code": "def shipWithinDays(weights, days):\n    def need(cap):\n        d, cur = 0, 0\n        for w in weights:\n            if cur + w > cap:\n                d += 1\n                cur = 0\n            cur += w\n        return d\n    lo, hi = max(weights), sum(weights)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if need(mid) <= days:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "normal",
+   "followup": "If everything fits in the first load, how many days did it take? What does your counter say?"
+  },
+  {
+   "name": "upper bound one too small",
+   "code": "def shipWithinDays(weights, days):\n    def need(cap):\n        d, cur = 1, 0\n        for w in weights:\n            if cur + w > cap:\n                d += 1\n                cur = 0\n            cur += w\n        return d\n    lo, hi = max(weights), sum(weights) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if need(mid) <= days:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "single_day",
+   "followup": "If you only have one day, what capacity is required, and is it inside your search range?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log S) where S = sum of weights",
+  "space": "O(1)",
+  "followups": [
+   "Why must packages be loaded greedily in order, and why is greedy optimal for the feasibility check?",
+   "How does this problem relate to Koko Eating Bananas?"
+  ]
+ }
+}

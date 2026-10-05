@@ -1,0 +1,1479 @@
+{
+ "problems": [
+  {
+   "id": "sliding-window-003",
+   "leetcode": 3,
+   "title": "Longest Substring Without Repeating Characters",
+   "pattern": "sliding_window",
+   "difficulty": "medium"
+  },
+  {
+   "id": "sliding-window-076",
+   "leetcode": 76,
+   "title": "Minimum Window Substring",
+   "pattern": "sliding_window",
+   "difficulty": "hard"
+  },
+  {
+   "id": "sliding-window-209",
+   "leetcode": 209,
+   "title": "Minimum Size Subarray Sum",
+   "pattern": "sliding_window",
+   "difficulty": "medium"
+  },
+  {
+   "id": "sliding-window-424",
+   "leetcode": 424,
+   "title": "Longest Repeating Character Replacement",
+   "pattern": "sliding_window",
+   "difficulty": "medium"
+  },
+  {
+   "id": "sliding-window-567",
+   "leetcode": 567,
+   "title": "Permutation in String",
+   "pattern": "sliding_window",
+   "difficulty": "medium"
+  },
+  {
+   "id": "sliding-window-904",
+   "leetcode": 904,
+   "title": "Fruit Into Baskets",
+   "pattern": "sliding_window",
+   "difficulty": "medium"
+  },
+  {
+   "id": "two-pointers-011",
+   "leetcode": 11,
+   "title": "Container With Most Water",
+   "pattern": "two_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "two-pointers-015",
+   "leetcode": 15,
+   "title": "3Sum",
+   "pattern": "two_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "two-pointers-016",
+   "leetcode": 16,
+   "title": "3Sum Closest",
+   "pattern": "two_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "two-pointers-018",
+   "leetcode": 18,
+   "title": "4Sum",
+   "pattern": "two_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "two-pointers-042",
+   "leetcode": 42,
+   "title": "Trapping Rain Water",
+   "pattern": "two_pointers",
+   "difficulty": "hard"
+  },
+  {
+   "id": "two-pointers-167",
+   "leetcode": 167,
+   "title": "Two Sum II - Input Array Is Sorted",
+   "pattern": "two_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "fast-slow-141",
+   "leetcode": 141,
+   "title": "Linked List Cycle",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "easy"
+  },
+  {
+   "id": "fast-slow-142",
+   "leetcode": 142,
+   "title": "Linked List Cycle II",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "fast-slow-019",
+   "leetcode": 19,
+   "title": "Remove Nth Node From End of List",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "medium"
+  },
+  {
+   "id": "fast-slow-876",
+   "leetcode": 876,
+   "title": "Middle of the Linked List",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "easy"
+  },
+  {
+   "id": "fast-slow-160",
+   "leetcode": 160,
+   "title": "Intersection of Two Linked Lists",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "easy"
+  },
+  {
+   "id": "fast-slow-234",
+   "leetcode": 234,
+   "title": "Palindrome Linked List",
+   "pattern": "fast_slow_pointers",
+   "difficulty": "easy"
+  },
+  {
+   "id": "binary-search-033",
+   "leetcode": 33,
+   "title": "Search in Rotated Sorted Array",
+   "pattern": "binary_search_sorted",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-034",
+   "leetcode": 34,
+   "title": "Find First and Last Position of Element in Sorted Array",
+   "pattern": "binary_search_sorted",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-035",
+   "leetcode": 35,
+   "title": "Search Insert Position",
+   "pattern": "binary_search_sorted",
+   "difficulty": "easy"
+  },
+  {
+   "id": "binary-search-153",
+   "leetcode": 153,
+   "title": "Find Minimum in Rotated Sorted Array",
+   "pattern": "binary_search_sorted",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-162",
+   "leetcode": 162,
+   "title": "Find Peak Element",
+   "pattern": "binary_search_sorted",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-704",
+   "leetcode": 704,
+   "title": "Binary Search",
+   "pattern": "binary_search_sorted",
+   "difficulty": "easy"
+  },
+  {
+   "id": "binary-search-answer-875",
+   "leetcode": 875,
+   "title": "Koko Eating Bananas",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-answer-1011",
+   "leetcode": 1011,
+   "title": "Capacity To Ship Packages Within D Days",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-answer-410",
+   "leetcode": 410,
+   "title": "Split Array Largest Sum",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "hard"
+  },
+  {
+   "id": "binary-search-answer-774",
+   "leetcode": 774,
+   "title": "Minimize Max Distance to Gas Station",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "hard"
+  },
+  {
+   "id": "binary-search-answer-1283",
+   "leetcode": 1283,
+   "title": "Find the Smallest Divisor Given a Threshold",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "medium"
+  },
+  {
+   "id": "binary-search-answer-1482",
+   "leetcode": 1482,
+   "title": "Minimum Number of Days to Make m Bouquets",
+   "pattern": "binary_search_on_answer",
+   "difficulty": "medium"
+  },
+  {
+   "id": "hashing-001",
+   "leetcode": 1,
+   "title": "Two Sum",
+   "pattern": "hashing_frequency",
+   "difficulty": "easy"
+  },
+  {
+   "id": "hashing-049",
+   "leetcode": 49,
+   "title": "Group Anagrams",
+   "pattern": "hashing_frequency",
+   "difficulty": "medium"
+  },
+  {
+   "id": "hashing-128",
+   "leetcode": 128,
+   "title": "Longest Consecutive Sequence",
+   "pattern": "hashing_frequency",
+   "difficulty": "medium"
+  },
+  {
+   "id": "hashing-217",
+   "leetcode": 217,
+   "title": "Contains Duplicate",
+   "pattern": "hashing_frequency",
+   "difficulty": "easy"
+  },
+  {
+   "id": "hashing-242",
+   "leetcode": 242,
+   "title": "Valid Anagram",
+   "pattern": "hashing_frequency",
+   "difficulty": "easy"
+  },
+  {
+   "id": "hashing-347",
+   "leetcode": 347,
+   "title": "Top K Frequent Elements",
+   "pattern": "hashing_frequency",
+   "difficulty": "medium"
+  },
+  {
+   "id": "prefix-sum-303",
+   "leetcode": 303,
+   "title": "Range Sum Query - Immutable",
+   "pattern": "prefix_sum",
+   "difficulty": "easy"
+  },
+  {
+   "id": "prefix-sum-560",
+   "leetcode": 560,
+   "title": "Subarray Sum Equals K",
+   "pattern": "prefix_sum",
+   "difficulty": "medium"
+  },
+  {
+   "id": "prefix-sum-724",
+   "leetcode": 724,
+   "title": "Find Pivot Index",
+   "pattern": "prefix_sum",
+   "difficulty": "easy"
+  },
+  {
+   "id": "prefix-sum-930",
+   "leetcode": 930,
+   "title": "Binary Subarrays With Sum",
+   "pattern": "prefix_sum",
+   "difficulty": "medium"
+  },
+  {
+   "id": "prefix-sum-974",
+   "leetcode": 974,
+   "title": "Subarray Sums Divisible by K",
+   "pattern": "prefix_sum",
+   "difficulty": "medium"
+  },
+  {
+   "id": "prefix-sum-523",
+   "leetcode": 523,
+   "title": "Continuous Subarray Sum",
+   "pattern": "prefix_sum",
+   "difficulty": "medium"
+  },
+  {
+   "id": "difference-array-370",
+   "leetcode": 370,
+   "title": "Range Addition",
+   "pattern": "difference_array",
+   "difficulty": "medium"
+  },
+  {
+   "id": "difference-array-1094",
+   "leetcode": 1094,
+   "title": "Car Pooling",
+   "pattern": "difference_array",
+   "difficulty": "medium"
+  },
+  {
+   "id": "difference-array-1109",
+   "leetcode": 1109,
+   "title": "Corporate Flight Bookings",
+   "pattern": "difference_array",
+   "difficulty": "medium"
+  },
+  {
+   "id": "difference-array-1893",
+   "leetcode": 1893,
+   "title": "Check if All the Integers in a Range Are Covered",
+   "pattern": "difference_array",
+   "difficulty": "easy"
+  },
+  {
+   "id": "difference-array-1943",
+   "leetcode": 1943,
+   "title": "Describe the Painting",
+   "pattern": "difference_array",
+   "difficulty": "hard"
+  },
+  {
+   "id": "difference-array-2381",
+   "leetcode": 2381,
+   "title": "Shifting Letters II",
+   "pattern": "difference_array",
+   "difficulty": "medium"
+  },
+  {
+   "id": "monotonic-stack-739",
+   "leetcode": 739,
+   "title": "Daily Temperatures",
+   "pattern": "monotonic_stack",
+   "difficulty": "medium"
+  },
+  {
+   "id": "monotonic-stack-496",
+   "leetcode": 496,
+   "title": "Next Greater Element I",
+   "pattern": "monotonic_stack",
+   "difficulty": "easy"
+  },
+  {
+   "id": "monotonic-stack-503",
+   "leetcode": 503,
+   "title": "Next Greater Element II",
+   "pattern": "monotonic_stack",
+   "difficulty": "medium"
+  },
+  {
+   "id": "monotonic-stack-084",
+   "leetcode": 84,
+   "title": "Largest Rectangle in Histogram",
+   "pattern": "monotonic_stack",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-stack-085",
+   "leetcode": 85,
+   "title": "Maximal Rectangle",
+   "pattern": "monotonic_stack",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-stack-901",
+   "leetcode": 901,
+   "title": "Online Stock Span",
+   "pattern": "monotonic_stack",
+   "difficulty": "medium"
+  },
+  {
+   "id": "monotonic-queue-239",
+   "leetcode": 239,
+   "title": "Sliding Window Maximum",
+   "pattern": "monotonic_queue",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-queue-862",
+   "leetcode": 862,
+   "title": "Shortest Subarray with Sum at Least K",
+   "pattern": "monotonic_queue",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-queue-1425",
+   "leetcode": 1425,
+   "title": "Constrained Subsequence Sum",
+   "pattern": "monotonic_queue",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-queue-1438",
+   "leetcode": 1438,
+   "title": "Longest Continuous Subarray With Absolute Diff <= Limit",
+   "pattern": "monotonic_queue",
+   "difficulty": "medium"
+  },
+  {
+   "id": "monotonic-queue-1499",
+   "leetcode": 1499,
+   "title": "Max Value of Equation",
+   "pattern": "monotonic_queue",
+   "difficulty": "hard"
+  },
+  {
+   "id": "monotonic-queue-1696",
+   "leetcode": 1696,
+   "title": "Jump Game VI",
+   "pattern": "monotonic_queue",
+   "difficulty": "medium"
+  },
+  {
+   "id": "heap-215",
+   "leetcode": 215,
+   "title": "Kth Largest Element in an Array",
+   "pattern": "heap_top_k",
+   "difficulty": "medium"
+  },
+  {
+   "id": "heap-692",
+   "leetcode": 692,
+   "title": "Top K Frequent Words",
+   "pattern": "heap_top_k",
+   "difficulty": "medium"
+  },
+  {
+   "id": "heap-703",
+   "leetcode": 703,
+   "title": "Kth Largest Element in a Stream",
+   "pattern": "heap_top_k",
+   "difficulty": "easy"
+  },
+  {
+   "id": "heap-973",
+   "leetcode": 973,
+   "title": "K Closest Points to Origin",
+   "pattern": "heap_top_k",
+   "difficulty": "medium"
+  },
+  {
+   "id": "heap-1046",
+   "leetcode": 1046,
+   "title": "Last Stone Weight",
+   "pattern": "heap_top_k",
+   "difficulty": "easy"
+  },
+  {
+   "id": "intervals-056",
+   "leetcode": 56,
+   "title": "Merge Intervals",
+   "pattern": "intervals",
+   "difficulty": "medium"
+  },
+  {
+   "id": "intervals-057",
+   "leetcode": 57,
+   "title": "Insert Interval",
+   "pattern": "intervals",
+   "difficulty": "medium"
+  },
+  {
+   "id": "intervals-252",
+   "leetcode": 252,
+   "title": "Meeting Rooms",
+   "pattern": "intervals",
+   "difficulty": "easy"
+  },
+  {
+   "id": "intervals-253",
+   "leetcode": 253,
+   "title": "Meeting Rooms II",
+   "pattern": "intervals",
+   "difficulty": "medium"
+  },
+  {
+   "id": "intervals-435",
+   "leetcode": 435,
+   "title": "Non-overlapping Intervals",
+   "pattern": "intervals",
+   "difficulty": "medium"
+  },
+  {
+   "id": "intervals-452",
+   "leetcode": 452,
+   "title": "Minimum Number of Arrows to Burst Balloons",
+   "pattern": "intervals",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-045",
+   "leetcode": 45,
+   "title": "Jump Game II",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-055",
+   "leetcode": 55,
+   "title": "Jump Game",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-406",
+   "leetcode": 406,
+   "title": "Queue Reconstruction by Height",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-621",
+   "leetcode": 621,
+   "title": "Task Scheduler",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-763",
+   "leetcode": 763,
+   "title": "Partition Labels",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "greedy-134",
+   "leetcode": 134,
+   "title": "Gas Station",
+   "pattern": "greedy",
+   "difficulty": "medium"
+  },
+  {
+   "id": "linked-list-021",
+   "leetcode": 21,
+   "title": "Merge Two Sorted Lists",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "easy"
+  },
+  {
+   "id": "linked-list-023",
+   "leetcode": 23,
+   "title": "Merge k Sorted Lists",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "hard"
+  },
+  {
+   "id": "linked-list-024",
+   "leetcode": 24,
+   "title": "Swap Nodes in Pairs",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "medium"
+  },
+  {
+   "id": "linked-list-025",
+   "leetcode": 25,
+   "title": "Reverse Nodes in k-Group",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "hard"
+  },
+  {
+   "id": "linked-list-092",
+   "leetcode": 92,
+   "title": "Reverse Linked List II",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "medium"
+  },
+  {
+   "id": "linked-list-138",
+   "leetcode": 138,
+   "title": "Copy List with Random Pointer",
+   "pattern": "linked_list_manipulation",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-dfs-104",
+   "leetcode": 104,
+   "title": "Maximum Depth of Binary Tree",
+   "pattern": "tree_dfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "tree-dfs-112",
+   "leetcode": 112,
+   "title": "Path Sum",
+   "pattern": "tree_dfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "tree-dfs-113",
+   "leetcode": 113,
+   "title": "Path Sum II",
+   "pattern": "tree_dfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-dfs-543",
+   "leetcode": 543,
+   "title": "Diameter of Binary Tree",
+   "pattern": "tree_dfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "tree-dfs-124",
+   "leetcode": 124,
+   "title": "Binary Tree Maximum Path Sum",
+   "pattern": "tree_dfs",
+   "difficulty": "hard"
+  },
+  {
+   "id": "tree-dfs-226",
+   "leetcode": 226,
+   "title": "Invert Binary Tree",
+   "pattern": "tree_dfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "tree-bfs-102",
+   "leetcode": 102,
+   "title": "Binary Tree Level Order Traversal",
+   "pattern": "tree_bfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-bfs-103",
+   "leetcode": 103,
+   "title": "Binary Tree Zigzag Level Order Traversal",
+   "pattern": "tree_bfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-bfs-199",
+   "leetcode": 199,
+   "title": "Binary Tree Right Side View",
+   "pattern": "tree_bfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-bfs-515",
+   "leetcode": 515,
+   "title": "Find Largest Value in Each Tree Row",
+   "pattern": "tree_bfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "tree-bfs-637",
+   "leetcode": 637,
+   "title": "Average of Levels in Binary Tree",
+   "pattern": "tree_bfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "tree-bfs-116",
+   "leetcode": 116,
+   "title": "Populating Next Right Pointers in Each Node",
+   "pattern": "tree_bfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-098",
+   "leetcode": 98,
+   "title": "Validate Binary Search Tree",
+   "pattern": "bst",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-099",
+   "leetcode": 99,
+   "title": "Recover Binary Search Tree",
+   "pattern": "bst",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-230",
+   "leetcode": 230,
+   "title": "Kth Smallest Element in a BST",
+   "pattern": "bst",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-235",
+   "leetcode": 235,
+   "title": "Lowest Common Ancestor of a Binary Search Tree",
+   "pattern": "bst",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-450",
+   "leetcode": 450,
+   "title": "Delete Node in a BST",
+   "pattern": "bst",
+   "difficulty": "medium"
+  },
+  {
+   "id": "bst-700",
+   "leetcode": 700,
+   "title": "Search in a Binary Search Tree",
+   "pattern": "bst",
+   "difficulty": "easy"
+  },
+  {
+   "id": "backtracking-046",
+   "leetcode": 46,
+   "title": "Permutations",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-047",
+   "leetcode": 47,
+   "title": "Permutations II",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-077",
+   "leetcode": 77,
+   "title": "Combinations",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-078",
+   "leetcode": 78,
+   "title": "Subsets",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-090",
+   "leetcode": 90,
+   "title": "Subsets II",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-039",
+   "leetcode": 39,
+   "title": "Combination Sum",
+   "pattern": "backtracking_basics",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-constraints-040",
+   "leetcode": 40,
+   "title": "Combination Sum II",
+   "pattern": "backtracking_constraints",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-constraints-017",
+   "leetcode": 17,
+   "title": "Letter Combinations of a Phone Number",
+   "pattern": "backtracking_constraints",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-constraints-079",
+   "leetcode": 79,
+   "title": "Word Search",
+   "pattern": "backtracking_constraints",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-constraints-131",
+   "leetcode": 131,
+   "title": "Palindrome Partitioning",
+   "pattern": "backtracking_constraints",
+   "difficulty": "medium"
+  },
+  {
+   "id": "backtracking-constraints-051",
+   "leetcode": 51,
+   "title": "N-Queens",
+   "pattern": "backtracking_constraints",
+   "difficulty": "hard"
+  },
+  {
+   "id": "backtracking-constraints-052",
+   "leetcode": 52,
+   "title": "N-Queens II",
+   "pattern": "backtracking_constraints",
+   "difficulty": "hard"
+  },
+  {
+   "id": "graph-200",
+   "leetcode": 200,
+   "title": "Number of Islands",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "graph-695",
+   "leetcode": 695,
+   "title": "Max Area of Island",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "graph-733",
+   "leetcode": 733,
+   "title": "Flood Fill",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "easy"
+  },
+  {
+   "id": "graph-994",
+   "leetcode": 994,
+   "title": "Rotting Oranges",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "graph-1091",
+   "leetcode": 1091,
+   "title": "Shortest Path in Binary Matrix",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "medium"
+  },
+  {
+   "id": "graph-1254",
+   "leetcode": 1254,
+   "title": "Number of Closed Islands",
+   "pattern": "graph_bfs_dfs",
+   "difficulty": "medium"
+  }
+ ],
+ "roadmap": {
+  "sliding_window": [
+   {
+    "leetcode": 3,
+    "status": "done",
+    "id": "sliding-window-003"
+   },
+   {
+    "leetcode": 76,
+    "status": "done",
+    "id": "sliding-window-076"
+   },
+   {
+    "leetcode": 209,
+    "status": "done",
+    "id": "sliding-window-209"
+   },
+   {
+    "leetcode": 424,
+    "status": "done",
+    "id": "sliding-window-424"
+   },
+   {
+    "leetcode": 567,
+    "status": "done",
+    "id": "sliding-window-567"
+   },
+   {
+    "leetcode": 904,
+    "status": "done",
+    "id": "sliding-window-904"
+   }
+  ],
+  "two_pointers": [
+   {
+    "leetcode": 11,
+    "status": "done",
+    "id": "two-pointers-011"
+   },
+   {
+    "leetcode": 15,
+    "status": "done",
+    "id": "two-pointers-015"
+   },
+   {
+    "leetcode": 16,
+    "status": "done",
+    "id": "two-pointers-016"
+   },
+   {
+    "leetcode": 18,
+    "status": "done",
+    "id": "two-pointers-018"
+   },
+   {
+    "leetcode": 42,
+    "status": "done",
+    "id": "two-pointers-042"
+   },
+   {
+    "leetcode": 167,
+    "status": "done",
+    "id": "two-pointers-167"
+   }
+  ],
+  "fast_slow_pointers": [
+   {
+    "leetcode": 141,
+    "status": "done",
+    "id": "fast-slow-141"
+   },
+   {
+    "leetcode": 142,
+    "status": "done",
+    "id": "fast-slow-142"
+   },
+   {
+    "leetcode": 19,
+    "status": "done",
+    "id": "fast-slow-019"
+   },
+   {
+    "leetcode": 876,
+    "status": "done",
+    "id": "fast-slow-876"
+   },
+   {
+    "leetcode": 160,
+    "status": "done",
+    "id": "fast-slow-160"
+   },
+   {
+    "leetcode": 234,
+    "status": "done",
+    "id": "fast-slow-234"
+   }
+  ],
+  "binary_search_sorted": [
+   {
+    "leetcode": 33,
+    "status": "done",
+    "id": "binary-search-033"
+   },
+   {
+    "leetcode": 34,
+    "status": "done",
+    "id": "binary-search-034"
+   },
+   {
+    "leetcode": 35,
+    "status": "done",
+    "id": "binary-search-035"
+   },
+   {
+    "leetcode": 153,
+    "status": "done",
+    "id": "binary-search-153"
+   },
+   {
+    "leetcode": 162,
+    "status": "done",
+    "id": "binary-search-162"
+   },
+   {
+    "leetcode": 704,
+    "status": "done",
+    "id": "binary-search-704"
+   }
+  ],
+  "binary_search_on_answer": [
+   {
+    "leetcode": 875,
+    "status": "done",
+    "id": "binary-search-answer-875"
+   },
+   {
+    "leetcode": 1011,
+    "status": "done",
+    "id": "binary-search-answer-1011"
+   },
+   {
+    "leetcode": 410,
+    "status": "done",
+    "id": "binary-search-answer-410"
+   },
+   {
+    "leetcode": 774,
+    "status": "done",
+    "id": "binary-search-answer-774"
+   },
+   {
+    "leetcode": 1283,
+    "status": "done",
+    "id": "binary-search-answer-1283"
+   },
+   {
+    "leetcode": 1482,
+    "status": "done",
+    "id": "binary-search-answer-1482"
+   }
+  ],
+  "hashing_frequency": [
+   {
+    "leetcode": 1,
+    "status": "done",
+    "id": "hashing-001"
+   },
+   {
+    "leetcode": 49,
+    "status": "done",
+    "id": "hashing-049"
+   },
+   {
+    "leetcode": 128,
+    "status": "done",
+    "id": "hashing-128"
+   },
+   {
+    "leetcode": 217,
+    "status": "done",
+    "id": "hashing-217"
+   },
+   {
+    "leetcode": 242,
+    "status": "done",
+    "id": "hashing-242"
+   },
+   {
+    "leetcode": 347,
+    "status": "done",
+    "id": "hashing-347"
+   }
+  ],
+  "prefix_sum": [
+   {
+    "leetcode": 303,
+    "status": "done",
+    "id": "prefix-sum-303"
+   },
+   {
+    "leetcode": 560,
+    "status": "done",
+    "id": "prefix-sum-560"
+   },
+   {
+    "leetcode": 724,
+    "status": "done",
+    "id": "prefix-sum-724"
+   },
+   {
+    "leetcode": 930,
+    "status": "done",
+    "id": "prefix-sum-930"
+   },
+   {
+    "leetcode": 974,
+    "status": "done",
+    "id": "prefix-sum-974"
+   },
+   {
+    "leetcode": 523,
+    "status": "done",
+    "id": "prefix-sum-523"
+   }
+  ],
+  "difference_array": [
+   {
+    "leetcode": 370,
+    "status": "done",
+    "id": "difference-array-370"
+   },
+   {
+    "leetcode": 1094,
+    "status": "done",
+    "id": "difference-array-1094"
+   },
+   {
+    "leetcode": 1109,
+    "status": "done",
+    "id": "difference-array-1109"
+   },
+   {
+    "leetcode": 1893,
+    "status": "done",
+    "id": "difference-array-1893"
+   },
+   {
+    "leetcode": 1943,
+    "status": "done",
+    "id": "difference-array-1943"
+   },
+   {
+    "leetcode": 2381,
+    "status": "done",
+    "id": "difference-array-2381"
+   }
+  ],
+  "monotonic_stack": [
+   {
+    "leetcode": 739,
+    "status": "done",
+    "id": "monotonic-stack-739"
+   },
+   {
+    "leetcode": 496,
+    "status": "done",
+    "id": "monotonic-stack-496"
+   },
+   {
+    "leetcode": 503,
+    "status": "done",
+    "id": "monotonic-stack-503"
+   },
+   {
+    "leetcode": 84,
+    "status": "done",
+    "id": "monotonic-stack-084"
+   },
+   {
+    "leetcode": 85,
+    "status": "done",
+    "id": "monotonic-stack-085"
+   },
+   {
+    "leetcode": 901,
+    "status": "done",
+    "id": "monotonic-stack-901"
+   }
+  ],
+  "monotonic_queue": [
+   {
+    "leetcode": 239,
+    "status": "done",
+    "id": "monotonic-queue-239"
+   },
+   {
+    "leetcode": 862,
+    "status": "done",
+    "id": "monotonic-queue-862"
+   },
+   {
+    "leetcode": 1425,
+    "status": "done",
+    "id": "monotonic-queue-1425"
+   },
+   {
+    "leetcode": 1438,
+    "status": "done",
+    "id": "monotonic-queue-1438"
+   },
+   {
+    "leetcode": 1499,
+    "status": "done",
+    "id": "monotonic-queue-1499"
+   },
+   {
+    "leetcode": 1696,
+    "status": "done",
+    "id": "monotonic-queue-1696"
+   }
+  ],
+  "heap_top_k": [
+   {
+    "leetcode": 215,
+    "status": "done",
+    "id": "heap-215"
+   },
+   {
+    "leetcode": 347,
+    "status": "done",
+    "id": "hashing-347"
+   },
+   {
+    "leetcode": 692,
+    "status": "done",
+    "id": "heap-692"
+   },
+   {
+    "leetcode": 703,
+    "status": "done",
+    "id": "heap-703"
+   },
+   {
+    "leetcode": 973,
+    "status": "done",
+    "id": "heap-973"
+   },
+   {
+    "leetcode": 1046,
+    "status": "done",
+    "id": "heap-1046"
+   }
+  ],
+  "intervals": [
+   {
+    "leetcode": 56,
+    "status": "done",
+    "id": "intervals-056"
+   },
+   {
+    "leetcode": 57,
+    "status": "done",
+    "id": "intervals-057"
+   },
+   {
+    "leetcode": 252,
+    "status": "done",
+    "id": "intervals-252"
+   },
+   {
+    "leetcode": 253,
+    "status": "done",
+    "id": "intervals-253"
+   },
+   {
+    "leetcode": 435,
+    "status": "done",
+    "id": "intervals-435"
+   },
+   {
+    "leetcode": 452,
+    "status": "done",
+    "id": "intervals-452"
+   }
+  ],
+  "greedy": [
+   {
+    "leetcode": 45,
+    "status": "done",
+    "id": "greedy-045"
+   },
+   {
+    "leetcode": 55,
+    "status": "done",
+    "id": "greedy-055"
+   },
+   {
+    "leetcode": 406,
+    "status": "done",
+    "id": "greedy-406"
+   },
+   {
+    "leetcode": 621,
+    "status": "done",
+    "id": "greedy-621"
+   },
+   {
+    "leetcode": 763,
+    "status": "done",
+    "id": "greedy-763"
+   },
+   {
+    "leetcode": 134,
+    "status": "done",
+    "id": "greedy-134"
+   }
+  ],
+  "linked_list_manipulation": [
+   {
+    "leetcode": 21,
+    "status": "done",
+    "id": "linked-list-021"
+   },
+   {
+    "leetcode": 23,
+    "status": "done",
+    "id": "linked-list-023"
+   },
+   {
+    "leetcode": 24,
+    "status": "done",
+    "id": "linked-list-024"
+   },
+   {
+    "leetcode": 25,
+    "status": "done",
+    "id": "linked-list-025"
+   },
+   {
+    "leetcode": 92,
+    "status": "done",
+    "id": "linked-list-092"
+   },
+   {
+    "leetcode": 138,
+    "status": "done",
+    "id": "linked-list-138"
+   }
+  ],
+  "tree_dfs": [
+   {
+    "leetcode": 104,
+    "status": "done",
+    "id": "tree-dfs-104"
+   },
+   {
+    "leetcode": 112,
+    "status": "done",
+    "id": "tree-dfs-112"
+   },
+   {
+    "leetcode": 113,
+    "status": "done",
+    "id": "tree-dfs-113"
+   },
+   {
+    "leetcode": 543,
+    "status": "done",
+    "id": "tree-dfs-543"
+   },
+   {
+    "leetcode": 124,
+    "status": "done",
+    "id": "tree-dfs-124"
+   },
+   {
+    "leetcode": 226,
+    "status": "done",
+    "id": "tree-dfs-226"
+   }
+  ],
+  "tree_bfs": [
+   {
+    "leetcode": 102,
+    "status": "done",
+    "id": "tree-bfs-102"
+   },
+   {
+    "leetcode": 103,
+    "status": "done",
+    "id": "tree-bfs-103"
+   },
+   {
+    "leetcode": 199,
+    "status": "done",
+    "id": "tree-bfs-199"
+   },
+   {
+    "leetcode": 515,
+    "status": "done",
+    "id": "tree-bfs-515"
+   },
+   {
+    "leetcode": 637,
+    "status": "done",
+    "id": "tree-bfs-637"
+   },
+   {
+    "leetcode": 116,
+    "status": "done",
+    "id": "tree-bfs-116"
+   }
+  ],
+  "bst": [
+   {
+    "leetcode": 98,
+    "status": "done",
+    "id": "bst-098"
+   },
+   {
+    "leetcode": 99,
+    "status": "done",
+    "id": "bst-099"
+   },
+   {
+    "leetcode": 230,
+    "status": "done",
+    "id": "bst-230"
+   },
+   {
+    "leetcode": 235,
+    "status": "done",
+    "id": "bst-235"
+   },
+   {
+    "leetcode": 450,
+    "status": "done",
+    "id": "bst-450"
+   },
+   {
+    "leetcode": 700,
+    "status": "done",
+    "id": "bst-700"
+   }
+  ],
+  "backtracking_basics": [
+   {
+    "leetcode": 46,
+    "status": "done",
+    "id": "backtracking-046"
+   },
+   {
+    "leetcode": 47,
+    "status": "done",
+    "id": "backtracking-047"
+   },
+   {
+    "leetcode": 77,
+    "status": "done",
+    "id": "backtracking-077"
+   },
+   {
+    "leetcode": 78,
+    "status": "done",
+    "id": "backtracking-078"
+   },
+   {
+    "leetcode": 90,
+    "status": "done",
+    "id": "backtracking-090"
+   },
+   {
+    "leetcode": 39,
+    "status": "done",
+    "id": "backtracking-039"
+   }
+  ],
+  "backtracking_constraints": [
+   {
+    "leetcode": 40,
+    "status": "done",
+    "id": "backtracking-constraints-040"
+   },
+   {
+    "leetcode": 17,
+    "status": "done",
+    "id": "backtracking-constraints-017"
+   },
+   {
+    "leetcode": 79,
+    "status": "done",
+    "id": "backtracking-constraints-079"
+   },
+   {
+    "leetcode": 131,
+    "status": "done",
+    "id": "backtracking-constraints-131"
+   },
+   {
+    "leetcode": 51,
+    "status": "done",
+    "id": "backtracking-constraints-051"
+   },
+   {
+    "leetcode": 52,
+    "status": "done",
+    "id": "backtracking-constraints-052"
+   }
+  ],
+  "graph_bfs_dfs": [
+   {
+    "leetcode": 200,
+    "status": "done",
+    "id": "graph-200"
+   },
+   {
+    "leetcode": 695,
+    "status": "done",
+    "id": "graph-695"
+   },
+   {
+    "leetcode": 733,
+    "status": "done",
+    "id": "graph-733"
+   },
+   {
+    "leetcode": 994,
+    "status": "done",
+    "id": "graph-994"
+   },
+   {
+    "leetcode": 1091,
+    "status": "done",
+    "id": "graph-1091"
+   },
+   {
+    "leetcode": 1254,
+    "status": "done",
+    "id": "graph-1254"
+   }
+  ]
+ }
+}

@@ -1,0 +1,629 @@
+{
+ "id": "backtracking-046",
+ "leetcode": 46,
+ "title": "Permutations",
+ "pattern": "backtracking_basics",
+ "difficulty": "medium",
+ "function": "permute",
+ "signature": "permute(nums: List[int]) -> List[List[int]]",
+ "adapter": "sort_outer",
+ "statement": "Return every permutation of a list of distinct integers, in any order. The list has at least one element.",
+ "reference_solution": "def permute(nums):\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+ "brute_force_solution": "import itertools\ndef permute(nums):\n    return [list(p) for p in itertools.permutations(nums)]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     3,
+     2
+    ],
+    [
+     2,
+     1,
+     3
+    ],
+    [
+     2,
+     3,
+     1
+    ],
+    [
+     3,
+     1,
+     2
+    ],
+    [
+     3,
+     2,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    [
+     1,
+     2,
+     4,
+     3
+    ],
+    [
+     1,
+     3,
+     2,
+     4
+    ],
+    [
+     1,
+     3,
+     4,
+     2
+    ],
+    [
+     1,
+     4,
+     2,
+     3
+    ],
+    [
+     1,
+     4,
+     3,
+     2
+    ],
+    [
+     2,
+     1,
+     3,
+     4
+    ],
+    [
+     2,
+     1,
+     4,
+     3
+    ],
+    [
+     2,
+     3,
+     1,
+     4
+    ],
+    [
+     2,
+     3,
+     4,
+     1
+    ],
+    [
+     2,
+     4,
+     1,
+     3
+    ],
+    [
+     2,
+     4,
+     3,
+     1
+    ],
+    [
+     3,
+     1,
+     2,
+     4
+    ],
+    [
+     3,
+     1,
+     4,
+     2
+    ],
+    [
+     3,
+     2,
+     1,
+     4
+    ],
+    [
+     3,
+     2,
+     4,
+     1
+    ],
+    [
+     3,
+     4,
+     1,
+     2
+    ],
+    [
+     3,
+     4,
+     2,
+     1
+    ],
+    [
+     4,
+     1,
+     2,
+     3
+    ],
+    [
+     4,
+     1,
+     3,
+     2
+    ],
+    [
+     4,
+     2,
+     1,
+     3
+    ],
+    [
+     4,
+     2,
+     3,
+     1
+    ],
+    [
+     4,
+     3,
+     1,
+     2
+    ],
+    [
+     4,
+     3,
+     2,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -1,
+     0,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     -1,
+     0,
+     1
+    ],
+    [
+     -1,
+     1,
+     0
+    ],
+    [
+     0,
+     -1,
+     1
+    ],
+    [
+     0,
+     1,
+     -1
+    ],
+    [
+     1,
+     -1,
+     0
+    ],
+    [
+     1,
+     0,
+     -1
+    ]
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     4
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     2,
+     4
+    ],
+    [
+     0,
+     4,
+     2
+    ],
+    [
+     2,
+     0,
+     4
+    ],
+    [
+     2,
+     4,
+     0
+    ],
+    [
+     4,
+     0,
+     2
+    ],
+    [
+     4,
+     2,
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     2
+    ],
+    [
+     2,
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     -1,
+     4
+    ]
+   ],
+   "expected": [
+    [
+     -1,
+     2,
+     3,
+     4
+    ],
+    [
+     -1,
+     2,
+     4,
+     3
+    ],
+    [
+     -1,
+     3,
+     2,
+     4
+    ],
+    [
+     -1,
+     3,
+     4,
+     2
+    ],
+    [
+     -1,
+     4,
+     2,
+     3
+    ],
+    [
+     -1,
+     4,
+     3,
+     2
+    ],
+    [
+     2,
+     -1,
+     3,
+     4
+    ],
+    [
+     2,
+     -1,
+     4,
+     3
+    ],
+    [
+     2,
+     3,
+     -1,
+     4
+    ],
+    [
+     2,
+     3,
+     4,
+     -1
+    ],
+    [
+     2,
+     4,
+     -1,
+     3
+    ],
+    [
+     2,
+     4,
+     3,
+     -1
+    ],
+    [
+     3,
+     -1,
+     2,
+     4
+    ],
+    [
+     3,
+     -1,
+     4,
+     2
+    ],
+    [
+     3,
+     2,
+     -1,
+     4
+    ],
+    [
+     3,
+     2,
+     4,
+     -1
+    ],
+    [
+     3,
+     4,
+     -1,
+     2
+    ],
+    [
+     3,
+     4,
+     2,
+     -1
+    ],
+    [
+     4,
+     -1,
+     2,
+     3
+    ],
+    [
+     4,
+     -1,
+     3,
+     2
+    ],
+    [
+     4,
+     2,
+     -1,
+     3
+    ],
+    [
+     4,
+     2,
+     3,
+     -1
+    ],
+    [
+     4,
+     3,
+     -1,
+     2
+    ],
+    [
+     4,
+     3,
+     2,
+     -1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     4,
+     3
+    ]
+   ],
+   "expected": [
+    [
+     -2,
+     3,
+     4
+    ],
+    [
+     -2,
+     4,
+     3
+    ],
+    [
+     3,
+     -2,
+     4
+    ],
+    [
+     3,
+     4,
+     -2
+    ],
+    [
+     4,
+     -2,
+     3
+    ],
+    [
+     4,
+     3,
+     -2
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     4,
+     -3
+    ]
+   ],
+   "expected": [
+    [
+     -3,
+     -1,
+     4
+    ],
+    [
+     -3,
+     4,
+     -1
+    ],
+    [
+     -1,
+     -3,
+     4
+    ],
+    [
+     -1,
+     4,
+     -3
+    ],
+    [
+     4,
+     -3,
+     -1
+    ],
+    [
+     4,
+     -1,
+     -3
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(8))]"
+  }
+ ],
+ "hints": {
+  "1_question": "Build a permutation one position at a time. What choices are available at each position?",
+  "2_nudge": "At each step try every element not yet used, recurse, then undo the choice (backtrack).",
+  "3_big_hint": "If len(cur) == n: record a COPY. Else for each unused i: mark used, append, recurse, pop, unmark."
+ },
+ "known_bugs": [
+  {
+   "name": "records the live list (no copy)",
+   "code": "def permute(nums):\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur)\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+   "fails_on": "normal",
+   "followup": "After the recursion finishes, what does `cur` contain? What do the lists you stored point to?"
+  },
+  {
+   "name": "allows the same element twice",
+   "code": "def permute(nums):\n    res, cur = [], []\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for x in nums:\n            cur.append(x)\n            bt()\n            cur.pop()\n    bt()\n    return res\n",
+   "fails_on": "two_elements",
+   "followup": "Is [1, 1] a permutation of [0, 1]? Where do you stop an element from being reused?"
+  },
+  {
+   "name": "only generates ascending-order selections (combinations)",
+   "code": "def permute(nums):\n    res, cur = [], []\n    def bt(start):\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(start, len(nums)):\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "two_elements",
+   "followup": "Can [1, 0] be produced if you only ever pick elements to the right of the last pick?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * n!)",
+  "space": "O(n)",
+  "followups": [
+   "Why is the output size itself n * n!?",
+   "How would swapping elements in place avoid the `used` array?"
+  ]
+ }
+}

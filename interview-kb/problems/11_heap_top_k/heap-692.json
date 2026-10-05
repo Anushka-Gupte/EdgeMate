@@ -1,0 +1,222 @@
+{
+ "id": "heap-692",
+ "leetcode": 692,
+ "title": "Top K Frequent Words",
+ "pattern": "heap_top_k",
+ "difficulty": "medium",
+ "function": "topKFrequentWords",
+ "signature": "topKFrequentWords(words: List[str], k: int) -> List[str]",
+ "adapter": null,
+ "statement": "Return the k most frequent words, ordered from most to least frequent. Words with the same frequency are ordered alphabetically.",
+ "reference_solution": "import heapq\nfrom collections import Counter\ndef topKFrequentWords(words, k):\n    c = Counter(words)\n    return heapq.nsmallest(k, c, key=lambda w: (-c[w], w))\n",
+ "brute_force_solution": "def topKFrequentWords(words, k):\n    c = {}\n    for w in words:\n        c[w] = c.get(w, 0) + 1\n    out = []\n    for _ in range(k):\n        best = None\n        for w in c:\n            if w in out:\n                continue\n            if best is None or c[w] > c[best] or (c[w] == c[best] and w < best):\n                best = w\n        out.append(best)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     "i",
+     "love",
+     "leetcode",
+     "i",
+     "love",
+     "coding"
+    ],
+    2
+   ],
+   "expected": [
+    "i",
+    "love"
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     "the",
+     "day",
+     "is",
+     "sunny",
+     "the",
+     "the",
+     "the",
+     "sunny",
+     "is",
+     "is"
+    ],
+    4
+   ],
+   "expected": [
+    "the",
+    "is",
+    "sunny",
+    "day"
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     "a"
+    ],
+    1
+   ],
+   "expected": [
+    "a"
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     "b",
+     "a"
+    ],
+    2
+   ],
+   "expected": [
+    "a",
+    "b"
+   ],
+   "tag": "tie_alphabetical"
+  },
+  {
+   "args": [
+    [
+     "a",
+     "b",
+     "a",
+     "b",
+     "c"
+    ],
+    1
+   ],
+   "expected": [
+    "a"
+   ],
+   "tag": "tie_alphabetical"
+  },
+  {
+   "args": [
+    [
+     "cb",
+     "c",
+     "ab",
+     "a"
+    ],
+    2
+   ],
+   "expected": [
+    "a",
+    "ab"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "b"
+    ],
+    1
+   ],
+   "expected": [
+    "b"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "c",
+     "b",
+     "c",
+     "c",
+     "ac",
+     "b"
+    ],
+    3
+   ],
+   "expected": [
+    "c",
+    "b",
+    "ac"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "b",
+     "a",
+     "bb",
+     "a",
+     "ca",
+     "aa",
+     "ca",
+     "cc"
+    ],
+    1
+   ],
+   "expected": [
+    "a"
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "ca",
+     "aa",
+     "bc",
+     "cc",
+     "cc"
+    ],
+    3
+   ],
+   "expected": [
+    "cc",
+    "aa",
+    "bc"
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(41)\n    ws = ['w%d' % r.randint(0, 999) for _ in range(100000)]\n    return [ws, 10]"
+  }
+ ],
+ "hints": {
+  "1_question": "Two sort keys are needed: how often a word appears, and the word itself. Which direction does each go?",
+  "2_nudge": "Count words, then pick k items using the key (-count, word) so higher counts come first and ties go alphabetically.",
+  "3_big_hint": "c = Counter(words); return heapq.nsmallest(k, c, key=lambda w: (-c[w], w))."
+ },
+ "known_bugs": [
+  {
+   "name": "ties keep first-seen order (most_common)",
+   "code": "from collections import Counter\ndef topKFrequentWords(words, k):\n    return [w for w, _ in Counter(words).most_common(k)]\n",
+   "fails_on": "tie_alphabetical",
+   "followup": "When two words have the same count, which one should come first? Where is that rule in your code?"
+  },
+  {
+   "name": "ties go reverse-alphabetical",
+   "code": "import heapq\nfrom collections import Counter\ndef topKFrequentWords(words, k):\n    c = Counter(words)\n    return heapq.nlargest(k, c, key=lambda w: (c[w], w))\n",
+   "fails_on": "tie_alphabetical",
+   "followup": "Check the order of 'a' and 'b' when both appear once. Which should be first?"
+  },
+  {
+   "name": "result ordered least frequent first",
+   "code": "from collections import Counter\ndef topKFrequentWords(words, k):\n    c = Counter(words)\n    return sorted(c, key=lambda w: (-c[w], w))[:k][::-1]\n",
+   "fails_on": "normal",
+   "followup": "The answer should start with the most frequent word. Which end does yours start from?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log k)",
+  "space": "O(n)",
+  "followups": [
+   "How would you make ties alphabetical in a min-heap of size k (custom comparator)?",
+   "What if the words arrive as a stream?"
+  ]
+ }
+}

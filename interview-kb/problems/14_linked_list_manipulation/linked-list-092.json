@@ -1,0 +1,251 @@
+{
+ "id": "linked-list-092",
+ "leetcode": 92,
+ "title": "Reverse Linked List II",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "medium",
+ "function": "reverseBetween",
+ "signature": "reverseBetween(head: ListNode, left: int, right: int) -> ListNode",
+ "adapter": "list_args_to_list",
+ "statement": "Reverse the nodes from position left to position right (1-based, inclusive) and return the head of the list.",
+ "reference_solution": "def reverseBetween(head, left, right):\n    dummy = ListNode(0, head)\n    prev = dummy\n    for _ in range(left - 1):\n        prev = prev.next\n    cur = prev.next\n    for _ in range(right - left):\n        nxt = cur.next\n        cur.next = nxt.next\n        nxt.next = prev.next\n        prev.next = nxt\n    return dummy.next\n",
+ "brute_force_solution": "def reverseBetween(head, left, right):\n    vals = []\n    while head:\n        vals.append(head.val)\n        head = head.next\n    vals[left - 1:right] = vals[left - 1:right][::-1]\n    out = None\n    for v in reversed(vals):\n        out = ListNode(v, out)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    2,
+    4
+   ],
+   "expected": [
+    1,
+    4,
+    3,
+    2,
+    5
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    1,
+    1
+   ],
+   "expected": [
+    5
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    1,
+    2
+   ],
+   "expected": [
+    2,
+    1
+   ],
+   "tag": "whole_list"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    2,
+    2
+   ],
+   "expected": [
+    1,
+    2,
+    3
+   ],
+   "tag": "left_equals_right"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    1,
+    3
+   ],
+   "expected": [
+    3,
+    2,
+    1,
+    4
+   ],
+   "tag": "from_head"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    3,
+    4
+   ],
+   "expected": [
+    1,
+    2,
+    4,
+    3
+   ],
+   "tag": "to_tail"
+  },
+  {
+   "args": [
+    [
+     2,
+     8,
+     2
+    ],
+    3,
+    3
+   ],
+   "expected": [
+    2,
+    8,
+    2
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    1,
+    1
+   ],
+   "expected": [
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     0,
+     6,
+     6,
+     3,
+     2,
+     0
+    ],
+    3,
+    6
+   ],
+   "expected": [
+    8,
+    0,
+    2,
+    3,
+    6,
+    6,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     4,
+     6,
+     5,
+     6,
+     1,
+     5
+    ],
+    2,
+    4
+   ],
+   "expected": [
+    6,
+    5,
+    6,
+    4,
+    6,
+    1,
+    5
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6
+    ],
+    1,
+    1
+   ],
+   "expected": [
+    6
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 10, 99990]"
+  }
+ ],
+ "hints": {
+  "1_question": "Walk to the node just before position left. Then you need to reverse a stretch of right - left + 1 nodes while staying connected on both sides.",
+  "2_nudge": "Use a dummy head so left = 1 is not special. Keep `prev` fixed; repeatedly take the node after cur and move it to the front of the reversed section (right after prev).",
+  "3_big_hint": "for _ in range(right - left): nxt = cur.next; cur.next = nxt.next; nxt.next = prev.next; prev.next = nxt."
+ },
+ "known_bugs": [
+  {
+   "name": "walks one node too far to find the predecessor",
+   "code": "def reverseBetween(head, left, right):\n    dummy = ListNode(0, head)\n    prev = dummy\n    for _ in range(left):\n        prev = prev.next\n    cur = prev.next\n    for _ in range(right - left):\n        if cur is None or cur.next is None:\n            break\n        nxt = cur.next\n        cur.next = nxt.next\n        nxt.next = prev.next\n        prev.next = nxt\n    return dummy.next\n",
+   "fails_on": "normal",
+   "followup": "How many steps from the dummy reach the node just BEFORE position left?"
+  },
+  {
+   "name": "one extra reversal step",
+   "code": "def reverseBetween(head, left, right):\n    dummy = ListNode(0, head)\n    prev = dummy\n    for _ in range(left - 1):\n        prev = prev.next\n    cur = prev.next\n    for _ in range(right - left + 1):\n        if cur.next is None:\n            break\n        nxt = cur.next\n        cur.next = nxt.next\n        nxt.next = prev.next\n        prev.next = nxt\n    return dummy.next\n",
+   "fails_on": "left_equals_right",
+   "followup": "How many nodes need to be moved to reverse a section of right - left + 1 nodes?"
+  },
+  {
+   "name": "returns the old head even if it moved",
+   "code": "def reverseBetween(head, left, right):\n    dummy = ListNode(0, head)\n    prev = dummy\n    for _ in range(left - 1):\n        prev = prev.next\n    cur = prev.next\n    for _ in range(right - left):\n        nxt = cur.next\n        cur.next = nxt.next\n        nxt.next = prev.next\n        prev.next = nxt\n    return head\n",
+   "fails_on": "from_head",
+   "followup": "If the reversed part starts at position 1, is the original head still the head?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is one pass enough?",
+   "How would you do this recursively and what is the extra cost?"
+  ]
+ }
+}

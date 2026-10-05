@@ -1,0 +1,150 @@
+{
+ "id": "sliding-window-424",
+ "leetcode": 424,
+ "title": "Longest Repeating Character Replacement",
+ "pattern": "sliding_window",
+ "difficulty": "medium",
+ "function": "characterReplacement",
+ "signature": "characterReplacement(s: str, k: int) -> int",
+ "adapter": null,
+ "statement": "You may change at most k characters of the string to any other letter. Return the length of the longest substring that could consist of a single repeated letter after those changes.",
+ "reference_solution": "def characterReplacement(s, k):\n    count = {}\n    left = best = maxf = 0\n    for right, ch in enumerate(s):\n        count[ch] = count.get(ch, 0) + 1\n        maxf = max(maxf, count[ch])\n        while right - left + 1 - maxf > k:\n            count[s[left]] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+ "brute_force_solution": "def characterReplacement(s, k):\n    best = 0\n    for i in range(len(s)):\n        for j in range(i, len(s)):\n            sub = s[i:j + 1]\n            if len(sub) - max(sub.count(c) for c in set(sub)) <= k:\n                best = max(best, len(sub))\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    "ABAB",
+    2
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "AABABBA",
+    1
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "",
+    2
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "A",
+    0
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    "AAAA",
+    0
+   ],
+   "expected": 4,
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    "ABC",
+    0
+   ],
+   "expected": 1,
+   "tag": "zero_k"
+  },
+  {
+   "args": [
+    "ABBB",
+    2
+   ],
+   "expected": 4,
+   "tag": "k_exceeds_need"
+  },
+  {
+   "args": [
+    "AAA",
+    2
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "ABB",
+    1
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "AABBBBB",
+    1
+   ],
+   "expected": 6,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "AAAAABBAAA",
+    0
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "AAABABAA",
+    0
+   ],
+   "expected": 3,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(13)\n    return [''.join(r.choice('ABC') for _ in range(30000)), 1000]"
+  }
+ ],
+ "hints": {
+  "1_question": "For a window, how many characters would you have to change to make it uniform? Which letter should you keep?",
+  "2_nudge": "Keep the count of the most frequent letter in the window. A window is valid when its length minus that count is at most k.",
+  "3_big_hint": "Grow right; update counts and the max count; while (window length - maxCount) > k: remove s[left], left += 1. Track the best length."
+ },
+ "known_bugs": [
+  {
+   "name": "shrinks when changes needed equals k (>= instead of >)",
+   "code": "def characterReplacement(s, k):\n    count = {}\n    left = best = maxf = 0\n    for right, ch in enumerate(s):\n        count[ch] = count.get(ch, 0) + 1\n        maxf = max(maxf, count[ch])\n        while right - left + 1 - maxf >= k and left <= right:\n            count[s[left]] -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "normal",
+   "followup": "If you are allowed exactly k changes and the window needs exactly k, is it still valid?"
+  },
+  {
+   "name": "forgets to decrement the count when the window shrinks",
+   "code": "def characterReplacement(s, k):\n    count = {}\n    left = best = maxf = 0\n    for right, ch in enumerate(s):\n        count[ch] = count.get(ch, 0) + 1\n        maxf = max(maxf, count[ch])\n        while right - left + 1 - maxf > k:\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "normal",
+   "followup": "When left moves past a character, should that character still count toward the window?"
+  },
+  {
+   "name": "tries every start and rescans (O(n * window))",
+   "code": "def characterReplacement(s, k):\n    best = 0\n    for i in range(len(s)):\n        count = {}\n        maxf = 0\n        for j in range(i, len(s)):\n            count[s[j]] = count.get(s[j], 0) + 1\n            maxf = max(maxf, count[s[j]])\n            if j - i + 1 - maxf > k:\n                break\n            best = max(best, j - i + 1)\n    return best\n",
+   "fails_on": "large",
+   "followup": "For each start you restart counting from scratch. What work from the previous start can you reuse?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(alphabet)",
+  "followups": [
+   "Why is it fine that maxCount is never decreased when the window shrinks?",
+   "How would the solution change if you could only change letters to a specific target letter?"
+  ]
+ }
+}

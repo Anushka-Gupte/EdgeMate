@@ -1,0 +1,231 @@
+{
+ "id": "tree-dfs-112",
+ "leetcode": 112,
+ "title": "Path Sum",
+ "pattern": "tree_dfs",
+ "difficulty": "easy",
+ "function": "hasPathSum",
+ "signature": "hasPathSum(root: TreeNode, targetSum: int) -> bool",
+ "adapter": "tree_value",
+ "statement": "Return True if some root-to-LEAF path has values that add up to targetSum. A leaf is a node with no children.",
+ "reference_solution": "def hasPathSum(root, t):\n    if not root:\n        return False\n    if not root.left and not root.right:\n        return root.val == t\n    return hasPathSum(root.left, t - root.val) or hasPathSum(root.right, t - root.val)\n",
+ "brute_force_solution": "def hasPathSum(root, t):\n    if not root:\n        return False\n    st = [(root, root.val)]\n    while st:\n        n, s = st.pop()\n        if not n.left and not n.right and s == t:\n            return True\n        if n.left:\n            st.append((n.left, s + n.left.val))\n        if n.right:\n            st.append((n.right, s + n.right.val))\n    return False\n",
+ "tests": [
+  {
+   "args": [
+    [
+     5,
+     4,
+     8,
+     11,
+     null,
+     13,
+     4,
+     7,
+     2,
+     null,
+     null,
+     null,
+     1
+    ],
+    22
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    5
+   ],
+   "expected": false,
+   "tag": "no_match"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": false,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    1
+   ],
+   "expected": false,
+   "tag": "not_leaf"
+  },
+  {
+   "args": [
+    [
+     -2,
+     null,
+     -3
+    ],
+    -5
+   ],
+   "expected": true,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     1,
+     -2,
+     -3,
+     1,
+     3,
+     -2,
+     null,
+     -1
+    ],
+    -1
+   ],
+   "expected": true,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     5,
+     5,
+     null,
+     -3,
+     -3,
+     0,
+     -3,
+     null,
+     -3,
+     null,
+     null,
+     null,
+     null,
+     null,
+     1
+    ],
+    -7
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -3,
+     -2,
+     4,
+     0,
+     4,
+     4,
+     null,
+     null,
+     5
+    ],
+    -4
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     -2,
+     0,
+     null,
+     null,
+     null,
+     5
+    ],
+    2
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4,
+     -1
+    ],
+    -5
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     -2,
+     1,
+     null,
+     null,
+     -2
+    ],
+    10
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(2)\n    return [rand_tree(r, 60000), 0]"
+  }
+ ],
+ "hints": {
+  "1_question": "You need a path that ends at a leaf. What should you do when you reach a node that is not a leaf?",
+  "2_nudge": "Subtract each node's value from the target as you go down. At a leaf, check whether the remaining target equals the leaf's value.",
+  "3_big_hint": "if not root: False; if leaf: return root.val == t; return hasPathSum(left, t - root.val) or hasPathSum(right, t - root.val)."
+ },
+ "known_bugs": [
+  {
+   "name": "accepts a path that ends at any node",
+   "code": "def hasPathSum(root, t):\n    if not root:\n        return False\n    if root.val == t:\n        return True\n    return hasPathSum(root.left, t - root.val) or hasPathSum(root.right, t - root.val)\n",
+   "fails_on": "not_leaf",
+   "followup": "For the tree [1, 2] and target 1, the root alone sums to 1. Is the root a leaf?"
+  },
+  {
+   "name": "empty tree with target 0 is True",
+   "code": "def hasPathSum(root, t):\n    if not root:\n        return t == 0\n    if not root.left and not root.right:\n        return root.val == t\n    return hasPathSum(root.left, t - root.val) or hasPathSum(root.right, t - root.val)\n",
+   "fails_on": "empty",
+   "followup": "Is there a root-to-leaf path in an empty tree?"
+  },
+  {
+   "name": "prunes when the running sum exceeds the target (assumes positives)",
+   "code": "def hasPathSum(root, t):\n    def go(n, cur):\n        if not n:\n            return False\n        cur += n.val\n        if cur > t:\n            return False\n        if not n.left and not n.right:\n            return cur == t\n        return go(n.left, cur) or go(n.right, cur)\n    return go(root, 0)\n",
+   "fails_on": "negative",
+   "followup": "If values can be negative, can a sum that is too big now come back down to the target later?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "What changes if the path may start and end at any node (problem 437)?",
+   "Why is it important that the check happens only at leaves?"
+  ]
+ }
+}

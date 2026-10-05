@@ -1,0 +1,248 @@
+{
+ "id": "greedy-134",
+ "leetcode": 134,
+ "title": "Gas Station",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "canCompleteCircuit",
+ "signature": "canCompleteCircuit(gas: List[int], cost: List[int]) -> int",
+ "adapter": null,
+ "statement": "Stations are on a circular route. gas[i] fuel is available at station i and travelling to the next station costs cost[i]. Starting with an empty tank, return the index of the station from which you can complete the full circle clockwise, or -1 if impossible. If a solution exists it is unique.",
+ "reference_solution": "def canCompleteCircuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    start = tank = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            start = i + 1\n            tank = 0\n    return start\n",
+ "brute_force_solution": "def canCompleteCircuit(gas, cost):\n    n = len(gas)\n    for s in range(n):\n        tank = 0\n        good = True\n        for j in range(n):\n            i = (s + j) % n\n            tank += gas[i] - cost[i]\n            if tank < 0:\n                good = False\n                break\n        if good:\n            return s\n    return -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    [
+     3,
+     4,
+     5,
+     1,
+     2
+    ]
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     4
+    ],
+    [
+     3,
+     4,
+     3
+    ]
+   ],
+   "expected": -1,
+   "tag": "impossible"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    [
+     4
+    ]
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    [
+     6
+    ]
+   ],
+   "expected": -1,
+   "tag": "impossible"
+  },
+  {
+   "args": [
+    [
+     2
+    ],
+    [
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "exact"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     2
+    ]
+   ],
+   "expected": 0,
+   "tag": "start_zero"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     5,
+     70
+    ],
+    [
+     2,
+     3,
+     4,
+     3,
+     9,
+     6,
+     2
+    ]
+   ],
+   "expected": 6,
+   "tag": "start_last"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     0,
+     6,
+     4
+    ],
+    [
+     2,
+     4,
+     6,
+     1,
+     1
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     4,
+     0,
+     1
+    ],
+    [
+     4,
+     5,
+     3,
+     1
+    ]
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     6,
+     1,
+     5
+    ],
+    [
+     6,
+     4,
+     3,
+     5,
+     3
+    ]
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6
+    ],
+    [
+     4
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0
+    ],
+    [
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    n = 100000\n    return [[0] * (n - 1) + [n], [1] * n]"
+  }
+ ],
+ "hints": {
+  "1_question": "If the total gas is less than the total cost, no start works. Otherwise a start exists - how could a failure partway tell you where NOT to start?",
+  "2_nudge": "Run around once keeping the tank. If it goes negative at i, none of the stations from the current start through i can be the answer, so restart from i + 1.",
+  "3_big_hint": "If sum(gas) < sum(cost) return -1. Else start = tank = 0; for i: tank += gas[i]-cost[i]; if tank < 0: start = i+1; tank = 0. Return start."
+ },
+ "known_bugs": [
+  {
+   "name": "starts at the first station where gas >= cost",
+   "code": "def canCompleteCircuit(gas, cost):\n    for i in range(len(gas)):\n        if gas[i] >= cost[i]:\n            return i\n    return -1\n",
+   "fails_on": "start_last",
+   "followup": "A station with enough gas for the first leg is not necessarily able to finish the whole circle. What about the later stretches?"
+  },
+  {
+   "name": "never checks that a solution exists",
+   "code": "def canCompleteCircuit(gas, cost):\n    start = tank = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            start = i + 1\n            tank = 0\n    return start % len(gas)\n",
+   "fails_on": "impossible",
+   "followup": "If the total gas is less than the total cost, can any starting station work? What does your code return then?"
+  },
+  {
+   "name": "never moves the start after a failure",
+   "code": "def canCompleteCircuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    start = tank = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            tank = 0\n    return start\n",
+   "fails_on": "normal",
+   "followup": "When the tank goes negative at station i, which stations are now ruled out as starting points?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is the start right after the last failure guaranteed to work when total gas >= total cost?",
+   "What if there could be several valid starts?"
+  ]
+ }
+}

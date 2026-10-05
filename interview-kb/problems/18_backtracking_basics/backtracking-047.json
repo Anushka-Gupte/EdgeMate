@@ -1,0 +1,595 @@
+{
+ "id": "backtracking-047",
+ "leetcode": 47,
+ "title": "Permutations II",
+ "pattern": "backtracking_basics",
+ "difficulty": "medium",
+ "function": "permuteUnique",
+ "signature": "permuteUnique(nums: List[int]) -> List[List[int]]",
+ "adapter": "sort_outer",
+ "statement": "The list may contain duplicate values. Return all UNIQUE permutations in any order.",
+ "reference_solution": "def permuteUnique(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+ "brute_force_solution": "import itertools\ndef permuteUnique(nums):\n    return [list(p) for p in sorted(set(itertools.permutations(nums)))]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     2,
+     1,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     3,
+     2
+    ],
+    [
+     2,
+     1,
+     3
+    ],
+    [
+     2,
+     3,
+     1
+    ],
+    [
+     3,
+     1,
+     2
+    ],
+    [
+     3,
+     2,
+     1
+    ]
+   ],
+   "tag": "all_distinct"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     1
+    ]
+   ],
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     1,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     1,
+     2,
+     2
+    ],
+    [
+     1,
+     2,
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     2,
+     1
+    ],
+    [
+     2,
+     1,
+     1,
+     2
+    ],
+    [
+     2,
+     1,
+     2,
+     1
+    ],
+    [
+     2,
+     2,
+     1,
+     1
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "tag": "all_same"
+  },
+  {
+   "args": [
+    [
+     2,
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     2
+    ],
+    [
+     2,
+     1,
+     2
+    ],
+    [
+     2,
+     2,
+     1
+    ]
+   ],
+   "tag": "unsorted_input"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     0,
+     2,
+     1
+    ],
+    [
+     1,
+     0,
+     2
+    ],
+    [
+     1,
+     2,
+     0
+    ],
+    [
+     2,
+     0,
+     1
+    ],
+    [
+     2,
+     1,
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     2,
+     3,
+     1
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2,
+     2,
+     3,
+     3
+    ],
+    [
+     1,
+     2,
+     3,
+     2,
+     3
+    ],
+    [
+     1,
+     2,
+     3,
+     3,
+     2
+    ],
+    [
+     1,
+     3,
+     2,
+     2,
+     3
+    ],
+    [
+     1,
+     3,
+     2,
+     3,
+     2
+    ],
+    [
+     1,
+     3,
+     3,
+     2,
+     2
+    ],
+    [
+     2,
+     1,
+     2,
+     3,
+     3
+    ],
+    [
+     2,
+     1,
+     3,
+     2,
+     3
+    ],
+    [
+     2,
+     1,
+     3,
+     3,
+     2
+    ],
+    [
+     2,
+     2,
+     1,
+     3,
+     3
+    ],
+    [
+     2,
+     2,
+     3,
+     1,
+     3
+    ],
+    [
+     2,
+     2,
+     3,
+     3,
+     1
+    ],
+    [
+     2,
+     3,
+     1,
+     2,
+     3
+    ],
+    [
+     2,
+     3,
+     1,
+     3,
+     2
+    ],
+    [
+     2,
+     3,
+     2,
+     1,
+     3
+    ],
+    [
+     2,
+     3,
+     2,
+     3,
+     1
+    ],
+    [
+     2,
+     3,
+     3,
+     1,
+     2
+    ],
+    [
+     2,
+     3,
+     3,
+     2,
+     1
+    ],
+    [
+     3,
+     1,
+     2,
+     2,
+     3
+    ],
+    [
+     3,
+     1,
+     2,
+     3,
+     2
+    ],
+    [
+     3,
+     1,
+     3,
+     2,
+     2
+    ],
+    [
+     3,
+     2,
+     1,
+     2,
+     3
+    ],
+    [
+     3,
+     2,
+     1,
+     3,
+     2
+    ],
+    [
+     3,
+     2,
+     2,
+     1,
+     3
+    ],
+    [
+     3,
+     2,
+     2,
+     3,
+     1
+    ],
+    [
+     3,
+     2,
+     3,
+     1,
+     2
+    ],
+    [
+     3,
+     2,
+     3,
+     2,
+     1
+    ],
+    [
+     3,
+     3,
+     1,
+     2,
+     2
+    ],
+    [
+     3,
+     3,
+     2,
+     1,
+     2
+    ],
+    [
+     3,
+     3,
+     2,
+     2,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     3
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     2,
+     0,
+     2
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     2,
+     2
+    ],
+    [
+     0,
+     2,
+     0,
+     2
+    ],
+    [
+     0,
+     2,
+     2,
+     0
+    ],
+    [
+     2,
+     0,
+     0,
+     2
+    ],
+    [
+     2,
+     0,
+     2,
+     0
+    ],
+    [
+     2,
+     2,
+     0,
+     0
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[1, 1, 1, 1, 2, 2, 2, 3, 3]]"
+  }
+ ],
+ "hints": {
+  "1_question": "Plain permutations would generate identical lists when equal values are swapped. How can you avoid choosing 'the same value' twice at the same position?",
+  "2_nudge": "Sort the array. At each position skip a value if it equals the previous one and the previous one is not currently in use.",
+  "3_big_hint": "Sort first. In the loop: if i > 0 and nums[i] == nums[i-1] and not used[i-1]: continue."
+ },
+ "known_bugs": [
+  {
+   "name": "no duplicate handling",
+   "code": "def permuteUnique(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+   "fails_on": "duplicates",
+   "followup": "For [1, 1, 2] how many times is [1, 1, 2] produced?"
+  },
+  {
+   "name": "skips every value equal to its left neighbour (ignores whether it is in use)",
+   "code": "def permuteUnique(nums):\n    nums = sorted(nums)\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+   "fails_on": "all_same",
+   "followup": "For [1, 1] your code produces no permutation at all. The second 1 may be needed once the first 1 is already in the current permutation - when is it right to skip it?"
+  },
+  {
+   "name": "forgets to sort first",
+   "code": "def permuteUnique(nums):\n    res, cur = [], []\n    used = [False] * len(nums)\n    def bt():\n        if len(cur) == len(nums):\n            res.append(cur[:])\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:\n                continue\n            used[i] = True\n            cur.append(nums[i])\n            bt()\n            cur.pop()\n            used[i] = False\n    bt()\n    return res\n",
+   "fails_on": "unsorted_input",
+   "followup": "Your skip rule compares neighbouring positions. In [2, 1, 2] are the two 2s neighbours?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * n!)",
+  "space": "O(n)",
+  "followups": [
+   "Why must equal values be used in left-to-right order?",
+   "Could a counter (value -> count) replace the used array?"
+  ]
+ }
+}

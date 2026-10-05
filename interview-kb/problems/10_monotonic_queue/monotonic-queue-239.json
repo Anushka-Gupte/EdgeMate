@@ -1,0 +1,273 @@
+{
+ "id": "monotonic-queue-239",
+ "leetcode": 239,
+ "title": "Sliding Window Maximum",
+ "pattern": "monotonic_queue",
+ "difficulty": "hard",
+ "function": "maxSlidingWindow",
+ "signature": "maxSlidingWindow(nums: List[int], k: int) -> List[int]",
+ "adapter": null,
+ "statement": "A window of size k slides one step at a time from the left end of the list to the right end. Return the maximum value inside the window at each position.",
+ "reference_solution": "from collections import deque\ndef maxSlidingWindow(nums, k):\n    dq, out = deque(), []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()\n        if i >= k - 1:\n            out.append(nums[dq[0]])\n    return out\n",
+ "brute_force_solution": "def maxSlidingWindow(nums, k):\n    return [max(nums[i:i + k]) for i in range(len(nums) - k + 1)]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     3,
+     -1,
+     -3,
+     5,
+     3,
+     6,
+     7
+    ],
+    3
+   ],
+   "expected": [
+    3,
+    3,
+    5,
+    5,
+    6,
+    7
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     -1
+    ],
+    1
+   ],
+   "expected": [
+    1,
+    -1
+   ],
+   "tag": "k_is_one"
+  },
+  {
+   "args": [
+    [
+     9,
+     11
+    ],
+    2
+   ],
+   "expected": [
+    11
+   ],
+   "tag": "window_is_whole_array"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -1,
+     -2
+    ],
+    2
+   ],
+   "expected": [
+    -1,
+    -1
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2
+    ],
+    2
+   ],
+   "expected": [
+    2,
+    2
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     5,
+     1,
+     1,
+     1
+    ],
+    2
+   ],
+   "expected": [
+    5,
+    1,
+    1
+   ],
+   "tag": "expired_max"
+  },
+  {
+   "args": [
+    [],
+    1
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     -1,
+     7,
+     9,
+     -5,
+     5,
+     4,
+     8,
+     2,
+     9
+    ],
+    2
+   ],
+   "expected": [
+    7,
+    9,
+    9,
+    5,
+    5,
+    8,
+    8,
+    9
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -2,
+     0,
+     2,
+     2,
+     3
+    ],
+    4
+   ],
+   "expected": [
+    2,
+    2,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    1
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     4,
+     3,
+     1,
+     -3,
+     -5,
+     7,
+     8,
+     7
+    ],
+    5
+   ],
+   "expected": [
+    4,
+    4,
+    7,
+    8,
+    8
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -4,
+     -5,
+     -1,
+     7,
+     8
+    ],
+    4
+   ],
+   "expected": [
+    -1,
+    7,
+    8
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(11)\n    return [[r.randint(-10**6, 10**6) for _ in range(100000)], 30000]"
+  }
+ ],
+ "hints": {
+  "1_question": "As the window slides, which elements could ever become the maximum later, and which can be forgotten forever?",
+  "2_nudge": "Keep a deque of indices whose values are in decreasing order. A new value makes every smaller value before it useless.",
+  "3_big_hint": "For each i: pop from the back while nums[back] <= nums[i]; push i; pop from the front if it left the window (index <= i - k); once i >= k-1 record nums[front]."
+ },
+ "known_bugs": [
+  {
+   "name": "never removes indices that left the window",
+   "code": "from collections import deque\ndef maxSlidingWindow(nums, k):\n    dq, out = deque(), []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if i >= k - 1:\n            out.append(nums[dq[0]])\n    return out\n",
+   "fails_on": "expired_max",
+   "followup": "Your front element may belong to a position the window has already passed. Where do you check that?"
+  },
+  {
+   "name": "starts recording before the window is full",
+   "code": "from collections import deque\ndef maxSlidingWindow(nums, k):\n    dq, out = deque(), []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()\n        out.append(nums[dq[0]])\n    return out\n",
+   "fails_on": "normal",
+   "followup": "How many windows are there in an array of n elements with window size k, and how many outputs does your loop produce?"
+  },
+  {
+   "name": "takes max() of every slice (O(n*k))",
+   "code": "def maxSlidingWindow(nums, k):\n    return [max(nums[i:i + k]) for i in range(len(nums) - k + 1)]\n",
+   "fails_on": "large",
+   "followup": "With 100000 elements and k = 30000, how many numbers does max() examine in total? Can a deque avoid re-scanning?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(k)",
+  "followups": [
+   "Each index enters and leaves the deque once. Why is that enough for O(n)?",
+   "Why store indices instead of values?"
+  ]
+ }
+}

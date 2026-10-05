@@ -1,0 +1,253 @@
+{
+ "id": "difference-array-1094",
+ "leetcode": 1094,
+ "title": "Car Pooling",
+ "pattern": "difference_array",
+ "difficulty": "medium",
+ "function": "carPooling",
+ "signature": "carPooling(trips: List[List[int]], capacity: int) -> bool",
+ "adapter": null,
+ "statement": "A car drives in one direction with a fixed seat capacity. Each trip [passengers, pickup, dropoff] boards at the pickup point and leaves at the dropoff point. Return True if the car never exceeds its capacity.",
+ "reference_solution": "def carPooling(trips, capacity):\n    if not trips:\n        return True\n    end = max(t[2] for t in trips)\n    diff = [0] * (end + 2)\n    for num, frm, to in trips:\n        diff[frm] += num\n        diff[to] -= num\n    cur = 0\n    for i in range(end + 1):\n        cur += diff[i]\n        if cur > capacity:\n            return False\n    return True\n",
+ "brute_force_solution": "def carPooling(trips, capacity):\n    if not trips:\n        return True\n    end = max(t[2] for t in trips)\n    for loc in range(end + 1):\n        load = sum(num for num, f, t in trips if f <= loc < t)\n        if load > capacity:\n            return False\n    return True\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      5
+     ],
+     [
+      3,
+      3,
+      7
+     ]
+    ],
+    4
+   ],
+   "expected": false,
+   "tag": "overlap"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      5
+     ],
+     [
+      3,
+      3,
+      7
+     ]
+    ],
+    5
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      5
+     ],
+     [
+      3,
+      5,
+      7
+     ]
+    ],
+    3
+   ],
+   "expected": true,
+   "tag": "drop_before_pickup"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      1,
+      5
+     ]
+    ],
+    2
+   ],
+   "expected": true,
+   "tag": "exact_capacity"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": true,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      5,
+      8
+     ],
+     [
+      2,
+      2,
+      4
+     ],
+     [
+      1,
+      7,
+      11
+     ],
+     [
+      4,
+      3,
+      5
+     ]
+    ],
+    8
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      8,
+      9
+     ],
+     [
+      3,
+      3,
+      8
+     ],
+     [
+      2,
+      7,
+      8
+     ]
+    ],
+    4
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      4,
+      8,
+      11
+     ],
+     [
+      4,
+      6,
+      9
+     ],
+     [
+      1,
+      1,
+      5
+     ],
+     [
+      3,
+      0,
+      4
+     ],
+     [
+      4,
+      8,
+      13
+     ]
+    ],
+    1
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      4,
+      7,
+      10
+     ]
+    ],
+    8
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      2,
+      5
+     ],
+     [
+      3,
+      7,
+      12
+     ]
+    ],
+    3
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(10)\n    t = []\n    for _ in range(10000):\n        a = r.randint(0, 990)\n        t.append([r.randint(1, 3), a, a + r.randint(1, 9)])\n    return [t, 100]"
+  }
+ ],
+ "hints": {
+  "1_question": "You only care about how many passengers are in the car at each location. What changes at a pickup? At a dropoff?",
+  "2_nudge": "Mark +passengers at the pickup and -passengers at the dropoff, then sweep left to right keeping a running total.",
+  "3_big_hint": "diff[from] += num; diff[to] -= num. Sweep with a running sum; if it ever exceeds capacity return False. Drop-off at x frees the seats before a pickup at x."
+ },
+ "known_bugs": [
+  {
+   "name": "treats the dropoff point as still occupied",
+   "code": "def carPooling(trips, capacity):\n    if not trips:\n        return True\n    end = max(t[2] for t in trips)\n    diff = [0] * (end + 3)\n    for num, frm, to in trips:\n        diff[frm] += num\n        diff[to + 1] -= num\n    cur = 0\n    for i in range(end + 2):\n        cur += diff[i]\n        if cur > capacity:\n            return False\n    return True\n",
+   "fails_on": "drop_before_pickup",
+   "followup": "Passengers get off at their dropoff location. If someone else boards at that same location, are the seats free?"
+  },
+  {
+   "name": "rejects when exactly full (>= instead of >)",
+   "code": "def carPooling(trips, capacity):\n    if not trips:\n        return True\n    end = max(t[2] for t in trips)\n    diff = [0] * (end + 2)\n    for num, frm, to in trips:\n        diff[frm] += num\n        diff[to] -= num\n    cur = 0\n    for i in range(end + 1):\n        cur += diff[i]\n        if cur >= capacity:\n            return False\n    return True\n",
+   "fails_on": "exact_capacity",
+   "followup": "If the car has 2 seats and 2 passengers, is that over capacity?"
+  },
+  {
+   "name": "only checks each trip on its own",
+   "code": "def carPooling(trips, capacity):\n    return all(t[0] <= capacity for t in trips)\n",
+   "fails_on": "overlap",
+   "followup": "What if two trips overlap in time? Does checking trips one by one capture the total on board?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + L) where L = last location",
+  "space": "O(L)",
+  "followups": [
+   "What if locations go up to 10^9? How would you adapt without allocating a huge array?",
+   "How does the sweep-line version with sorted events compare?"
+  ]
+ }
+}

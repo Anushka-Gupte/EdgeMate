@@ -1,0 +1,225 @@
+{
+ "id": "greedy-621",
+ "leetcode": 621,
+ "title": "Task Scheduler",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "leastInterval",
+ "signature": "leastInterval(tasks: List[str], n: int) -> int",
+ "adapter": null,
+ "statement": "Each task takes one time unit and the CPU may idle. Two identical tasks must be at least n units apart (n other slots between them). Return the least number of time units needed to finish all tasks.",
+ "reference_solution": "from collections import Counter\ndef leastInterval(tasks, n):\n    if not tasks:\n        return 0\n    c = Counter(tasks)\n    maxf = max(c.values())\n    cnt = sum(1 for v in c.values() if v == maxf)\n    return max((maxf - 1) * (n + 1) + cnt, len(tasks))\n",
+ "brute_force_solution": "from collections import Counter\ndef leastInterval(tasks, n):\n    cnt = Counter(tasks)\n    ready = {t: 0 for t in cnt}\n    time = 0\n    remaining = len(tasks)\n    while remaining:\n        avail = [t for t in cnt if cnt[t] > 0 and ready[t] <= time]\n        if avail:\n            t = max(avail, key=lambda x: cnt[x])\n            cnt[t] -= 1\n            remaining -= 1\n            ready[t] = time + n + 1\n        time += 1\n    return time\n",
+ "tests": [
+  {
+   "args": [
+    [
+     "A",
+     "A",
+     "A",
+     "B",
+     "B",
+     "B"
+    ],
+    2
+   ],
+   "expected": 8,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     "A",
+     "A",
+     "A",
+     "B",
+     "B",
+     "B"
+    ],
+    0
+   ],
+   "expected": 6,
+   "tag": "n_zero"
+  },
+  {
+   "args": [
+    [
+     "A",
+     "A",
+     "A",
+     "A",
+     "A",
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G"
+    ],
+    2
+   ],
+   "expected": 16,
+   "tag": "many_distinct"
+  },
+  {
+   "args": [
+    [
+     "A"
+    ],
+    5
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     "A",
+     "B",
+     "C"
+    ],
+    10
+   ],
+   "expected": 3,
+   "tag": "all_distinct"
+  },
+  {
+   "args": [
+    [
+     "A",
+     "A",
+     "A",
+     "B",
+     "B",
+     "B",
+     "C",
+     "C",
+     "C",
+     "D",
+     "D",
+     "E"
+    ],
+    2
+   ],
+   "expected": 12,
+   "tag": "no_idle"
+  },
+  {
+   "args": [
+    [
+     "C",
+     "C",
+     "A",
+     "D",
+     "D",
+     "C",
+     "C",
+     "D"
+    ],
+    2
+   ],
+   "expected": 10,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "A",
+     "D",
+     "A"
+    ],
+    0
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "B"
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "D",
+     "B"
+    ],
+    4
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     "B",
+     "B",
+     "D",
+     "A",
+     "B",
+     "D",
+     "B",
+     "D",
+     "B",
+     "A"
+    ],
+    3
+   ],
+   "expected": 17,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(51)\n    return [[r.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in range(100000)], 50]"
+  }
+ ],
+ "hints": {
+  "1_question": "The most frequent task forces the structure of the schedule. How many 'frames' does it create, and how long is each frame?",
+  "2_nudge": "If the top task appears maxf times, you need (maxf - 1) full frames of length n + 1, plus a final partial frame holding every task that ties for maxf.",
+  "3_big_hint": "answer = max(len(tasks), (maxf - 1) * (n + 1) + (number of tasks with count maxf))."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets that the answer can't be less than the number of tasks",
+   "code": "from collections import Counter\ndef leastInterval(tasks, n):\n    if not tasks:\n        return 0\n    c = Counter(tasks)\n    maxf = max(c.values())\n    cnt = sum(1 for v in c.values() if v == maxf)\n    return (maxf - 1) * (n + 1) + cnt\n",
+   "fails_on": "no_idle",
+   "followup": "When n is small and there are many different tasks, there is no idle time. What is the minimum possible answer in that case?"
+  },
+  {
+   "name": "counts distinct tasks instead of tasks tied for the max",
+   "code": "from collections import Counter\ndef leastInterval(tasks, n):\n    if not tasks:\n        return 0\n    c = Counter(tasks)\n    maxf = max(c.values())\n    return max((maxf - 1) * (n + 1) + len(c), len(tasks))\n",
+   "fails_on": "many_distinct",
+   "followup": "The last partial frame only contains tasks that appear maxf times. Is that every distinct task?"
+  },
+  {
+   "name": "uses frame length n instead of n + 1",
+   "code": "from collections import Counter\ndef leastInterval(tasks, n):\n    if not tasks:\n        return 0\n    c = Counter(tasks)\n    maxf = max(c.values())\n    cnt = sum(1 for v in c.values() if v == maxf)\n    return max((maxf - 1) * n + cnt, len(tasks))\n",
+   "fails_on": "normal",
+   "followup": "With cooldown n = 2, a task A runs and then two other slots pass before the next A. How long is that frame including A itself?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "How would a max-heap simulation compute the same answer?",
+   "How can you also output the actual schedule?"
+  ]
+ }
+}

@@ -1,0 +1,252 @@
+{
+ "id": "intervals-253",
+ "leetcode": 253,
+ "title": "Meeting Rooms II",
+ "pattern": "intervals",
+ "difficulty": "medium",
+ "function": "minMeetingRooms",
+ "signature": "minMeetingRooms(intervals: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "Each meeting is [start, end) (back-to-back meetings may share a room). Return the minimum number of rooms needed to hold all meetings.",
+ "reference_solution": "import heapq\ndef minMeetingRooms(intervals):\n    h = []\n    for s, e in sorted(intervals):\n        if h and h[0] <= s:\n            heapq.heapreplace(h, e)\n        else:\n            heapq.heappush(h, e)\n    return len(h)\n",
+ "brute_force_solution": "def minMeetingRooms(intervals):\n    if not intervals:\n        return 0\n    lo = min(s for s, e in intervals)\n    hi = max(e for s, e in intervals)\n    return max(sum(1 for s, e in intervals if s <= t < e) for t in range(lo, hi + 1))\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      0,
+      30
+     ],
+     [
+      5,
+      10
+     ],
+     [
+      15,
+      20
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      7,
+      10
+     ],
+     [
+      2,
+      4
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "unsorted"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "touching"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      5
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      3,
+      7
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "all_overlap"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      10
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      4,
+      5
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "contained"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      4
+     ],
+     [
+      5,
+      10
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      4
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      9,
+      12
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      7,
+      11
+     ],
+     [
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      7,
+      10
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      3,
+      5
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      6
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(46)\n    return [[(lambda a: [a, a + r.randint(1, 1000)])(r.randint(0, 10**6)) for _ in range(100000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "At any moment, how many meetings are running at once? That number is the answer's lower bound.",
+  "2_nudge": "Sort by start. Keep a min-heap of end times of rooms in use. If the earliest-ending room is free by the new start, reuse it.",
+  "3_big_hint": "For each (s, e) in sorted order: if heap and heap[0] <= s: heapreplace(heap, e) else heappush(heap, e). Answer = len(heap)."
+ },
+ "known_bugs": [
+  {
+   "name": "back-to-back meetings need a new room (< instead of <=)",
+   "code": "import heapq\ndef minMeetingRooms(intervals):\n    h = []\n    for s, e in sorted(intervals):\n        if h and h[0] < s:\n            heapq.heapreplace(h, e)\n        else:\n            heapq.heappush(h, e)\n    return len(h)\n",
+   "fails_on": "touching",
+   "followup": "A meeting ends at 2 and another starts at 2. Can they share a room?"
+  },
+  {
+   "name": "processes meetings in the given order (no sort)",
+   "code": "import heapq\ndef minMeetingRooms(intervals):\n    h = []\n    for s, e in intervals:\n        if h and h[0] <= s:\n            heapq.heapreplace(h, e)\n        else:\n            heapq.heappush(h, e)\n    return len(h)\n",
+   "fails_on": "unsorted",
+   "followup": "The heap logic assumes you meet the meetings in start order. Where do you guarantee that?"
+  },
+  {
+   "name": "counts only meetings that overlap the first one",
+   "code": "def minMeetingRooms(intervals):\n    if not intervals:\n        return 0\n    s0, e0 = intervals[0]\n    return sum(1 for s, e in intervals if s < e0 and s0 < e)\n",
+   "fails_on": "contained",
+   "followup": "Rooms can be needed later in the day, away from the first meeting. Does your count see them?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log n)",
+  "space": "O(n)",
+  "followups": [
+   "How does the sweep-line with separate sorted start/end arrays compare?",
+   "Why is a min-heap of end times the right structure?"
+  ]
+ }
+}

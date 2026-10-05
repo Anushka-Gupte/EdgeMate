@@ -1,0 +1,296 @@
+{
+ "id": "backtracking-constraints-079",
+ "leetcode": 79,
+ "title": "Word Search",
+ "pattern": "backtracking_constraints",
+ "difficulty": "medium",
+ "function": "exist",
+ "signature": "exist(board: List[List[str]], word: str) -> bool",
+ "adapter": null,
+ "statement": "Return True if the word can be traced in the grid by moving to horizontally or vertically adjacent cells, never using the same cell twice in one path.",
+ "reference_solution": "def exist(board, word):\n    R, C = len(board), len(board[0]) if board else 0\n    def dfs(r, c, i):\n        if i == len(word):\n            return True\n        if r < 0 or c < 0 or r >= R or c >= C or board[r][c] != word[i]:\n            return False\n        tmp = board[r][c]\n        board[r][c] = '#'\n        ok = dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1)\n        board[r][c] = tmp\n        return ok\n    return any(dfs(r, c, 0) for r in range(R) for c in range(C))\n",
+ "brute_force_solution": "def exist(board, word):\n    R, C = len(board), len(board[0]) if board else 0\n    def go(r, c, i, seen):\n        if board[r][c] != word[i]:\n            return False\n        if i == len(word) - 1:\n            return True\n        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < R and 0 <= nc < C and (nr, nc) not in seen and go(nr, nc, i + 1, seen | {(nr, nc)}):\n                return True\n        return False\n    return any(go(r, c, 0, {(r, c)}) for r in range(R) for c in range(C))\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      "A",
+      "B",
+      "C",
+      "E"
+     ],
+     [
+      "S",
+      "F",
+      "C",
+      "S"
+     ],
+     [
+      "A",
+      "D",
+      "E",
+      "E"
+     ]
+    ],
+    "ABCCED"
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      "A",
+      "B",
+      "C",
+      "E"
+     ],
+     [
+      "S",
+      "F",
+      "C",
+      "S"
+     ],
+     [
+      "A",
+      "D",
+      "E",
+      "E"
+     ]
+    ],
+    "SEE"
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      "A",
+      "B",
+      "C",
+      "E"
+     ],
+     [
+      "S",
+      "F",
+      "C",
+      "S"
+     ],
+     [
+      "A",
+      "D",
+      "E",
+      "E"
+     ]
+    ],
+    "ABCB"
+   ],
+   "expected": false,
+   "tag": "reuse_cell"
+  },
+  {
+   "args": [
+    [
+     [
+      "a"
+     ]
+    ],
+    "a"
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      "a"
+     ]
+    ],
+    "b"
+   ],
+   "expected": false,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      "a",
+      "b"
+     ]
+    ],
+    "ba"
+   ],
+   "expected": true,
+   "tag": "reversed_direction"
+  },
+  {
+   "args": [
+    [
+     [
+      "a",
+      "a"
+     ]
+    ],
+    "aaa"
+   ],
+   "expected": false,
+   "tag": "reuse_cell"
+  },
+  {
+   "args": [
+    [
+     [
+      "b",
+      "a",
+      "a"
+     ],
+     [
+      "b",
+      "c",
+      "b"
+     ],
+     [
+      "a",
+      "b",
+      "a"
+     ]
+    ],
+    "aabb"
+   ],
+   "expected": true,
+   "tag": "needs_backtracking"
+  },
+  {
+   "args": [
+    [
+     [
+      "b"
+     ],
+     [
+      "b"
+     ],
+     [
+      "b"
+     ]
+    ],
+    "babb"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      "a"
+     ],
+     [
+      "b"
+     ]
+    ],
+    "bb"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      "a",
+      "b"
+     ],
+     [
+      "a",
+      "a"
+     ]
+    ],
+    "bbabb"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      "b",
+      "a"
+     ],
+     [
+      "b",
+      "a"
+     ],
+     [
+      "b",
+      "b"
+     ]
+    ],
+    "a"
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      "a",
+      "b"
+     ],
+     [
+      "b",
+      "b"
+     ],
+     [
+      "a",
+      "a"
+     ]
+    ],
+    "bbaa"
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [],
+ "hints": {
+  "1_question": "Start a search from every cell that matches the first letter. What do you need to remember during one path so you don't reuse a cell?",
+  "2_nudge": "DFS from each start: match the next letter in the 4 directions, mark the current cell as used, and UNMARK it when you return so other paths can use it.",
+  "3_big_hint": "dfs(r, c, i): if i == len(word) True; if out of bounds or mismatch False; mark cell; try 4 neighbours; restore the cell; return result."
+ },
+ "known_bugs": [
+  {
+   "name": "does not restore the cell after exploring (no backtracking)",
+   "code": "def exist(board, word):\n    R, C = len(board), len(board[0]) if board else 0\n    def dfs(r, c, i):\n        if i == len(word):\n            return True\n        if r < 0 or c < 0 or r >= R or c >= C or board[r][c] != word[i]:\n            return False\n        board[r][c] = '#'\n        return dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1)\n    return any(dfs(r, c, 0) for r in range(R) for c in range(C))\n",
+   "fails_on": "needs_backtracking",
+   "followup": "After a path fails, is the cell you marked usable by a different path? What does your code do to it?"
+  },
+  {
+   "name": "allows reusing a cell within one path",
+   "code": "def exist(board, word):\n    R, C = len(board), len(board[0]) if board else 0\n    def dfs(r, c, i):\n        if i == len(word):\n            return True\n        if r < 0 or c < 0 or r >= R or c >= C or board[r][c] != word[i]:\n            return False\n        return dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1) or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1)\n    return any(dfs(r, c, 0) for r in range(R) for c in range(C))\n",
+   "fails_on": "reuse_cell",
+   "followup": "Can the same cell be used twice in one word? How do you prevent it?"
+  },
+  {
+   "name": "only moves right or down",
+   "code": "def exist(board, word):\n    R, C = len(board), len(board[0]) if board else 0\n    def dfs(r, c, i):\n        if i == len(word):\n            return True\n        if r >= R or c >= C or board[r][c] != word[i]:\n            return False\n        return dfs(r + 1, c, i + 1) or dfs(r, c + 1, i + 1)\n    return any(dfs(r, c, 0) for r in range(R) for c in range(C))\n",
+   "fails_on": "reversed_direction",
+   "followup": "Which directions may a path move in according to the statement?"
+  }
+ ],
+ "complexity": {
+  "time": "O(R * C * 3^L)",
+  "space": "O(L)",
+  "followups": [
+   "How can you prune the search (check letter frequencies, search the rarer end first)?",
+   "Why is marking the board in place better than a separate visited set?"
+  ]
+ }
+}

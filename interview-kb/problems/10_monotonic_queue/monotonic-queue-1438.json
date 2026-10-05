@@ -1,0 +1,206 @@
+{
+ "id": "monotonic-queue-1438",
+ "leetcode": 1438,
+ "title": "Longest Continuous Subarray With Absolute Diff <= Limit",
+ "pattern": "monotonic_queue",
+ "difficulty": "medium",
+ "function": "longestSubarray",
+ "signature": "longestSubarray(nums: List[int], limit: int) -> int",
+ "adapter": null,
+ "statement": "Return the length of the longest contiguous subarray in which the difference between its largest and smallest element is at most limit.",
+ "reference_solution": "from collections import deque\ndef longestSubarray(nums, limit):\n    mx, mn = deque(), deque()\n    left = best = 0\n    for right, x in enumerate(nums):\n        while mx and nums[mx[-1]] <= x:\n            mx.pop()\n        mx.append(right)\n        while mn and nums[mn[-1]] >= x:\n            mn.pop()\n        mn.append(right)\n        while nums[mx[0]] - nums[mn[0]] > limit:\n            left += 1\n            if mx[0] < left:\n                mx.popleft()\n            if mn[0] < left:\n                mn.popleft()\n        best = max(best, right - left + 1)\n    return best\n",
+ "brute_force_solution": "def longestSubarray(nums, limit):\n    best = 0\n    for i in range(len(nums)):\n        lo = hi = nums[i]\n        for j in range(i, len(nums)):\n            lo = min(lo, nums[j])\n            hi = max(hi, nums[j])\n            if hi - lo > limit:\n                break\n            best = max(best, j - i + 1)\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     8,
+     2,
+     4,
+     7
+    ],
+    4
+   ],
+   "expected": 2,
+   "tag": "shrink"
+  },
+  {
+   "args": [
+    [
+     10,
+     1,
+     2,
+     4,
+     7,
+     2
+    ],
+    5
+   ],
+   "expected": 4,
+   "tag": "shrink"
+  },
+  {
+   "args": [
+    [
+     4,
+     2,
+     2,
+     2,
+     4,
+     4,
+     2,
+     2
+    ],
+    0
+   ],
+   "expected": 3,
+   "tag": "zero_limit"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    0
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [],
+    3
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1
+    ],
+    0
+   ],
+   "expected": 3,
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     5,
+     6,
+     3
+    ],
+    4
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     7,
+     8,
+     9,
+     9
+    ],
+    3
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     8,
+     9,
+     2,
+     7,
+     9,
+     9
+    ],
+    6
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     9,
+     5,
+     3,
+     2,
+     5
+    ],
+    1
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     7,
+     1,
+     6,
+     1,
+     7,
+     5,
+     8,
+     7
+    ],
+    6
+   ],
+   "expected": 6,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 50000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Inside a window you need its current max and min quickly. What structure keeps the max (and min) available while elements enter and leave?",
+  "2_nudge": "Use two monotonic deques over the window: one decreasing (front is max), one increasing (front is min). Shrink the window while max - min > limit.",
+  "3_big_hint": "For each right: update both deques. While nums[mx[0]] - nums[mn[0]] > limit: left += 1 and pop any deque front whose index < left. Track right - left + 1."
+ },
+ "known_bugs": [
+  {
+   "name": "forgets to pop deque fronts that left the window",
+   "code": "from collections import deque\ndef longestSubarray(nums, limit):\n    mx, mn = deque(), deque()\n    left = best = 0\n    for right, x in enumerate(nums):\n        while mx and nums[mx[-1]] <= x:\n            mx.pop()\n        mx.append(right)\n        while mn and nums[mn[-1]] >= x:\n            mn.pop()\n        mn.append(right)\n        while nums[mx[0]] - nums[mn[0]] > limit:\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "shrink",
+   "followup": "When left moves forward, is the front of each deque guaranteed to still be inside the window?"
+  },
+  {
+   "name": "length computed as right - left",
+   "code": "from collections import deque\ndef longestSubarray(nums, limit):\n    mx, mn = deque(), deque()\n    left = best = 0\n    for right, x in enumerate(nums):\n        while mx and nums[mx[-1]] <= x:\n            mx.pop()\n        mx.append(right)\n        while mn and nums[mn[-1]] >= x:\n            mn.pop()\n        mn.append(right)\n        while nums[mx[0]] - nums[mn[0]] > limit:\n            left += 1\n            if mx[0] < left:\n                mx.popleft()\n            if mn[0] < left:\n                mn.popleft()\n        best = max(best, right - left)\n    return best\n",
+   "fails_on": "single",
+   "followup": "How long is a window where left == right?"
+  },
+  {
+   "name": "recomputes max() and min() of the window each time",
+   "code": "def longestSubarray(nums, limit):\n    left = best = 0\n    for right in range(len(nums)):\n        while max(nums[left:right + 1]) - min(nums[left:right + 1]) > limit:\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+   "fails_on": "large",
+   "followup": "How many elements do max() and min() scan each step when the window is large? What could hand you the max and min in O(1)?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "Why do you need two deques rather than one?",
+   "Why does a sorted container (tree map) solution cost O(n log n) here?"
+  ]
+ }
+}

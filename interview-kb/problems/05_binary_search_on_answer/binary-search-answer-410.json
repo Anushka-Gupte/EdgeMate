@@ -1,0 +1,219 @@
+{
+ "id": "binary-search-answer-410",
+ "leetcode": 410,
+ "title": "Split Array Largest Sum",
+ "pattern": "binary_search_on_answer",
+ "difficulty": "hard",
+ "function": "splitArray",
+ "signature": "splitArray(nums: List[int], k: int) -> int",
+ "adapter": null,
+ "statement": "Split the list into exactly k non-empty contiguous pieces so that the largest piece sum is as small as possible. Return that smallest possible largest sum. (1 <= k <= len(nums), values are non-negative.)",
+ "reference_solution": "def splitArray(nums, k):\n    def parts(cap):\n        c, cur = 1, 0\n        for x in nums:\n            if cur + x > cap:\n                c += 1\n                cur = 0\n            cur += x\n        return c\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if parts(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+ "brute_force_solution": "def splitArray(nums, k):\n    n = len(nums)\n    INF = float('inf')\n    pre = [0]\n    for x in nums:\n        pre.append(pre[-1] + x)\n    dp = [[INF] * (k + 1) for _ in range(n + 1)]\n    dp[0][0] = 0\n    for i in range(1, n + 1):\n        for j in range(1, k + 1):\n            for p in range(i):\n                if dp[p][j - 1] < INF:\n                    dp[i][j] = min(dp[i][j], max(dp[p][j - 1], pre[i] - pre[p]))\n    return dp[n][k]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     7,
+     2,
+     5,
+     10,
+     8
+    ],
+    2
+   ],
+   "expected": 18,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    2
+   ],
+   "expected": 9,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     4,
+     4
+    ],
+    3
+   ],
+   "expected": 4,
+   "tag": "k_equals_n"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    1
+   ],
+   "expected": 5,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    1
+   ],
+   "expected": 6,
+   "tag": "k_is_one"
+  },
+  {
+   "args": [
+    [
+     10,
+     5,
+     13,
+     4,
+     8,
+     4,
+     5,
+     11,
+     14,
+     9,
+     16,
+     10,
+     20,
+     8
+    ],
+    8
+   ],
+   "expected": 25,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     1,
+     2,
+     4,
+     3
+    ],
+    5
+   ],
+   "expected": 4,
+   "tag": "k_near_n"
+  },
+  {
+   "args": [
+    [
+     8,
+     3
+    ],
+    2
+   ],
+   "expected": 8,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     7,
+     1,
+     5,
+     5
+    ],
+    4
+   ],
+   "expected": 7,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     4,
+     9,
+     5
+    ],
+    4
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     1,
+     0,
+     3
+    ],
+    3
+   ],
+   "expected": 9,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     7,
+     3,
+     4,
+     8,
+     6
+    ],
+    6
+   ],
+   "expected": 8,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(20)\n    return [[r.randint(0, 10000) for _ in range(5000)], 50]"
+  }
+ ],
+ "hints": {
+  "1_question": "If someone proposes a maximum allowed piece sum, can you quickly tell how many pieces you would need? What happens to that count as the allowed sum grows?",
+  "2_nudge": "Binary search the answer. It can't be below the largest element and never needs to exceed the total sum. Greedily fill pieces up to the cap.",
+  "3_big_hint": "lo = max(nums), hi = sum(nums). parts(cap) counts greedy pieces. If parts(mid) <= k: hi = mid else lo = mid + 1."
+ },
+ "known_bugs": [
+  {
+   "name": "lower bound of 1 allows pieces smaller than the biggest element",
+   "code": "def splitArray(nums, k):\n    def parts(cap):\n        c, cur = 1, 0\n        for x in nums:\n            if cur + x > cap:\n                c += 1\n                cur = 0\n            cur += x\n        return c\n    lo, hi = 1, sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if parts(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "k_equals_n",
+   "followup": "Can any piece have a sum smaller than the biggest single element? What is the smallest sensible cap?"
+  },
+  {
+   "name": "upper bound one too small",
+   "code": "def splitArray(nums, k):\n    def parts(cap):\n        c, cur = 1, 0\n        for x in nums:\n            if cur + x > cap:\n                c += 1\n                cur = 0\n            cur += x\n        return c\n    lo, hi = max(nums), sum(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if parts(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "k_is_one",
+   "followup": "With k = 1 the only piece is everything. Is that sum inside your search range?"
+  },
+  {
+   "name": "piece counter starts at 0",
+   "code": "def splitArray(nums, k):\n    def parts(cap):\n        c, cur = 0, 0\n        for x in nums:\n            if cur + x > cap:\n                c += 1\n                cur = 0\n            cur += x\n        return c\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if parts(mid) <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "normal",
+   "followup": "If everything fits in one piece, how many pieces does your counter report?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log S)",
+  "space": "O(1)",
+  "followups": [
+   "Why is a greedy fill optimal for the feasibility check?",
+   "How would dynamic programming solve this, and why is binary search faster?"
+  ]
+ }
+}

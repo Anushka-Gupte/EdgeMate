@@ -1,0 +1,158 @@
+{
+ "id": "hashing-242",
+ "leetcode": 242,
+ "title": "Valid Anagram",
+ "pattern": "hashing_frequency",
+ "difficulty": "easy",
+ "function": "isAnagram",
+ "signature": "isAnagram(s: str, t: str) -> bool",
+ "adapter": null,
+ "statement": "Return True if t is a rearrangement of s (same letters with the same counts).",
+ "reference_solution": "def isAnagram(s, t):\n    if len(s) != len(t):\n        return False\n    c = {}\n    for ch in s:\n        c[ch] = c.get(ch, 0) + 1\n    for ch in t:\n        if c.get(ch, 0) == 0:\n            return False\n        c[ch] -= 1\n    return True\n",
+ "brute_force_solution": "def isAnagram(s, t):\n    return sorted(s) == sorted(t)\n",
+ "tests": [
+  {
+   "args": [
+    "anagram",
+    "nagaram"
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    "rat",
+    "car"
+   ],
+   "expected": false,
+   "tag": "not_anagram"
+  },
+  {
+   "args": [
+    "a",
+    "a"
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    "",
+    ""
+   ],
+   "expected": true,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    "ab",
+    "a"
+   ],
+   "expected": false,
+   "tag": "different_lengths"
+  },
+  {
+   "args": [
+    "aab",
+    "abb"
+   ],
+   "expected": false,
+   "tag": "same_letters_diff_counts"
+  },
+  {
+   "args": [
+    "ac",
+    "bb"
+   ],
+   "expected": false,
+   "tag": "sum_collision"
+  },
+  {
+   "args": [
+    "aacc",
+    "ccac"
+   ],
+   "expected": false,
+   "tag": "same_letters_diff_counts"
+  },
+  {
+   "args": [
+    "cbbab",
+    "c"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "bc",
+    "bbc"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "bac",
+    "c"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "a",
+    "c"
+   ],
+   "expected": false,
+   "tag": "random"
+  },
+  {
+   "args": [
+    "ac",
+    "bba"
+   ],
+   "expected": false,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(24)\n    s = [r.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(100000)]\n    t = s[:]\n    r.shuffle(t)\n    return [''.join(s), ''.join(t)]"
+  }
+ ],
+ "hints": {
+  "1_question": "What must be equal between two words for them to be anagrams? Is it just which letters appear?",
+  "2_nudge": "Count how many times each letter appears in s, then use up those counts with the letters of t. Check lengths first.",
+  "3_big_hint": "If lengths differ return False. Build counts from s; for each ch in t, if its count is 0 return False else decrement. Return True."
+ },
+ "known_bugs": [
+  {
+   "name": "compares sets of letters",
+   "code": "def isAnagram(s, t):\n    return set(s) == set(t)\n",
+   "fails_on": "same_letters_diff_counts",
+   "followup": "Do 'aab' and 'abb' use each letter the same number of times?"
+  },
+  {
+   "name": "compares the sum of character codes",
+   "code": "def isAnagram(s, t):\n    return sum(map(ord, s)) == sum(map(ord, t))\n",
+   "fails_on": "sum_collision",
+   "followup": "'ac' and 'bb' have the same total of character codes. Are they anagrams?"
+  },
+  {
+   "name": "skips the length check",
+   "code": "def isAnagram(s, t):\n    c = {}\n    for ch in s:\n        c[ch] = c.get(ch, 0) + 1\n    for ch in t:\n        if c.get(ch, 0) == 0:\n            return False\n        c[ch] -= 1\n    return True\n",
+   "fails_on": "different_lengths",
+   "followup": "If t is shorter than s, can you use up t's letters from s's counts and still have leftovers?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(alphabet)",
+  "followups": [
+   "How does sorting both strings compare in time and space?",
+   "What changes if the strings can contain any Unicode?"
+  ]
+ }
+}

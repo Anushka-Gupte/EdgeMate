@@ -1,0 +1,461 @@
+{
+ "id": "greedy-406",
+ "leetcode": 406,
+ "title": "Queue Reconstruction by Height",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "reconstructQueue",
+ "signature": "reconstructQueue(people: List[List[int]]) -> List[List[int]]",
+ "adapter": null,
+ "statement": "Each person is [h, k]: height h and exactly k people in front of them in the queue who are at least as tall. Given the people in random order, rebuild the queue. The input always describes a valid queue.",
+ "reference_solution": "def reconstructQueue(people):\n    res = []\n    for h, k in sorted(people, key=lambda p: (-p[0], p[1])):\n        res.insert(k, [h, k])\n    return res\n",
+ "brute_force_solution": "import itertools\ndef reconstructQueue(people):\n    for perm in itertools.permutations(people):\n        if all(sum(1 for x in perm[:i] if x[0] >= p[0]) == p[1] for i, p in enumerate(perm)):\n            return [list(p) for p in perm]\n    return []\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      7,
+      0
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      7,
+      1
+     ],
+     [
+      5,
+      0
+     ],
+     [
+      6,
+      1
+     ],
+     [
+      5,
+      2
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     5,
+     0
+    ],
+    [
+     7,
+     0
+    ],
+    [
+     5,
+     2
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     7,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      6,
+      0
+     ],
+     [
+      5,
+      0
+     ],
+     [
+      4,
+      0
+     ],
+     [
+      3,
+      2
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      1,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     6,
+     0
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      5,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     5,
+     0
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      5,
+      1
+     ],
+     [
+      5,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     5,
+     0
+    ],
+    [
+     5,
+     1
+    ]
+   ],
+   "tag": "equal_heights"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      3,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     3,
+     0
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "tag": "descending"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      6,
+      0
+     ],
+     [
+      3,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      1
+     ],
+     [
+      5,
+      0
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      2,
+      0
+     ],
+     [
+      4,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     2,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     1,
+     5
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      5,
+      0
+     ],
+     [
+      6,
+      1
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      6,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      4,
+      3
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     5,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     4,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      2
+     ],
+     [
+      6,
+      0
+     ],
+     [
+      6,
+      1
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      3,
+      2
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     6,
+     0
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     2
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(50)\n    hs = [r.randint(1, 100000) for _ in range(1500)]\n    people, q = [], []\n    for h in hs:\n        people.append([h, sum(1 for x in q if x >= h)])\n        q.append(h)\n    r.shuffle(people)\n    return [people]"
+  }
+ ],
+ "hints": {
+  "1_question": "Taller people are never affected by shorter people standing in front of them. What does that suggest about the order in which to place people?",
+  "2_nudge": "Place the tallest first (and among equal heights, the one with the smaller k first). Then insert each person at index k in the result.",
+  "3_big_hint": "Sort by (-h, k). For each (h, k): result.insert(k, [h, k])."
+ },
+ "known_bugs": [
+  {
+   "name": "places the shortest people first",
+   "code": "def reconstructQueue(people):\n    res = []\n    for h, k in sorted(people, key=lambda p: (p[0], p[1])):\n        res.insert(k, [h, k])\n    return res\n",
+   "fails_on": "normal",
+   "followup": "When a shorter person is already in the queue, does it count toward a taller person's k? What order avoids that problem?"
+  },
+  {
+   "name": "ignores k when placing (appends)",
+   "code": "def reconstructQueue(people):\n    res = []\n    for h, k in sorted(people, key=lambda p: (-p[0], p[1])):\n        res.append([h, k])\n    return res\n",
+   "fails_on": "normal",
+   "followup": "Where does each person's k tell you to put them?"
+  },
+  {
+   "name": "inserts at the wrong index (k + 1)",
+   "code": "def reconstructQueue(people):\n    res = []\n    for h, k in sorted(people, key=lambda p: (-p[0], p[1])):\n        res.insert(k + 1, [h, k])\n    return res\n",
+   "fails_on": "normal",
+   "followup": "A person with k = 0 should have nobody tall in front. At which index does that put them?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n^2)",
+  "space": "O(n)",
+  "followups": [
+   "Can a balanced tree or Fenwick tree bring the insertion cost down?",
+   "Why does inserting taller people first keep earlier placements valid?"
+  ]
+ }
+}

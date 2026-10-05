@@ -1,0 +1,272 @@
+{
+ "id": "two-pointers-018",
+ "leetcode": 18,
+ "title": "4Sum",
+ "pattern": "two_pointers",
+ "difficulty": "medium",
+ "function": "fourSum",
+ "signature": "fourSum(nums: List[int], target: int) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "Return every unique group of four values (from four different positions) that add up to the target. The same set of values must not appear twice; order does not matter.",
+ "reference_solution": "def fourSum(nums, target):\n    nums = sorted(nums)\n    n = len(nums)\n    res = []\n    for i in range(n - 3):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        for j in range(i + 1, n - 2):\n            if j > i + 1 and nums[j] == nums[j - 1]:\n                continue\n            l, r = j + 1, n - 1\n            while l < r:\n                s = nums[i] + nums[j] + nums[l] + nums[r]\n                if s < target:\n                    l += 1\n                elif s > target:\n                    r -= 1\n                else:\n                    res.append([nums[i], nums[j], nums[l], nums[r]])\n                    l += 1\n                    while l < r and nums[l] == nums[l - 1]:\n                        l += 1\n                    r -= 1\n    return res\n",
+ "brute_force_solution": "def fourSum(nums, target):\n    res = set()\n    n = len(nums)\n    for a in range(n):\n        for b in range(a + 1, n):\n            for c in range(b + 1, n):\n                for d in range(c + 1, n):\n                    if nums[a] + nums[b] + nums[c] + nums[d] == target:\n                        res.add(tuple(sorted((nums[a], nums[b], nums[c], nums[d]))))\n    return [list(t) for t in res]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     0,
+     -1,
+     0,
+     -2,
+     2
+    ],
+    0
+   ],
+   "expected": [
+    [
+     -2,
+     -1,
+     1,
+     2
+    ],
+    [
+     -2,
+     0,
+     0,
+     2
+    ],
+    [
+     -1,
+     0,
+     0,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     2,
+     2,
+     2,
+     2
+    ],
+    8
+   ],
+   "expected": [
+    [
+     2,
+     2,
+     2,
+     2
+    ]
+   ],
+   "tag": "same_value_repeated"
+  },
+  {
+   "args": [
+    [],
+    0
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    0
+   ],
+   "expected": [
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ],
+   "tag": "all_zeros"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    6
+   ],
+   "expected": [],
+   "tag": "fewer_than_four"
+  },
+  {
+   "args": [
+    [
+     -2,
+     -1,
+     -1,
+     1,
+     1,
+     2,
+     2
+    ],
+    0
+   ],
+   "expected": [
+    [
+     -2,
+     -1,
+     1,
+     2
+    ],
+    [
+     -1,
+     -1,
+     1,
+     1
+    ]
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -1,
+     0,
+     2,
+     4,
+     5
+    ],
+    2
+   ],
+   "expected": [
+    [
+     -3,
+     -1,
+     2,
+     4
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2
+    ],
+    2
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3
+    ],
+    0
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     0,
+     2
+    ],
+    -1
+   ],
+   "expected": [],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2,
+     2,
+     3,
+     -3,
+     1,
+     -2
+    ],
+    0
+   ],
+   "expected": [
+    [
+     -3,
+     -2,
+     2,
+     3
+    ],
+    [
+     -2,
+     -2,
+     1,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     -3,
+     0
+    ],
+    1
+   ],
+   "expected": [],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(18)\n    return [[r.randint(-500, 500) for _ in range(300)], 0]"
+  }
+ ],
+ "hints": {
+  "1_question": "Think of 4Sum as 'fix one number, then solve 3Sum', and 3Sum as 'fix one, then two pointers'. What do you need to do about duplicates at each level?",
+  "2_nudge": "Sort. Two nested loops choose the first two numbers; two pointers search for the remaining pair. Skip repeated values at the first two levels and after each match.",
+  "3_big_hint": "Skip i if nums[i] == nums[i-1]; skip j if j > i+1 and nums[j] == nums[j-1]. Then run l, r as in 3Sum, skipping duplicates of l after a match."
+ },
+ "known_bugs": [
+  {
+   "name": "no duplicate handling",
+   "code": "def fourSum(nums, target):\n    nums = sorted(nums)\n    n = len(nums)\n    res = []\n    for i in range(n - 3):\n        for j in range(i + 1, n - 2):\n            l, r = j + 1, n - 1\n            while l < r:\n                s = nums[i] + nums[j] + nums[l] + nums[r]\n                if s < target:\n                    l += 1\n                elif s > target:\n                    r -= 1\n                else:\n                    res.append([nums[i], nums[j], nums[l], nums[r]])\n                    l += 1\n                    r -= 1\n    return res\n",
+   "fails_on": "duplicates",
+   "followup": "If the array contains repeated values, can the same quadruplet be found more than once? Where do you prevent that?"
+  },
+  {
+   "name": "skips j when it equals nums[j-1] even if j is the first choice after i",
+   "code": "def fourSum(nums, target):\n    nums = sorted(nums)\n    n = len(nums)\n    res = []\n    for i in range(n - 3):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        for j in range(i + 1, n - 2):\n            if j > 0 and nums[j] == nums[j - 1]:\n                continue\n            l, r = j + 1, n - 1\n            while l < r:\n                s = nums[i] + nums[j] + nums[l] + nums[r]\n                if s < target:\n                    l += 1\n                elif s > target:\n                    r -= 1\n                else:\n                    res.append([nums[i], nums[j], nums[l], nums[r]])\n                    l += 1\n                    while l < r and nums[l] == nums[l - 1]:\n                        l += 1\n                    r -= 1\n    return res\n",
+   "fails_on": "same_value_repeated",
+   "followup": "For [2,2,2,2,2], when i = 0 and j = 1, nums[j] equals nums[j-1]. Is j really a duplicate choice there, or the first choice for its level?"
+  },
+  {
+   "name": "tries every quadruple (O(n^4))",
+   "code": "def fourSum(nums, target):\n    res = set()\n    n = len(nums)\n    for a in range(n):\n        for b in range(a + 1, n):\n            for c in range(b + 1, n):\n                for d in range(c + 1, n):\n                    if nums[a] + nums[b] + nums[c] + nums[d] == target:\n                        res.add(tuple(sorted((nums[a], nums[b], nums[c], nums[d]))))\n    return [list(t) for t in res]\n",
+   "fails_on": "large",
+   "followup": "How many nested loops do you have? Which innermost two can two pointers replace?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n^3)",
+  "space": "O(1) extra",
+  "followups": [
+   "How would you write a general kSum recursively?",
+   "What changes if values can be very large (overflow in other languages)?"
+  ]
+ }
+}

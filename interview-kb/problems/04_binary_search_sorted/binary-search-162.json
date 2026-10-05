@@ -1,0 +1,197 @@
+{
+ "id": "binary-search-162",
+ "leetcode": 162,
+ "title": "Find Peak Element",
+ "pattern": "binary_search_sorted",
+ "difficulty": "medium",
+ "function": "findPeakElement",
+ "signature": "findPeakElement(nums: List[int]) -> int",
+ "adapter": "peak",
+ "statement": "A peak is an element strictly greater than its neighbours (treat the outside of the list as negative infinity). Adjacent elements are never equal. Return the index of any peak in O(log n). (The checker accepts any valid peak.)",
+ "reference_solution": "def findPeakElement(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < nums[mid + 1]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n",
+ "brute_force_solution": "def findPeakElement(nums):\n    for i in range(len(nums)):\n        if (i == 0 or nums[i] > nums[i - 1]) and (i == len(nums) - 1 or nums[i] > nums[i + 1]):\n            return i\n    return -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     1,
+     3,
+     5,
+     6,
+     4
+    ]
+   ],
+   "expected": true,
+   "tag": "multiple_peaks"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": true,
+   "tag": "peak_at_end"
+  },
+  {
+   "args": [
+    [
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "peak_at_start"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   ],
+   "expected": true,
+   "tag": "increasing"
+  },
+  {
+   "args": [
+    [
+     5,
+     4,
+     3,
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "decreasing"
+  },
+  {
+   "args": [
+    [
+     7,
+     4,
+     3,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     9,
+     4,
+     5,
+     3,
+     7,
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     3,
+     9,
+     6,
+     1,
+     3
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     6,
+     2,
+     1
+    ]
+   ],
+   "expected": true,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(50000)) + list(range(50000, 0, -1))]"
+  }
+ ],
+ "hints": {
+  "1_question": "You don't need the highest peak, just any peak. If you stand at mid and look at its right neighbour, what does the slope tell you?",
+  "2_nudge": "If nums[mid] < nums[mid + 1] you are going uphill to the right, so a peak must exist on the right. Otherwise one exists at mid or on the left.",
+  "3_big_hint": "While lo < hi: mid; if nums[mid] < nums[mid+1]: lo = mid + 1 else hi = mid. Return lo."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the maximum value instead of an index",
+   "code": "def findPeakElement(nums):\n    return max(nums)\n",
+   "fails_on": "normal",
+   "followup": "The function should return an index. What does max() return?"
+  },
+  {
+   "name": "lo = mid never makes progress",
+   "code": "def findPeakElement(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < nums[mid + 1]:\n            lo = mid\n        else:\n            hi = mid\n    return lo\n",
+   "fails_on": "peak_at_end",
+   "followup": "With two elements left and an uphill slope, what are lo, mid and the new lo?"
+  },
+  {
+   "name": "linear scan that never handles a peak at the end",
+   "code": "def findPeakElement(nums):\n    for i in range(len(nums) - 1):\n        if nums[i] > nums[i + 1]:\n            return i\n",
+   "fails_on": "increasing",
+   "followup": "In a strictly increasing list, does your loop ever return? What should the answer be?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is a peak guaranteed to exist on the uphill side?",
+   "How would you adapt this to a 2D grid (problem 1901)?"
+  ]
+ }
+}

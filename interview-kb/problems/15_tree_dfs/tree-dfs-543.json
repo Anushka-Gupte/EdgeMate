@@ -1,0 +1,189 @@
+{
+ "id": "tree-dfs-543",
+ "leetcode": 543,
+ "title": "Diameter of Binary Tree",
+ "pattern": "tree_dfs",
+ "difficulty": "easy",
+ "function": "diameterOfBinaryTree",
+ "signature": "diameterOfBinaryTree(root: TreeNode) -> int",
+ "adapter": "tree_value",
+ "statement": "The diameter is the length (in edges) of the longest path between any two nodes. The path may or may not pass through the root. Return the diameter.",
+ "reference_solution": "def diameterOfBinaryTree(root):\n    best = 0\n    def h(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = h(n.left)\n        r = h(n.right)\n        best = max(best, l + r)\n        return 1 + max(l, r)\n    h(root)\n    return best\n",
+ "brute_force_solution": "def diameterOfBinaryTree(root):\n    def depth(n):\n        d, level = 0, ([n] if n else [])\n        while level:\n            d += 1\n            level = [c for x in level for c in (x.left, x.right) if c]\n        return d\n    best = 0\n    stack = [root] if root else []\n    while stack:\n        n = stack.pop()\n        best = max(best, depth(n.left) + depth(n.right))\n        if n.left:\n            stack.append(n.left)\n        if n.right:\n            stack.append(n.right)\n    return best\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": 1,
+   "tag": "two_nodes"
+  },
+  {
+   "args": [
+    [
+     1
+    ]
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     null,
+     3,
+     4,
+     5,
+     null,
+     null,
+     6
+    ]
+   ],
+   "expected": 4,
+   "tag": "not_through_root"
+  },
+  {
+   "args": [
+    [
+     1,
+     null,
+     2,
+     null,
+     3
+    ]
+   ],
+   "expected": 2,
+   "tag": "skew"
+  },
+  {
+   "args": [
+    [
+     8,
+     -1
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     3,
+     -4,
+     null,
+     null,
+     5,
+     null,
+     7,
+     0
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     8,
+     5,
+     5,
+     null,
+     9,
+     -2,
+     null,
+     null,
+     8
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -5,
+     null,
+     6
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     null,
+     9
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "\"\"\"Random tree generators (level-order lists with None), shared by problem definitions.\nThe whole file is also embedded in large-test generator code via inspect.getsource.\"\"\"\nimport random\n\n\ndef _ser(vals, left, right):\n    out, q, qi = [], [0], 0\n    while qi < len(q):\n        i = q[qi]; qi += 1\n        if i is None:\n            out.append(None); continue\n        out.append(vals[i]); q.append(left[i]); q.append(right[i])\n    while out and out[-1] is None:\n        out.pop()\n    return out\n\n\ndef rand_tree(r, n, lo=-5, hi=9):\n    if n == 0:\n        return []\n    vals = [r.randint(lo, hi) for _ in range(n)]\n    left, right = [None] * n, [None] * n\n    free = [(0, 'l'), (0, 'r')]\n    for i in range(1, n):\n        p, side = free.pop(r.randrange(len(free)))\n        if side == 'l':\n            left[p] = i\n        else:\n            right[p] = i\n        free += [(i, 'l'), (i, 'r')]\n    return _ser(vals, left, right)\n\n\ndef rand_bst(r, n, lo=0, hi=20):\n    if n == 0:\n        return []\n    keys = r.sample(range(lo, hi), n)\n    vals, left, right = [], [], []\n    for k in keys:\n        vals.append(k); left.append(None); right.append(None)\n        if len(vals) == 1:\n            continue\n        cur = 0\n        while True:\n            if k < vals[cur]:\n                if left[cur] is None:\n                    left[cur] = len(vals) - 1; break\n                cur = left[cur]\n            else:\n                if right[cur] is None:\n                    right[cur] = len(vals) - 1; break\n                cur = right[cur]\n    return _ser(vals, left, right)\n\n\ndef perfect_tree(r, depth, lo=0, hi=9):\n    return [r.randint(lo, hi) for _ in range(2 ** depth - 1)]\n\ndef gen():\n    r = random.Random(3)\n    return [rand_tree(r, 60000)]"
+  }
+ ],
+ "hints": {
+  "1_question": "Think of the longest path as turning around at some 'top' node. What does the path length at that node depend on?",
+  "2_nudge": "At each node, the best path turning there is height(left) + height(right). Compute heights bottom-up and keep a global maximum.",
+  "3_big_hint": "h(n) returns 1 + max(h(left), h(right)); before returning, best = max(best, h(left) + h(right))."
+ },
+ "known_bugs": [
+  {
+   "name": "only measures the path through the root",
+   "code": "def diameterOfBinaryTree(root):\n    def d(n):\n        return 0 if not n else 1 + max(d(n.left), d(n.right))\n    return d(root.left) + d(root.right) if root else 0\n",
+   "fails_on": "not_through_root",
+   "followup": "Could the longest path avoid the root entirely, living inside one subtree?"
+  },
+  {
+   "name": "counts nodes instead of edges",
+   "code": "def diameterOfBinaryTree(root):\n    best = 0\n    def h(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = h(n.left)\n        r = h(n.right)\n        best = max(best, l + r + 1)\n        return 1 + max(l, r)\n    h(root)\n    return best\n",
+   "fails_on": "single",
+   "followup": "How many edges does a single node have in any path?"
+  },
+  {
+   "name": "takes max(left, right) instead of left + right",
+   "code": "def diameterOfBinaryTree(root):\n    best = 0\n    def h(n):\n        nonlocal best\n        if not n:\n            return 0\n        l = h(n.left)\n        r = h(n.right)\n        best = max(best, max(l, r))\n        return 1 + max(l, r)\n    h(root)\n    return best\n",
+   "fails_on": "normal",
+   "followup": "A path that goes down the left side and down the right side uses both heights. Which of your two terms is missing?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(h)",
+  "followups": [
+   "Why is one traversal enough?",
+   "How would you return the endpoints of the diameter?"
+  ]
+ }
+}

@@ -1,0 +1,436 @@
+{
+ "id": "heap-973",
+ "leetcode": 973,
+ "title": "K Closest Points to Origin",
+ "pattern": "heap_top_k",
+ "difficulty": "medium",
+ "function": "kClosest",
+ "signature": "kClosest(points: List[List[int]], k: int) -> List[List[int]]",
+ "adapter": "sort_outer",
+ "statement": "Return the k points closest to the origin (0, 0) by straight-line (Euclidean) distance, in any order. The answer is unique (no tie at the k-th place).",
+ "reference_solution": "import heapq\ndef kClosest(points, k):\n    return heapq.nsmallest(k, points, key=lambda p: p[0] * p[0] + p[1] * p[1])\n",
+ "brute_force_solution": "def kClosest(points, k):\n    return sorted(points, key=lambda p: p[0] ** 2 + p[1] ** 2)[:k]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      3
+     ],
+     [
+      -2,
+      2
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    [
+     -2,
+     2
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      3
+     ],
+     [
+      5,
+      -1
+     ],
+     [
+      -2,
+      4
+     ]
+    ],
+    2
+   ],
+   "expected": [
+    [
+     -2,
+     4
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    [
+     0,
+     1
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      2
+     ],
+     [
+      -1,
+      -1
+     ],
+     [
+      0,
+      0
+     ]
+    ],
+    3
+   ],
+   "expected": [
+    [
+     -1,
+     -1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "k_equals_n"
+  },
+  {
+   "args": [
+    [
+     [
+      -5,
+      -5
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    [
+     1,
+     1
+    ]
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      0
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    [
+     2,
+     2
+    ]
+   ],
+   "tag": "euclidean_not_manhattan"
+  },
+  {
+   "args": [
+    [
+     [
+      -4,
+      3
+     ],
+     [
+      0,
+      -4
+     ],
+     [
+      2,
+      -4
+     ],
+     [
+      2,
+      1
+     ]
+    ],
+    2
+   ],
+   "expected": [
+    [
+     0,
+     -4
+    ],
+    [
+     2,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      -2,
+      -4
+     ],
+     [
+      -4,
+      3
+     ],
+     [
+      -2,
+      -2
+     ],
+     [
+      -4,
+      -1
+     ],
+     [
+      -4,
+      0
+     ],
+     [
+      4,
+      -4
+     ]
+    ],
+    6
+   ],
+   "expected": [
+    [
+     -4,
+     -1
+    ],
+    [
+     -4,
+     0
+    ],
+    [
+     -4,
+     3
+    ],
+    [
+     -2,
+     -4
+    ],
+    [
+     -2,
+     -2
+    ],
+    [
+     4,
+     -4
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      -3,
+      1
+     ],
+     [
+      -1,
+      0
+     ],
+     [
+      -3,
+      0
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      -3,
+      -3
+     ],
+     [
+      3,
+      3
+     ]
+    ],
+    7
+   ],
+   "expected": [
+    [
+     -3,
+     -3
+    ],
+    [
+     -3,
+     0
+    ],
+    [
+     -3,
+     1
+    ],
+    [
+     -1,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      -2,
+      4
+     ],
+     [
+      -2,
+      -1
+     ],
+     [
+      4,
+      1
+     ],
+     [
+      -3,
+      -4
+     ]
+    ],
+    4
+   ],
+   "expected": [
+    [
+     -3,
+     -4
+    ],
+    [
+     -2,
+     -1
+    ],
+    [
+     -2,
+     4
+    ],
+    [
+     4,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      -2,
+      4
+     ],
+     [
+      -4,
+      -3
+     ],
+     [
+      -3,
+      3
+     ],
+     [
+      -2,
+      2
+     ],
+     [
+      -2,
+      -3
+     ]
+    ],
+    1
+   ],
+   "expected": [
+    [
+     -2,
+     2
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(43)\n    return [[[r.randint(-10**4, 10**4), r.randint(-10**4, 10**4)] for _ in range(100000)], 100]"
+  }
+ ],
+ "hints": {
+  "1_question": "Do you need the real distance, or is there a cheaper quantity that orders points the same way?",
+  "2_nudge": "Compare squared distances x*x + y*y (no square root needed). Then pick the k smallest, using a heap or a sort.",
+  "3_big_hint": "heapq.nsmallest(k, points, key=lambda p: p[0]*p[0] + p[1]*p[1])."
+ },
+ "known_bugs": [
+  {
+   "name": "uses Manhattan distance",
+   "code": "def kClosest(points, k):\n    return sorted(points, key=lambda p: abs(p[0]) + abs(p[1]))[:k]\n",
+   "fails_on": "euclidean_not_manhattan",
+   "followup": "Which distance does the problem ask for? Compare (3, 0) and (2, 2)."
+  },
+  {
+   "name": "returns the farthest points",
+   "code": "def kClosest(points, k):\n    return sorted(points, key=lambda p: -(p[0] ** 2 + p[1] ** 2))[:k]\n",
+   "fails_on": "normal",
+   "followup": "Which direction does your sort go? Which points end up first?"
+  },
+  {
+   "name": "returns the first k points",
+   "code": "def kClosest(points, k):\n    return points[:k]\n",
+   "fails_on": "negative",
+   "followup": "Does your code look at any distances at all?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log k)",
+  "space": "O(k)",
+  "followups": [
+   "Why can you skip the square root?",
+   "How would quickselect solve this in O(n) average time?"
+  ]
+ }
+}

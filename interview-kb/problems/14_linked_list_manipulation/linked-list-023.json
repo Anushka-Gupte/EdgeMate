@@ -1,0 +1,290 @@
+{
+ "id": "linked-list-023",
+ "leetcode": 23,
+ "title": "Merge k Sorted Lists",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "hard",
+ "function": "mergeKLists",
+ "signature": "mergeKLists(lists: List[ListNode]) -> ListNode",
+ "adapter": "k_lists",
+ "statement": "Merge k sorted linked lists into one sorted linked list and return its head.",
+ "reference_solution": "import heapq\ndef mergeKLists(lists):\n    h = []\n    for i, n in enumerate(lists):\n        if n:\n            heapq.heappush(h, (n.val, i, n))\n    dummy = cur = ListNode(0)\n    while h:\n        v, i, n = heapq.heappop(h)\n        cur.next = n\n        cur = n\n        if n.next:\n            heapq.heappush(h, (n.next.val, i, n.next))\n    return dummy.next\n",
+ "brute_force_solution": "def mergeKLists(lists):\n    vals = []\n    for l in lists:\n        while l:\n            vals.append(l.val)\n            l = l.next\n    vals.sort()\n    out = None\n    for v in reversed(vals):\n        out = ListNode(v, out)\n    return out\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      1,
+      4,
+      5
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    2,
+    3,
+    4,
+    4,
+    5,
+    6
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "no_lists"
+  },
+  {
+   "args": [
+    [
+     []
+    ]
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    1
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ],
+     [
+      1
+     ],
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    1
+   ],
+   "tag": "duplicates"
+  },
+  {
+   "args": [
+    [
+     [
+      5
+     ],
+     [
+      1,
+      2,
+      3
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [],
+     [
+      4,
+      5,
+      6
+     ],
+     [
+      0,
+      1,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    1,
+    4,
+    5,
+    6,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      4,
+      5,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    4,
+    5,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      2,
+      2,
+      3
+     ],
+     [],
+     [
+      0,
+      1,
+      4,
+      6
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    0,
+    1,
+    2,
+    2,
+    3,
+    4,
+    6
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      3,
+      3
+     ],
+     [],
+     [
+      4
+     ],
+     [
+      0,
+      1,
+      3
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    0,
+    1,
+    3,
+    3,
+    3,
+    4
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      2,
+      5
+     ],
+     [],
+     [
+      1,
+      2,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    0,
+    1,
+    2,
+    2,
+    5,
+    5
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(53)\n    return [[sorted(r.randint(0, 10**6) for _ in range(50)) for _ in range(2000)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "At any moment the next output node is the smallest among the heads of all lists. Which structure finds a minimum quickly?",
+  "2_nudge": "Put each list's head in a min-heap; pop the smallest, append it, and push its successor.",
+  "3_big_hint": "heap items (val, list_index, node) so ties never compare nodes. Pop, attach, push node.next if it exists."
+ },
+ "known_bugs": [
+  {
+   "name": "heap compares nodes on equal values (TypeError)",
+   "code": "import heapq\ndef mergeKLists(lists):\n    h = []\n    for n in lists:\n        if n:\n            heapq.heappush(h, (n.val, n))\n    dummy = cur = ListNode(0)\n    while h:\n        v, n = heapq.heappop(h)\n        cur.next = n\n        cur = n\n        if n.next:\n            heapq.heappush(h, (n.next.val, n.next))\n    return dummy.next\n",
+   "fails_on": "duplicates",
+   "followup": "When two heap entries have equal values, what does Python try to compare next, and can it compare ListNodes?"
+  },
+  {
+   "name": "merges lists one after another (O(k * N))",
+   "code": "def mergeKLists(lists):\n    def merge(a, b):\n        dummy = cur = ListNode(0)\n        while a and b:\n            if a.val <= b.val:\n                cur.next = a\n                a = a.next\n            else:\n                cur.next = b\n                b = b.next\n            cur = cur.next\n        cur.next = a or b\n        return dummy.next\n    res = None\n    for l in lists:\n        res = merge(res, l)\n    return res\n",
+   "fails_on": "large",
+   "followup": "How long is the accumulated result when you merge the 2000th list into it? How many times do you re-walk early nodes?"
+  },
+  {
+   "name": "assumes at least one list is given",
+   "code": "def mergeKLists(lists):\n    head = lists[0]\n    for l in lists[1:]:\n        vals = []\n        a, b = head, l\n        while a:\n            vals.append(a.val)\n            a = a.next\n        while b:\n            vals.append(b.val)\n            b = b.next\n        vals.sort()\n        head = None\n        for v in reversed(vals):\n            head = ListNode(v, head)\n    return head\n",
+   "fails_on": "no_lists",
+   "followup": "What should you return when the input list of lists is empty?"
+  }
+ ],
+ "complexity": {
+  "time": "O(N log k)",
+  "space": "O(k)",
+  "followups": [
+   "How does divide-and-conquer pairwise merging compare?",
+   "Why is the index needed in the heap tuple?"
+  ]
+ }
+}

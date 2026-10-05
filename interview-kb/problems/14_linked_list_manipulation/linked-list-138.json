@@ -1,0 +1,426 @@
+{
+ "id": "linked-list-138",
+ "leetcode": 138,
+ "title": "Copy List with Random Pointer",
+ "pattern": "linked_list_manipulation",
+ "difficulty": "medium",
+ "function": "copyRandomList",
+ "signature": "copyRandomList(head: Node) -> Node",
+ "adapter": "random_list",
+ "statement": "Each node has a `next` and a `random` pointer (to any node or None). Build a deep copy of the list: all-new nodes whose next/random pointers mirror the original's structure and point only to new nodes. (The checker reports [value, random_index] per node, or an error if any original node is reused.)",
+ "reference_solution": "def copyRandomList(head):\n    if not head:\n        return None\n    m = {}\n    cur = head\n    while cur:\n        m[cur] = Node(cur.val)\n        cur = cur.next\n    cur = head\n    while cur:\n        m[cur].next = m.get(cur.next)\n        m[cur].random = m.get(cur.random)\n        cur = cur.next\n    return m[head]\n",
+ "brute_force_solution": "def copyRandomList(head):\n    nodes = []\n    cur = head\n    while cur:\n        nodes.append(cur)\n        cur = cur.next\n    new = [Node(n.val) for n in nodes]\n    for i, n in enumerate(nodes):\n        if i + 1 < len(nodes):\n            new[i].next = new[i + 1]\n        if n.random is not None:\n            j = 0\n            while nodes[j] is not n.random:\n                j += 1\n            new[i].random = new[j]\n    return new[0] if new else None\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      7,
+      null
+     ],
+     [
+      13,
+      0
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      10,
+      2
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     7,
+     null
+    ],
+    [
+     13,
+     0
+    ],
+    [
+     11,
+     4
+    ],
+    [
+     10,
+     2
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1
+     ],
+     [
+      2,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      null
+     ],
+     [
+      3,
+      0
+     ],
+     [
+      3,
+      null
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     3,
+     null
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     3,
+     null
+    ]
+   ],
+   "tag": "same_values"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      null
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     null
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     0
+    ]
+   ],
+   "tag": "self_random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      2
+     ],
+     [
+      1,
+      null
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      null
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     3,
+     2
+    ],
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     null
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      3,
+      null
+     ],
+     [
+      2,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     3,
+     null
+    ],
+    [
+     2,
+     1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      2,
+      3
+     ],
+     [
+      2,
+      null
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      null
+     ],
+     [
+      3,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     null
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     3,
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      2,
+      null
+     ],
+     [
+      3,
+      null
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      2,
+      null
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     0,
+     1
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     2,
+     null
+    ],
+    [
+     3,
+     null
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     2,
+     null
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      0
+     ],
+     [
+      0,
+      null
+     ],
+     [
+      1,
+      null
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      2,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     5
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [],
+ "hints": {
+  "1_question": "A copy must have its own nodes. The tricky part is random: it points to a node that may not have been copied yet. How can you look up 'the copy of node X'?",
+  "2_nudge": "Make two passes: first create a copy of every node and remember old -> new in a dictionary; then wire next and random using that map.",
+  "3_big_hint": "m[old] = Node(old.val) for all nodes. Then m[old].next = m.get(old.next); m[old].random = m.get(old.random). Return m[head]."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the original list (no copy)",
+   "code": "def copyRandomList(head):\n    return head\n",
+   "fails_on": "normal",
+   "followup": "If the caller changes the 'copy', does the original change too?"
+  },
+  {
+   "name": "copied random pointers still point to original nodes",
+   "code": "def copyRandomList(head):\n    if not head:\n        return None\n    m = {}\n    cur = head\n    while cur:\n        m[cur] = Node(cur.val)\n        cur = cur.next\n    cur = head\n    while cur:\n        m[cur].next = m.get(cur.next)\n        m[cur].random = cur.random\n        cur = cur.next\n    return m[head]\n",
+   "fails_on": "normal",
+   "followup": "A copied node's random must point to a copied node. What does it point to here?"
+  },
+  {
+   "name": "maps nodes by value (breaks with equal values)",
+   "code": "def copyRandomList(head):\n    if not head:\n        return None\n    m = {}\n    cur = head\n    while cur:\n        m[cur.val] = Node(cur.val)\n        cur = cur.next\n    cur = head\n    out = []\n    while cur:\n        out.append(cur)\n        cur = cur.next\n    copies = [Node(n.val) for n in out]\n    for i, n in enumerate(out):\n        if i + 1 < len(out):\n            copies[i].next = copies[i + 1]\n        if n.random is not None:\n            copies[i].random = m[n.random.val]\n    return copies[0]\n",
+   "fails_on": "same_values",
+   "followup": "Several nodes can hold the same value. Does a dictionary keyed by value pick the right copy?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(n)",
+  "followups": [
+   "How can you do it in O(1) extra space by interleaving copies?",
+   "What does the dictionary key identify - value or node?"
+  ]
+ }
+}

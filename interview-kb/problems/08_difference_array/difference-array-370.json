@@ -1,0 +1,295 @@
+{
+ "id": "difference-array-370",
+ "leetcode": 370,
+ "title": "Range Addition",
+ "pattern": "difference_array",
+ "difficulty": "medium",
+ "function": "getModifiedArray",
+ "signature": "getModifiedArray(length: int, updates: List[List[int]]) -> List[int]",
+ "adapter": null,
+ "statement": "Start with a list of `length` zeros. Each update [start, end, inc] adds inc to every position from start to end inclusive (0-based). Return the list after all updates.",
+ "reference_solution": "def getModifiedArray(length, updates):\n    diff = [0] * (length + 1)\n    for s, e, inc in updates:\n        diff[s] += inc\n        diff[e + 1] -= inc\n    out, run = [], 0\n    for i in range(length):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+ "brute_force_solution": "def getModifiedArray(length, updates):\n    res = [0] * length\n    for s, e, inc in updates:\n        for i in range(s, e + 1):\n            res[i] += inc\n    return res\n",
+ "tests": [
+  {
+   "args": [
+    5,
+    [
+     [
+      1,
+      3,
+      2
+     ],
+     [
+      2,
+      4,
+      3
+     ],
+     [
+      0,
+      2,
+      -2
+     ]
+    ]
+   ],
+   "expected": [
+    -2,
+    0,
+    3,
+    5,
+    3
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    1,
+    [
+     [
+      0,
+      0,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    5
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    3,
+    []
+   ],
+   "expected": [
+    0,
+    0,
+    0
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    4,
+    [
+     [
+      0,
+      3,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "tag": "whole_range"
+  },
+  {
+   "args": [
+    3,
+    [
+     [
+      2,
+      2,
+      7
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    0,
+    7
+   ],
+   "tag": "last_index"
+  },
+  {
+   "args": [
+    3,
+    [
+     [
+      0,
+      1,
+      -4
+     ],
+     [
+      1,
+      2,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    -4,
+    0,
+    4
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    6,
+    [
+     [
+      1,
+      1,
+      3
+     ],
+     [
+      1,
+      3,
+      0
+     ],
+     [
+      2,
+      2,
+      -2
+     ],
+     [
+      1,
+      4,
+      -4
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    -1,
+    -6,
+    -4,
+    -4,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    2,
+    []
+   ],
+   "expected": [
+    0,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    5,
+    [
+     [
+      3,
+      4,
+      3
+     ],
+     [
+      0,
+      2,
+      -5
+     ],
+     [
+      3,
+      3,
+      -3
+     ]
+    ]
+   ],
+   "expected": [
+    -5,
+    -5,
+    -5,
+    0,
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    4,
+    [
+     [
+      0,
+      1,
+      2
+     ],
+     [
+      1,
+      2,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    2,
+    6,
+    4,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    2,
+    [
+     [
+      0,
+      0,
+      -1
+     ],
+     [
+      0,
+      1,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    3,
+    4
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(29)\n    n = 100000\n    ups = []\n    for _ in range(100000):\n        a = r.randint(0, n - 1)\n        ups.append([a, r.randint(a, n - 1), r.randint(-50, 50)])\n    return [n, ups]"
+  }
+ ],
+ "hints": {
+  "1_question": "Adding inc to a whole range one cell at a time is slow. What if you only record where the increase starts and where it stops?",
+  "2_nudge": "Store +inc at start and -inc just after end in a helper array. A running sum over that array rebuilds the final values.",
+  "3_big_hint": "diff has length+1. diff[start] += inc; diff[end+1] -= inc. out[i] = running sum of diff[0..i]."
+ },
+ "known_bugs": [
+  {
+   "name": "difference array too short (fails when end is the last index)",
+   "code": "def getModifiedArray(length, updates):\n    diff = [0] * length\n    for s, e, inc in updates:\n        diff[s] += inc\n        diff[e + 1] -= inc\n    out, run = [], 0\n    for i in range(length):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+   "fails_on": "last_index",
+   "followup": "Where does the '-inc' marker go for a range that ends at the final index? Does your array have a slot for it?"
+  },
+  {
+   "name": "cancels at end instead of end + 1",
+   "code": "def getModifiedArray(length, updates):\n    diff = [0] * (length + 1)\n    for s, e, inc in updates:\n        diff[s] += inc\n        diff[e] -= inc\n    out, run = [], 0\n    for i in range(length):\n        run += diff[i]\n        out.append(run)\n    return out\n",
+   "fails_on": "whole_range",
+   "followup": "The range includes `end`. At which index should the value stop being added?"
+  },
+  {
+   "name": "applies every update cell by cell (O(n * m))",
+   "code": "def getModifiedArray(length, updates):\n    res = [0] * length\n    for s, e, inc in updates:\n        for i in range(s, e + 1):\n            res[i] += inc\n    return res\n",
+   "fails_on": "large",
+   "followup": "How many cell updates happen if 100000 updates each cover tens of thousands of cells? How can two markers replace the loop?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + m)",
+  "space": "O(n)",
+  "followups": [
+   "Why does a running sum recover the totals?",
+   "How is this the inverse of a prefix sum?"
+  ]
+ }
+}

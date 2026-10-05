@@ -1,0 +1,271 @@
+{
+ "id": "backtracking-078",
+ "leetcode": 78,
+ "title": "Subsets",
+ "pattern": "backtracking_basics",
+ "difficulty": "medium",
+ "function": "subsets",
+ "signature": "subsets(nums: List[int]) -> List[List[int]]",
+ "adapter": "sort_nested",
+ "statement": "Return all possible subsets (the power set) of a list of distinct integers, including the empty subset, in any order.",
+ "reference_solution": "def subsets(nums):\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums)):\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+ "brute_force_solution": "import itertools\ndef subsets(nums):\n    return [list(c) for k in range(len(nums) + 1) for c in itertools.combinations(nums, k)]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3
+    ]
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     0
+    ]
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": [
+    []
+   ],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2
+    ]
+   ],
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     -1,
+     0
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     -1
+    ],
+    [
+     -1,
+     0
+    ],
+    [
+     0
+    ]
+   ],
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -3,
+     0
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     -3
+    ],
+    [
+     -3,
+     -1
+    ],
+    [
+     -3,
+     -1,
+     0
+    ],
+    [
+     -3,
+     0
+    ],
+    [
+     -1
+    ],
+    [
+     -1,
+     0
+    ],
+    [
+     0
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -2
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     -2
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -1,
+     -3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     -3
+    ],
+    [
+     -3,
+     -1
+    ],
+    [
+     -1
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     4
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     4
+    ]
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     3
+    ]
+   ],
+   "expected": [
+    [],
+    [
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3
+    ]
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(15))]"
+  }
+ ],
+ "hints": {
+  "1_question": "Every prefix of the decision process is already a valid subset. When should you record?",
+  "2_nudge": "Record the current subset at every call, then try adding each later element.",
+  "3_big_hint": "bt(start): res.append(cur[:]); for i in range(start, n): cur.append(nums[i]); bt(i+1); cur.pop()."
+ },
+ "known_bugs": [
+  {
+   "name": "misses the empty subset",
+   "code": "def subsets(nums):\n    res, cur = [], []\n    def bt(start):\n        if cur:\n            res.append(cur[:])\n        for i in range(start, len(nums)):\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return [r for r in res if r]\n",
+   "fails_on": "empty",
+   "followup": "Is the empty set a subset of every set?"
+  },
+  {
+   "name": "never includes the last element",
+   "code": "def subsets(nums):\n    res, cur = [], []\n    def bt(start):\n        res.append(cur[:])\n        for i in range(start, len(nums) - 1):\n            cur.append(nums[i])\n            bt(i + 1)\n            cur.pop()\n    bt(0)\n    return res\n",
+   "fails_on": "single",
+   "followup": "Which elements can your loop pick? Is the last one among them?"
+  },
+  {
+   "name": "only builds prefixes",
+   "code": "def subsets(nums):\n    return [nums[:i] for i in range(len(nums) + 1)]\n",
+   "fails_on": "two_elements",
+   "followup": "For [1, 2] you should get 4 subsets. How many do you produce, and which is missing?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n * 2^n)",
+  "space": "O(n)",
+  "followups": [
+   "How would a bitmask enumeration solve it?",
+   "How does the answer change if there are duplicates (problem 90)?"
+  ]
+ }
+}

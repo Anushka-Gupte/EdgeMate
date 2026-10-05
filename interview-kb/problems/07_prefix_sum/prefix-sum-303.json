@@ -1,0 +1,296 @@
+{
+ "id": "prefix-sum-303",
+ "leetcode": 303,
+ "title": "Range Sum Query - Immutable",
+ "pattern": "prefix_sum",
+ "difficulty": "easy",
+ "function": "rangeSums",
+ "signature": "rangeSums(nums: List[int], queries: List[List[int]]) -> List[int]",
+ "adapter": null,
+ "statement": "Given a list and many queries [left, right] (inclusive indices), return the sum of nums[left..right] for each query. Precompute so each query is O(1).",
+ "reference_solution": "def rangeSums(nums, queries):\n    pre = [0]\n    for x in nums:\n        pre.append(pre[-1] + x)\n    return [pre[r + 1] - pre[l] for l, r in queries]\n",
+ "brute_force_solution": "def rangeSums(nums, queries):\n    return [sum(nums[l:r + 1]) for l, r in queries]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     -2,
+     0,
+     3,
+     -5,
+     2,
+     -1
+    ],
+    [
+     [
+      0,
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      0,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    -1,
+    -3
+   ],
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    [
+     [
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    5
+   ],
+   "tag": "single"
+  },
+  {
+   "args": [
+    [],
+    []
+   ],
+   "expected": [],
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     [
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    2
+   ],
+   "tag": "single_element_query"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4
+    ],
+    [
+     [
+      0,
+      3
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": [
+    10,
+    4,
+    1
+   ],
+   "tag": "boundaries"
+  },
+  {
+   "args": [
+    [
+     0,
+     1,
+     3,
+     1,
+     0
+    ],
+    [
+     [
+      1,
+      3
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      4,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    5,
+    1,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     -1,
+     0
+    ],
+    [
+     [
+      2,
+      2
+     ],
+     [
+      2,
+      2
+     ]
+    ]
+   ],
+   "expected": [
+    0,
+    0
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     -3,
+     3,
+     -1,
+     3,
+     2,
+     3
+    ],
+    [
+     [
+      5,
+      5
+     ]
+    ]
+   ],
+   "expected": [
+    3
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0,
+     -3,
+     -3,
+     3,
+     1
+    ],
+    [
+     [
+      4,
+      4
+     ],
+     [
+      0,
+      3
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      4,
+      4
+     ]
+    ]
+   ],
+   "expected": [
+    1,
+    -3,
+    -2,
+    1
+   ],
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     3
+    ],
+    [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": [
+    6,
+    6
+   ],
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(26)\n    n = 100000\n    nums = [r.randint(-100, 100) for _ in range(n)]\n    qs = []\n    for _ in range(100000):\n        a = r.randint(0, n // 4)\n        qs.append([a, r.randint(n // 2, n - 1)])\n    return [nums, qs]"
+  }
+ ],
+ "hints": {
+  "1_question": "If you knew the sum of everything up to each position, how could you get the sum of the middle part?",
+  "2_nudge": "Build prefix[i] = sum of the first i elements. The sum of nums[l..r] is a difference of two prefix values.",
+  "3_big_hint": "prefix has length n+1 with prefix[0] = 0. answer = prefix[r + 1] - prefix[l]."
+ },
+ "known_bugs": [
+  {
+   "name": "leaves out the right endpoint",
+   "code": "def rangeSums(nums, queries):\n    pre = [0]\n    for x in nums:\n        pre.append(pre[-1] + x)\n    return [pre[r] - pre[l] for l, r in queries]\n",
+   "fails_on": "normal",
+   "followup": "Is the right index inclusive? Which prefix entry includes nums[r]?"
+  },
+  {
+   "name": "uses prefix[l - 1] (wraps around when l = 0)",
+   "code": "def rangeSums(nums, queries):\n    pre = [0]\n    for x in nums:\n        pre.append(pre[-1] + x)\n    return [pre[r + 1] - pre[l - 1] if l > 0 else pre[r + 1] - pre[-1] for l, r in queries]\n",
+   "fails_on": "boundaries",
+   "followup": "Which prefix entry should be subtracted for a query starting at index 0, and what does index -1 give you in Python?"
+  },
+  {
+   "name": "sums the slice for every query (O(n) per query)",
+   "code": "def rangeSums(nums, queries):\n    return [sum(nums[l:r + 1]) for l, r in queries]\n",
+   "fails_on": "large",
+   "followup": "With 100000 queries over a long array, how many elements do you add in total? What can you precompute once?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n + q)",
+  "space": "O(n)",
+  "followups": [
+   "How would you extend this to a 2D matrix (problem 304)?",
+   "What if the array can change between queries?"
+  ]
+ }
+}

@@ -1,0 +1,201 @@
+{
+ "id": "fast-slow-142",
+ "leetcode": 142,
+ "title": "Linked List Cycle II",
+ "pattern": "fast_slow_pointers",
+ "difficulty": "medium",
+ "function": "detectCycle",
+ "signature": "detectCycle(head: ListNode) -> ListNode",
+ "adapter": "cycle_start",
+ "statement": "If the linked list contains a cycle, return the node where the cycle begins; otherwise return None. (The checker reports the index of that node, or -1 for None.)",
+ "reference_solution": "def detectCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            p = head\n            while p is not slow:\n                p = p.next\n                slow = slow.next\n            return p\n    return None\n",
+ "brute_force_solution": "def detectCycle(head):\n    seen = set()\n    while head:\n        if id(head) in seen:\n            return head\n        seen.add(id(head))\n        head = head.next\n    return None\n",
+ "tests": [
+  {
+   "args": [
+    [
+     3,
+     2,
+     0,
+     -4
+    ],
+    1
+   ],
+   "expected": 1,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ],
+    0
+   ],
+   "expected": 0,
+   "tag": "cycle_at_head"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    -1
+   ],
+   "expected": -1,
+   "tag": "no_cycle"
+  },
+  {
+   "args": [
+    [
+     1
+    ],
+    0
+   ],
+   "expected": 0,
+   "tag": "self_loop"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": -1,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    2
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    5
+   ],
+   "expected": 5,
+   "tag": "tail_loop"
+  },
+  {
+   "args": [
+    [],
+    -1
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     0,
+     0,
+     1
+    ],
+    -1
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     0,
+     2,
+     1,
+     3,
+     1,
+     2
+    ],
+    5
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     2,
+     0
+    ],
+    2
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     0
+    ],
+    0
+   ],
+   "expected": 0,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 99999]"
+  },
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(100000)), 50000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Detecting the cycle is the easy part (141). Once slow and fast have met, how far is the meeting point from the start of the cycle, compared with how far the head is?",
+  "2_nudge": "After they meet, the distance from the head to the cycle start equals the distance from the meeting point to the cycle start (going around). Walk one pointer from the head and one from the meeting point at the same speed.",
+  "3_big_hint": "When slow is fast: p = head; while p is not slow: p = p.next; slow = slow.next. Return p."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the meeting point instead of the cycle start",
+   "code": "def detectCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            return slow\n    return None\n",
+   "fails_on": "normal",
+   "followup": "The two pointers meet somewhere inside the cycle. Is that necessarily where the cycle begins?"
+  },
+  {
+   "name": "returns head when there is no cycle",
+   "code": "def detectCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            p = head\n            while p is not slow:\n                p = p.next\n                slow = slow.next\n            return p\n    return head\n",
+   "fails_on": "no_cycle",
+   "followup": "What should the function return when there is no cycle at all?"
+  },
+  {
+   "name": "second phase only advances one pointer",
+   "code": "def detectCycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            p = head\n            while p is not slow:\n                p = p.next\n            return p\n    return None\n",
+   "fails_on": "normal",
+   "followup": "In the second phase, both pointers should move one step at a time. What does your loop do with `slow`?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Can you prove why the two distances are equal? (Let the head-to-start length be a, the cycle length c.)",
+   "What if you used a hash set instead? What do you trade?"
+  ]
+ }
+}

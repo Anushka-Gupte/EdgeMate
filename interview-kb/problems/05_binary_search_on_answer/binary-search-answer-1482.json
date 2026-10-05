@@ -1,0 +1,231 @@
+{
+ "id": "binary-search-answer-1482",
+ "leetcode": 1482,
+ "title": "Minimum Number of Days to Make m Bouquets",
+ "pattern": "binary_search_on_answer",
+ "difficulty": "medium",
+ "function": "minDays",
+ "signature": "minDays(bloomDay: List[int], m: int, k: int) -> int",
+ "adapter": null,
+ "statement": "Flower i blooms on day bloomDay[i]. A bouquet needs k adjacent bloomed flowers, and each flower can be used once. Return the earliest day by which you can make m bouquets, or -1 if it is impossible.",
+ "reference_solution": "def minDays(bloomDay, m, k):\n    if m * k > len(bloomDay):\n        return -1\n    def ok(day):\n        flowers = bouquets = 0\n        for b in bloomDay:\n            if b <= day:\n                flowers += 1\n                if flowers == k:\n                    bouquets += 1\n                    flowers = 0\n            else:\n                flowers = 0\n        return bouquets >= m\n    lo, hi = min(bloomDay), max(bloomDay)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if ok(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+ "brute_force_solution": "def minDays(bloomDay, m, k):\n    def ok(day):\n        flowers = bouquets = 0\n        for b in bloomDay:\n            if b <= day:\n                flowers += 1\n                if flowers == k:\n                    bouquets += 1\n                    flowers = 0\n            else:\n                flowers = 0\n        return bouquets >= m\n    for day in sorted(set(bloomDay)):\n        if ok(day):\n            return day\n    return -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     1,
+     10,
+     3,
+     10,
+     2
+    ],
+    3,
+    1
+   ],
+   "expected": 3,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     1,
+     10,
+     3,
+     10,
+     2
+    ],
+    3,
+    2
+   ],
+   "expected": -1,
+   "tag": "impossible"
+  },
+  {
+   "args": [
+    [
+     7,
+     7,
+     7,
+     7,
+     12,
+     7,
+     7
+    ],
+    2,
+    3
+   ],
+   "expected": 12,
+   "tag": "adjacency_matters"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    1,
+    1
+   ],
+   "expected": 5,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    1,
+    3
+   ],
+   "expected": 3,
+   "tag": "whole_array"
+  },
+  {
+   "args": [
+    [
+     3,
+     3,
+     3
+    ],
+    2,
+    2
+   ],
+   "expected": -1,
+   "tag": "impossible"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    2,
+    1
+   ],
+   "expected": 2,
+   "tag": "consecutive_flowers"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1,
+     1
+    ],
+    2,
+    2
+   ],
+   "expected": 1,
+   "tag": "consecutive_flowers"
+  },
+  {
+   "args": [
+    [
+     2,
+     8
+    ],
+    1,
+    1
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2
+    ],
+    2,
+    1
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     10,
+     3,
+     4,
+     4,
+     3
+    ],
+    3,
+    2
+   ],
+   "expected": 10,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     10
+    ],
+    2,
+    3
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     2,
+     9,
+     5,
+     4,
+     10,
+     2
+    ],
+    3,
+    2
+   ],
+   "expected": 10,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(22)\n    return [[r.randint(1, 10**9) for _ in range(100000)], 100, 100]"
+  }
+ ],
+ "hints": {
+  "1_question": "If someone names a day, can you check how many bouquets are possible? Does the number of possible bouquets only grow as the day grows?",
+  "2_nudge": "Binary search the day. To count bouquets on a given day, scan left to right counting a run of bloomed flowers; every k in a row makes a bouquet and resets the run. An unbloomed flower breaks the run.",
+  "3_big_hint": "If m*k > len(bloomDay) return -1. Search lo = min, hi = max bloom day. ok(day): flowers = bouquets = 0; if b <= day: flowers += 1; if flowers == k: bouquets += 1; flowers = 0; else flowers = 0."
+ },
+ "known_bugs": [
+  {
+   "name": "ignores adjacency (counts bloomed flowers // k)",
+   "code": "def minDays(bloomDay, m, k):\n    if m * k > len(bloomDay):\n        return -1\n    lo, hi = min(bloomDay), max(bloomDay)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if sum(1 for b in bloomDay if b <= mid) // k >= m:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "adjacency_matters",
+   "followup": "A bouquet needs k flowers next to each other. If one flower in a row hasn't bloomed, what happens to the run?"
+  },
+  {
+   "name": "never returns -1",
+   "code": "def minDays(bloomDay, m, k):\n    def ok(day):\n        flowers = bouquets = 0\n        for b in bloomDay:\n            if b <= day:\n                flowers += 1\n                if flowers == k:\n                    bouquets += 1\n                    flowers = 0\n            else:\n                flowers = 0\n        return bouquets >= m\n    lo, hi = min(bloomDay), max(bloomDay)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if ok(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "impossible",
+   "followup": "What if there are fewer than m * k flowers in total? Can any day work?"
+  },
+  {
+   "name": "run is not reset after completing a bouquet",
+   "code": "def minDays(bloomDay, m, k):\n    if m * k > len(bloomDay):\n        return -1\n    def ok(day):\n        flowers = bouquets = 0\n        for b in bloomDay:\n            if b <= day:\n                flowers += 1\n                if flowers == k:\n                    bouquets += 1\n            else:\n                flowers = 0\n        return bouquets >= m\n    lo, hi = min(bloomDay), max(bloomDay)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if ok(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+   "fails_on": "consecutive_flowers",
+   "followup": "After a bouquet is made, those flowers are used up. What should the run length be for the next flower?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n log D)",
+  "space": "O(1)",
+  "followups": [
+   "Why is feasibility monotonic in the day number?",
+   "Why check m * k > n first?"
+  ]
+ }
+}

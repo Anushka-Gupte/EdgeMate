@@ -1,0 +1,191 @@
+{
+ "id": "binary-search-704",
+ "leetcode": 704,
+ "title": "Binary Search",
+ "pattern": "binary_search_sorted",
+ "difficulty": "easy",
+ "function": "search",
+ "signature": "search(nums: List[int], target: int) -> int",
+ "adapter": null,
+ "statement": "Given a sorted list of distinct integers and a target, return the target's index, or -1 if it is not in the list. Aim for O(log n).",
+ "reference_solution": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+ "brute_force_solution": "def search(nums, target):\n    return nums.index(target) if target in nums else -1\n",
+ "tests": [
+  {
+   "args": [
+    [
+     -1,
+     0,
+     3,
+     5,
+     9,
+     12
+    ],
+    9
+   ],
+   "expected": 4,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     -1,
+     0,
+     3,
+     5,
+     9,
+     12
+    ],
+    2
+   ],
+   "expected": -1,
+   "tag": "not_found"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    5
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     5
+    ],
+    -5
+   ],
+   "expected": -1,
+   "tag": "not_found"
+  },
+  {
+   "args": [
+    [],
+    1
+   ],
+   "expected": -1,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    7
+   ],
+   "expected": 6,
+   "tag": "last_element"
+  },
+  {
+   "args": [
+    [
+     -9,
+     -7,
+     -3
+    ],
+    -7
+   ],
+   "expected": 1,
+   "tag": "negative"
+  },
+  {
+   "args": [
+    [
+     -10,
+     -4,
+     -3,
+     7,
+     9,
+     19
+    ],
+    6
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    9
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    15
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [],
+    -9
+   ],
+   "expected": -1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     8,
+     16
+    ],
+    -4
+   ],
+   "expected": -1,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [list(range(400000)), 399999]"
+  }
+ ],
+ "hints": {
+  "1_question": "Each comparison should let you throw away half the remaining search space. What do you compare?",
+  "2_nudge": "Keep lo and hi as the inclusive ends of the range that could still contain the target. Look at the middle element.",
+  "3_big_hint": "While lo <= hi: mid; if equal return mid; if nums[mid] < target: lo = mid + 1 else hi = mid - 1. Return -1 after the loop."
+ },
+ "known_bugs": [
+  {
+   "name": "loop condition lo < hi skips the last candidate",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n",
+   "fails_on": "single",
+   "followup": "With one element, lo and hi are both 0. Does your loop body ever run?"
+  },
+  {
+   "name": "hi = mid never shrinks past a miss",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return -1\n",
+   "fails_on": "not_found",
+   "followup": "You already checked nums[mid] and it was too big. Why keep mid inside the range?"
+  },
+  {
+   "name": "comparison direction reversed",
+   "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            hi = mid - 1\n        else:\n            lo = mid + 1\n    return -1\n",
+   "fails_on": "normal",
+   "followup": "If nums[mid] is smaller than the target, which side of mid could the target be on?"
+  }
+ ],
+ "complexity": {
+  "time": "O(log n)",
+  "space": "O(1)",
+  "followups": [
+   "How could `(lo + hi) // 2` overflow in languages like Java, and what is the safe form?",
+   "Write the same search with the half-open range [lo, hi). What changes?"
+  ]
+ }
+}

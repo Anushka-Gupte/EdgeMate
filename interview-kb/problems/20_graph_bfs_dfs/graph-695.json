@@ -1,0 +1,360 @@
+{
+ "id": "graph-695",
+ "leetcode": 695,
+ "title": "Max Area of Island",
+ "pattern": "graph_bfs_dfs",
+ "difficulty": "medium",
+ "function": "maxAreaOfIsland",
+ "signature": "maxAreaOfIsland(grid: List[List[int]]) -> int",
+ "adapter": null,
+ "statement": "Return the size (number of cells) of the largest island of 1s, where cells connect horizontally or vertically. Return 0 if there is no island.",
+ "reference_solution": "def maxAreaOfIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    best = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1 and not seen[i][j]:\n                area = 0\n                st = [(i, j)]\n                seen[i][j] = True\n                while st:\n                    r, c = st.pop()\n                    area += 1\n                    for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                        nr, nc = r + dr, c + dc\n                        if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1 and not seen[nr][nc]:\n                            seen[nr][nc] = True\n                            st.append((nr, nc))\n                best = max(best, area)\n    return best\n",
+ "brute_force_solution": "def maxAreaOfIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    p = list(range(R * C))\n    def f(x):\n        while p[x] != x:\n            p[x] = p[p[x]]\n            x = p[x]\n        return x\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1:\n                for di, dj in ((1, 0), (0, 1)):\n                    ni, nj = i + di, j + dj\n                    if ni < R and nj < C and grid[ni][nj] == 1:\n                        p[f(i * C + j)] = f(ni * C + nj)\n    cnt = {}\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1:\n                k = f(i * C + j)\n                cnt[k] = cnt.get(k, 0) + 1\n    return max(cnt.values()) if cnt else 0\n",
+ "tests": [
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 6,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 0,
+   "tag": "no_land"
+  },
+  {
+   "args": [
+    [
+     [
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "l_shape"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "diagonal_not_connected"
+  },
+  {
+   "args": [
+    []
+   ],
+   "expected": 0,
+   "tag": "empty"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 4,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      1,
+      0
+     ],
+     [
+      1,
+      1,
+      0
+     ],
+     [
+      0,
+      1,
+      1
+     ]
+    ]
+   ],
+   "expected": 5,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      1,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      0
+     ]
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "import random\ndef gen():\n    r = random.Random(60)\n    return [[[1 if r.random() < 0.7 else 0 for _ in range(300)] for _ in range(300)]]"
+  }
+ ],
+ "hints": {
+  "1_question": "It's the same flood fill as counting islands, but you need each island's size. What do you count while exploring?",
+  "2_nudge": "Flood-fill each unvisited land cell, counting cells visited in that fill. Keep the maximum.",
+  "3_big_hint": "For each unvisited 1: area = 0; stack-explore, area += 1 per cell popped; best = max(best, area)."
+ },
+ "known_bugs": [
+  {
+   "name": "returns the total number of land cells",
+   "code": "def maxAreaOfIsland(grid):\n    return sum(sum(row) for row in grid)\n",
+   "fails_on": "normal",
+   "followup": "Should separate islands add up, or should you report just the largest one?"
+  },
+  {
+   "name": "diagonal connections",
+   "code": "def maxAreaOfIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    best = 0\n    for i in range(R):\n        for j in range(C):\n            if grid[i][j] == 1 and not seen[i][j]:\n                area = 0\n                st = [(i, j)]\n                seen[i][j] = True\n                while st:\n                    r, c = st.pop()\n                    area += 1\n                    for dr in (-1, 0, 1):\n                        for dc in (-1, 0, 1):\n                            nr, nc = r + dr, c + dc\n                            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1 and not seen[nr][nc]:\n                                seen[nr][nc] = True\n                                st.append((nr, nc))\n                best = max(best, area)\n    return best\n",
+   "fails_on": "diagonal_not_connected",
+   "followup": "Are diagonal cells part of the same island according to the statement?"
+  },
+  {
+   "name": "recursive DFS (recursion limit)",
+   "code": "def maxAreaOfIsland(grid):\n    if not grid:\n        return 0\n    R, C = len(grid), len(grid[0])\n    seen = [[False] * C for _ in range(R)]\n    def dfs(r, c):\n        if r < 0 or c < 0 or r >= R or c >= C or grid[r][c] != 1 or seen[r][c]:\n            return 0\n        seen[r][c] = True\n        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)\n    return max([dfs(i, j) for i in range(R) for j in range(C)] or [0])\n",
+   "fails_on": "large",
+   "followup": "How deep does the recursion go in one big island, and what limit does Python enforce?"
+  }
+ ],
+ "complexity": {
+  "time": "O(R * C)",
+  "space": "O(R * C)",
+  "followups": [
+   "Why does marking cells visited make each cell cost O(1) overall?",
+   "How would you return the cells of the largest island?"
+  ]
+ }
+}

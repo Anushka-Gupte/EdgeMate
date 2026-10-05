@@ -1,0 +1,195 @@
+{
+ "id": "greedy-045",
+ "leetcode": 45,
+ "title": "Jump Game II",
+ "pattern": "greedy",
+ "difficulty": "medium",
+ "function": "jump",
+ "signature": "jump(nums: List[int]) -> int",
+ "adapter": null,
+ "statement": "nums[i] is the maximum jump length from index i. Starting at index 0, return the minimum number of jumps needed to reach the last index. The last index is always reachable.",
+ "reference_solution": "def jump(nums):\n    jumps = cur_end = far = 0\n    for i in range(len(nums) - 1):\n        far = max(far, i + nums[i])\n        if i == cur_end:\n            jumps += 1\n            cur_end = far\n    return jumps\n",
+ "brute_force_solution": "def jump(nums):\n    n = len(nums)\n    INF = 10 ** 9\n    dp = [INF] * n\n    dp[0] = 0\n    for i in range(n):\n        for j in range(i + 1, min(n, i + nums[i] + 1)):\n            dp[j] = min(dp[j], dp[i] + 1)\n    return dp[-1]\n",
+ "tests": [
+  {
+   "args": [
+    [
+     2,
+     3,
+     1,
+     1,
+     4
+    ]
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     2,
+     3,
+     0,
+     1,
+     4
+    ]
+   ],
+   "expected": 2,
+   "tag": "normal"
+  },
+  {
+   "args": [
+    [
+     0
+    ]
+   ],
+   "expected": 0,
+   "tag": "single"
+  },
+  {
+   "args": [
+    [
+     1,
+     2
+    ]
+   ],
+   "expected": 1,
+   "tag": "two_elements"
+  },
+  {
+   "args": [
+    [
+     1,
+     1,
+     1,
+     1
+    ]
+   ],
+   "expected": 3,
+   "tag": "all_ones"
+  },
+  {
+   "args": [
+    [
+     5,
+     9,
+     3,
+     2,
+     1,
+     0,
+     2,
+     3,
+     3,
+     1,
+     0,
+     0
+    ]
+   ],
+   "expected": 3,
+   "tag": "big_first_jump"
+  },
+  {
+   "args": [
+    [
+     2,
+     0,
+     3,
+     3,
+     2,
+     2
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     1,
+     3,
+     1,
+     1
+    ]
+   ],
+   "expected": 2,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     0,
+     1,
+     3
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     1,
+     0
+    ]
+   ],
+   "expected": 1,
+   "tag": "random"
+  },
+  {
+   "args": [
+    [
+     3,
+     2,
+     2,
+     2,
+     0,
+     2,
+     3
+    ]
+   ],
+   "expected": 3,
+   "tag": "random"
+  }
+ ],
+ "large_tests": [
+  {
+   "tag": "large",
+   "gen_code": "def gen():\n    return [[25000] * 50000]"
+  }
+ ],
+ "hints": {
+  "1_question": "Think in 'waves': from the current wave of positions, how far could one more jump take you?",
+  "2_nudge": "Track the farthest index reachable so far and the end of the current jump's range. When you reach that end, you must jump again.",
+  "3_big_hint": "for i in range(n-1): far = max(far, i + nums[i]); if i == cur_end: jumps += 1; cur_end = far."
+ },
+ "known_bugs": [
+  {
+   "name": "always takes the full jump of the current cell",
+   "code": "def jump(nums):\n    i = jumps = 0\n    while i < len(nums) - 1:\n        i += max(nums[i], 1)\n        jumps += 1\n    return jumps\n",
+   "fails_on": "normal",
+   "followup": "Is jumping as far as possible from where you stand always best, or should you consider where each landing spot can take you next?"
+  },
+  {
+   "name": "loop includes the last index (counts an extra jump)",
+   "code": "def jump(nums):\n    jumps = cur_end = far = 0\n    for i in range(len(nums)):\n        far = max(far, i + nums[i])\n        if i == cur_end:\n            jumps += 1\n            cur_end = far\n    return jumps\n",
+   "fails_on": "single",
+   "followup": "Do you need another jump once you are already standing on the last index?"
+  },
+  {
+   "name": "dynamic programming over every pair (O(n^2))",
+   "code": "def jump(nums):\n    n = len(nums)\n    INF = 10 ** 9\n    dp = [INF] * n\n    dp[0] = 0\n    for i in range(n):\n        for j in range(i + 1, min(n, i + nums[i] + 1)):\n            dp[j] = min(dp[j], dp[i] + 1)\n    return dp[-1]\n",
+   "fails_on": "large",
+   "followup": "How many (i, j) updates happen when every cell can jump far? Is there a way to keep only the farthest reach?"
+  }
+ ],
+ "complexity": {
+  "time": "O(n)",
+  "space": "O(1)",
+  "followups": [
+   "Why is this greedy equivalent to a BFS over levels?",
+   "What if some jumps could go backwards?"
+  ]
+ }
+}
