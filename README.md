@@ -290,7 +290,7 @@ EdgeMate/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/EdgeMate.git
+git clone https://github.com/Anushka-Gupte/EdgeMate.git
 cd EdgeMate
 ```
 
