@@ -6,6 +6,9 @@
 
 ---
 
+# Demo
+[![Watch Demo](./Demo.png)](https://youtu.be/pWz3XlsvSXk)
+
 ```mermaid
 flowchart TD
     subgraph Frontend["Frontend Layer (Dark-First Developer Theme)"]
